@@ -13,14 +13,14 @@ const SignUp = () => {
       let attemptedSignUp = {username, email, password};
       axios({
         method: 'post',
-        url: '/signup',
+        url: '/register',
         data: attemptedSignUp
       })
         .then((response) => {
-          console.log('YAY')
+          console.log('YAY', response)
         })
         .catch((err) => {
-          console.log('SHIT')
+          console.log('SHIT', err)
         })
     }
   }

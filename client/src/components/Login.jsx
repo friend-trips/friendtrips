@@ -1,24 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
+import {AuthContext} from '../components/providers/AuthenticationProvider.jsx'
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const authContext = useContext(AuthContext);
   const handleSubmit = (event) => {
     event.preventDefault();
     let attemptedLogin = {username, password};
-    axios({
-      method: 'post',
-      url: '/auth',
-      data: attemptedLogin
-    })
-      .then((response) => {
-        console.log('YAY')
-      })
-      .catch((err) => {
-        console.log('SHIT')
-      })
+    authContext.signin(attemptedLogin);
   }
 
   return (
@@ -28,6 +19,7 @@ const Login = () => {
         <input value={password} onChange={(e)=>{setPassword(e.target.value)}} placeholder='Password'/>
         <button type="submit">Log In</button>
       </form>
+      {(authContext.user) ? 'logged in: ' + authContext.user : 'derp' }
     </div>
   );
 };
