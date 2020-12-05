@@ -14,20 +14,21 @@ app.use(morgan('dev'));
 //----------------------------------------- END OF IMPORTS---------------------------------------------------
 
 app.use(express.static('public'));
-// Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// Middleware
 app.use(
   cors({
-    origin: "http://localhost:3001", // <-- location of the react app were connecting to
+    origin: "http://mydomain:3001", // <-- location of the react app were connecting to
     credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS']
   })
 );
 app.use(
   session({
     secret: ENV.SESS_SECRET,
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
   })
 );
 app.use(cookieParser(ENV.SESS_SECRET));
@@ -36,20 +37,64 @@ app.use(passport.session());
 require("./passportConfig")(passport);
 
 //----------------------------------------- END OF MIDDLEWARE---------------------------------------------------
-
+app.set('views', __dirname + '/views')
+app.engine('html', require('ejs').renderFile)
+app.set('view-engine', 'ejs')
 // Routes
+// app.get('/', (req, res) => {
+//   res.render('index.ejs');
+// })
+
+// app.get('/home', (req, res) => {
+//   console.log('sanity')
+//   res.render('chatIndex.ejs')
+// })
+
+app.get('/checkAuth', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.status(200).send({user: req.session.passport.user})
+  } else {
+    res.status(403).end()
+  }
+})
 app.post("/login", (req, res, next) => {
+  console.log('IS IT AUTHED? ', req.isAuthenticated())
   passport.authenticate("local", (err, user, info) => {
+    console.log('.authenticate done', err, user, info)
     if (err) throw err;
     if (!user) res.status(500).send("No User Exists");
     else {
       req.logIn(user, (err) => {
+        console.log('loggged in a user: ', user)
         if (err) throw err;
-        res.cookie('user_id', user.user_id).status(200).send('successfully authenticated');
+        // res.cookie('user_id', user.user_id).render('chatIndex.ejs')
+        res.cookie('user_id', user.user_id).status(200).send(user.username);
       });
     }
   })(req, res, next);
 });
+app.get('/logout', function(req, res){
+  cookie = req.cookies;
+  for (var prop in cookie) {
+      if (!cookie.hasOwnProperty(prop)) {
+          continue;
+      }
+      res.cookie(prop, '', {expires: new Date(0)});
+      // console.log('PRE LOGOUT', req.session)
+      //logOut removes the user from our passport session
+      req.logOut();
+      // console.log('POST LOGOUT / PRE DESTROY', req.session)
+      req.session.destroy((err) => {
+        if (err) {
+          console.log('well we tried but we could not destroy the session');
+        } else {
+          console.log('IT HAS BEEN DONE!', req.session);
+        }
+      });
+  }
+  res.redirect('/');
+});
+
 // app.post("/register", (req, res) => {
 //find user in database
 //if there is an error, throw err

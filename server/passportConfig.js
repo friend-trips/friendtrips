@@ -7,6 +7,7 @@ module.exports = function (passport) {
 
   passport.use(
     new localStrategy((username, password, done) => {
+      console.log('begin verification')
       //find a user in the database
       //if err throw err, if none exists return done(null,false) to signify no user found
       //else a user is found
@@ -27,6 +28,8 @@ module.exports = function (passport) {
             bcrypt.compare(password, result.data.password, (err, passwordCompareResult) => {
               if (err) throw err;
               if (passwordCompareResult === true) {
+                delete result.data.password;
+                delete result.data.email;
                 return done(null, result.data);
               } else {
                 return done(null, false);
@@ -37,18 +40,6 @@ module.exports = function (passport) {
         .catch((err) => {
           console.log(err);
         });
-      // User.findOne({ username: username }, (err, user) => {
-      //   if (err) throw err;
-      //   if (!user) return done(null, false);
-      //   bcrypt.compare(password, user.password, (err, result) => {
-      //     if (err) throw err;
-      //     if (result === true) {
-      //       return done(null, user);
-      //     } else {
-      //       return done(null, false);
-      //     }
-      //   });
-      // });
     })
   );
   //serializeUser takes a userID, serializes it into a token and attaches it to the session -- deserialize takes that information off of the browsers session and verifies it, returning the users info if valid.
@@ -57,18 +48,16 @@ module.exports = function (passport) {
   });
   passport.deserializeUser((id, cb) => {
     axios.get(`${ENV.USER_ROUTE + '/' + id}`)
-      .then((result) => {
+      .then((req) => {
+        // console.log('DESERIALIZE', req.data)
         const userInformation = {
-          username: result[0].username,
-          user_id: result[0].user_id
+          username: req.data.username,
+          user_id: req.data.user_id
         };
-        cb(err, userInformation);
+        cb(null, userInformation);
       })
-    // User.findOne({ _id: id }, (err, user) => {
-    //   const userInformation = {
-    //     username: user.username,
-    //   };
-    //   cb(err, userInformation);
-    // });
+      .catch((err) => {
+        cb(err);
+      })
   });
 }

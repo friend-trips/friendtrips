@@ -1,31 +1,33 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 
+
 const AuthContext = React.createContext();
 
-const AuthProvider = ({children}) => {
+const AuthProvider = ({children, helper}) => {
   const [user, setUser] = useState(null);
 
-  const signin = attemptedLogin => {
+  const signin = (attemptedLogin, cb) => {
     axios({
       method: 'post',
       url: '/login',
       data: attemptedLogin
     })
       .then((response) => {
-        console.log('YAY', document.cookie, typeof document.cookie)
+        console.log('USER LOGGED IN')
         setUser(document.cookie.slice(document.cookie.indexOf('=') + 1))
       })
       .catch((err) => {
-        console.log('SHIT')
+        console.log('USER WAS UNABLE TO LOG IN', err)
       })
   };
 
-  const signout = cb => {
-    return fakeAuth.signout(() => {
-      setUser(null);
-      cb();
-    });
+  const signout = () => {
+    axios({
+      method: 'get',
+      url: '/logout'
+    })
+    setUser(null);
   };
 
   return (
