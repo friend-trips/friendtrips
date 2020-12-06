@@ -5,7 +5,7 @@ const passport = require('passport');
 const session = require('express-session');
 const bcrypt = require("bcrypt");
 const axios = require('axios');
-const ENV = require('../../environment.config.js');
+const ENV = require('../../configs/environment.config.js');
 router.use(
   session({
     secret: ENV.SESS_SECRET,
