@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@datepicker-react/styled": "^2.7.0",
+    "amadeus": "^5.6.0",
     "axios": "^0.21.0",
     "babel-polyfill": "^6.26.0",
     "bcrypt": "^5.0.0",
@@ -18,12 +20,14 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "moment": "^2.29.1",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.6",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "react": "^17.0.1",
+    "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "socket.io": "^3.0.3",
@@ -38,7 +42,7 @@
     "babel-loader": "^8.2.2",
     "enzyme": "^3.11.0",
     "jest": "^26.6.3",
-    "webpack": "^5.9.0",
+    "webpack": "^4.44.1",
     "webpack-cli": "^4.2.0"
   }
 }

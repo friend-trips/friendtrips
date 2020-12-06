@@ -5,8 +5,8 @@ require('babel-polyfill')
 import styled from 'styled-components';
 
 import {AuthProvider, AuthContext} from './providers/AuthenticationProvider.jsx'
-import Login from './Login.jsx';
-import SignUp from './Signup.jsx';
+import Login from '../AuthFlow/Login.jsx';
+import SignUp from '../AuthFlow/Signup.jsx';
 import FriendTrips from './FriendTrips.jsx';
 
 import {
@@ -34,7 +34,7 @@ const App = () => {
     signIn: (attemptedLogin) => {
       axios({
         method: 'post',
-        url: '/login',
+        url: '/auth/login',
         data: attemptedLogin
       })
         .then((response) => {
@@ -47,11 +47,11 @@ const App = () => {
         })
     },
     signOut: () => {
-      axios.get('/logout')
+      axios.get('/auth/logout')
       setUser(null);
     },
     checkStatus: () => {
-      return axios.get('/checkAuth')
+      return axios.get('/auth/check')
         .then((result) => {
           console.log('You have been authenticated', result);
           setUser(result.data.user);

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import { AuthContext } from '../components/providers/AuthenticationProvider.jsx';
+// import { AuthContext } from '../components/providers/AuthenticationProvider.jsx';
 import Page from './Page.jsx'
-import Chat from '../../ChatComponents/Chat.jsx'
+import Chat from '../GroupChat/Chat.jsx';
+import ItineraryBuilder from '../ItineraryBuilder/ItineraryBuilder.jsx';
+import Flights from '../Flights/Flights.jsx';
 
 import {
   HashRouter as Router,
@@ -22,9 +24,11 @@ const Container = styled.div`
   width: 100%;
   justify-content: space-around;
   align-items: center;
+  position: relative;
 `;
 
 const Section = styled.section`
+position: relative;
   height: 100%;
   margin-left: 2%;
   flex-grow: 1;
@@ -32,21 +36,20 @@ const Section = styled.section`
 `;
 
 const FriendTrips = () => {
-  const authContext = useContext(AuthContext);
   return (
     <Router>
       <Container>
         <NavBar></NavBar>
         <Section>
           <Switch>
-            <Route exactly path="/red">
-              <Chat authUser={authContext.user}/>
+            <Route exactly path="/chat">
+              <Chat/>
             </Route>
-            <Route exactly path="/blue">
-              <Page color={'blue'}></Page>
+            <Route exactly path="/itinerary">
+              <ItineraryBuilder/>
             </Route>
-            <Route exactly path="/green">
-              <Page color={'green'}></Page>
+            <Route exactly path="/flights">
+              <Flights/>
             </Route>
             <Route exactly path="/yellow">
               <Page color={'yellow'}></Page>

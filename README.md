@@ -1,19 +1,22 @@
-# Authentication
+# Friendtrips
 
-### About Authentication
-Working authentication service using passport, bcrypt, and express-sessions.
+### About Friendtrips
+Application
 
 ### Things to do
-[x] Add calls to DB for user info\
-[x] Research tokens and sessions -- find an npm package that seems easy enough to figure out in a day\
-[x] Create Login and Signup screens\
-[] Styling on Login and Signup screens\
-[x] Figure out React Router -- see if it's better to use protected routes or hacky 'conditional rendering' solution instead\
-[x] Local testing\
-[] Styling on all pages\
-[] App layout and prep for other ~microservices~ components\
+[] Add Global Styling\
+[] Add Hotels component\
+[] Add updates from Flight components\
+[] Figure out why leaving comments breaks the chat\
+  - Current hypothesis: after the comment is successfully posted, the entire messages list is refreshed (this expected behavior).  However, refreshing the list of messages seems to be remouting the component (or something like that) and thus 'wiping' the thread state (meaning that the new comment is trying to be mounted without a 'parent' message to attach to -- a react no-go that crashes the app).\
+[] Finish Itinerary Builder\
+[] Create Suggestions modal\
+[] Refactor imported components (Flights, hotels, ItinBuilder etc) to grant access to user variables through AuthContext\
+[] Create Trip selector drop down for the Navbar\
+[] Create Login and Signup components\
+[] Create Splash page\
+[] Testing (lol)
+
 
 ### Tech Debt
-[] App.jsx imports babel-polyfill in order to make use of async/await -- this makes the bundle size huge and is probably not best practice.  A better solution would be to use a 'regenerator runtime' loader or something like that with babel and webpack\
-[] Remove unnecessary files and functions\
-[] Restructure code to be more modular
+[] server/index.js is a mess because of the socket.io stuff -- would be nice if this could all live in middleware but I haven't figured out how to do that yet\

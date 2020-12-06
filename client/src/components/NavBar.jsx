@@ -21,16 +21,16 @@ const NavBar = () => {
             <div >
           <ul >
             <li >
-              <Link to="/red">Red</Link>
+              <Link to="/chat">Chat</Link>
             </li>
             <li >
-              <Link className="Nav__link" to="/blue">Blue</Link>
+              <Link to="/itinerary">Itinerary Builder</Link>
             </li>
             <li >
-              <Link className="Nav__link" to="/green">Green</Link>
+              <Link to="/flights">Flights</Link>
             </li>
             <li>
-              <Link className="Nav__link" to="/yellow">Yellow</Link>
+              <Link to="/yellow">Yellow</Link>
             </li>
           </ul>
         </div>

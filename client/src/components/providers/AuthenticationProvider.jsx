@@ -1,44 +1,7 @@
-import React, {useState} from 'react';
-import axios from 'axios';
+//Yes, this file is actually this empty.  Most of the setup for this AuthContext was done in App.jsx.  Migrating those functions here is technical debt.
 
+import React from 'react';
 
 const AuthContext = React.createContext();
 
-const AuthProvider = ({children, helper}) => {
-  const [user, setUser] = useState(null);
-
-  const signin = (attemptedLogin, cb) => {
-    axios({
-      method: 'post',
-      url: '/login',
-      data: attemptedLogin
-    })
-      .then((response) => {
-        console.log('USER LOGGED IN')
-        setUser(document.cookie.slice(document.cookie.indexOf('=') + 1))
-      })
-      .catch((err) => {
-        console.log('USER WAS UNABLE TO LOG IN', err)
-      })
-  };
-
-  const signout = () => {
-    axios({
-      method: 'get',
-      url: '/logout'
-    })
-    setUser(null);
-  };
-
-  return (
-    <AuthContext.Provider value={{
-    user,
-    signin,
-    signout
-  }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-export {AuthProvider, AuthContext};
+export {AuthContext};
