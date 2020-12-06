@@ -2,11 +2,12 @@ import React, {useContext, useState, useEffect, useMemo} from 'react';
 import PrivateRoute from './wrappers/PrivateRoute.jsx';
 import axios from 'axios';
 require('babel-polyfill')
+import styled from 'styled-components';
+
 import {AuthProvider, AuthContext} from './providers/AuthenticationProvider.jsx'
 import Login from './Login.jsx';
 import SignUp from './Signup.jsx';
 import FriendTrips from './FriendTrips.jsx';
-
 
 import {
   BrowserRouter as Router,
@@ -18,9 +19,15 @@ import {
   useLocation
 } from 'react-router-dom';
 
+const Application = styled.div`
+  position: absolute;
+  height: 98%;
+  width: 98%;
+`;
 
 const App = () => {
   const [user, setUser] = useState(null);
+  const [username, setUsername] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const authContext = useMemo(() => ({
@@ -31,8 +38,9 @@ const App = () => {
         data: attemptedLogin
       })
         .then((response) => {
-          console.log('USER LOGGED IN')
-          setUser(document.cookie.slice(document.cookie.indexOf('=') + 1))
+          console.log('USER LOGGED IN', response.data)
+          setUser(document.cookie.slice(document.cookie.indexOf('=') + 1));
+          setUsername(response.data)
         })
         .catch((err) => {
           console.log('USER WAS UNABLE TO LOG IN', err)
@@ -53,7 +61,8 @@ const App = () => {
         })
     }
     ,
-    user: user
+    user: user,
+    username: username
   }));
 
   useEffect(async () => {
@@ -64,13 +73,10 @@ const App = () => {
     <AuthContext.Provider value={authContext}>
 
       <Router>
-
-        <div>
-        WELCOME TO FRIENDTRIPS!
+        <Application>
           <Switch>
             <Route exact path="/">
               {user ? <Redirect to="/home"/> : <Redirect to="/login"/>}
-
             </Route>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp} />
@@ -78,7 +84,7 @@ const App = () => {
               <FriendTrips/>
             </PrivateRoute>
           </Switch>
-        </div>
+        </Application>
       </Router>
 
     </AuthContext.Provider>

@@ -9,21 +9,23 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const axios = require('axios');
 const app = express();
-const ENV = require('../environment.config.js')
 app.use(morgan('dev'));
+const ENV = require('../environment.config.js');
+
 //----------------------------------------- END OF IMPORTS---------------------------------------------------
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // Middleware
-app.use(
-  cors({
-    origin: "http://mydomain:3001", // <-- location of the react app were connecting to
-    credentials: true,
-    methods: ['GET', 'POST', 'OPTIONS']
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://mydomain:3001", // <-- location of the react app were connecting to
+//     credentials: true,
+//     methods: ['GET', 'POST', 'OPTIONS']
+//   })
+// );
+app.use(cors());
 app.use(
   session({
     secret: ENV.SESS_SECRET,
@@ -37,9 +39,9 @@ app.use(passport.session());
 require("./passportConfig")(passport);
 
 //----------------------------------------- END OF MIDDLEWARE---------------------------------------------------
-app.set('views', __dirname + '/views')
-app.engine('html', require('ejs').renderFile)
-app.set('view-engine', 'ejs')
+// app.set('views', __dirname + '/views')
+// app.engine('html', require('ejs').renderFile)
+// app.set('view-engine', 'ejs')
 // Routes
 // app.get('/', (req, res) => {
 //   res.render('index.ejs');
@@ -50,6 +52,16 @@ app.set('view-engine', 'ejs')
 //   res.render('chatIndex.ejs')
 // })
 
+app.use((req, res, next)=>{
+  console.log(req.session);
+  console.log(req.user);
+  console.log(req.isAuthenticated())
+  next();
+})
+
+app.get('/home', (req, res) => {
+  res.redirect('/')
+})
 app.get('/checkAuth', (req, res) => {
   if (req.isAuthenticated()) {
     res.status(200).send({user: req.session.passport.user})

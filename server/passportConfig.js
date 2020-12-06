@@ -4,16 +4,10 @@ const axios = require('axios');
 const ENV = require('../environment.config.js')
 
 module.exports = function (passport) {
-
   passport.use(
     new localStrategy((username, password, done) => {
       console.log('begin verification')
-      //find a user in the database
-      //if err throw err, if none exists return done(null,false) to signify no user found
-      //else a user is found
-      //bcrypt compare password with actual password
-      //if err throw err, if check fails return done(null, false)
-      //if valid user, done(null, user);
+      //grab matching user record from the database
       axios({
         method: 'get',
         url: ENV.AUTH_ROUTE,
@@ -23,22 +17,29 @@ module.exports = function (passport) {
       })
         .then((result) => {
           if (!result.data) {
+            //if theres no data, we couldn't find a matching user in the database -- return false in the place of our user
             return done(null, false);
           } else {
+            //if we found a matching record, use bcrypt to find compare the hashed passwords
             bcrypt.compare(password, result.data.password, (err, passwordCompareResult) => {
+              //if the compare fails with an error, throw it
               if (err) throw err;
               if (passwordCompareResult === true) {
+                //user provided the correct password
                 delete result.data.password;
                 delete result.data.email;
                 return done(null, result.data);
               } else {
+                //user provided an incorrect password
                 return done(null, false);
               }
             });
           }
         })
         .catch((err) => {
-          console.log(err);
+          //if we got an error while searching for a user in the database, return false as user
+          console.log('error looking up user in database', err);
+          done(null, false);
         });
     })
   );
@@ -49,7 +50,6 @@ module.exports = function (passport) {
   passport.deserializeUser((id, cb) => {
     axios.get(`${ENV.USER_ROUTE + '/' + id}`)
       .then((req) => {
-        // console.log('DESERIALIZE', req.data)
         const userInformation = {
           username: req.data.username,
           user_id: req.data.user_id

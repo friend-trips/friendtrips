@@ -17,4 +17,3 @@ Working authentication service using passport, bcrypt, and express-sessions.
 [] App.jsx imports babel-polyfill in order to make use of async/await -- this makes the bundle size huge and is probably not best practice.  A better solution would be to use a 'regenerator runtime' loader or something like that with babel and webpack\
 [] Remove unnecessary files and functions\
 [] Restructure code to be more modular
-
