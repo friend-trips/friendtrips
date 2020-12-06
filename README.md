@@ -4,10 +4,11 @@
 Application
 
 ### Things to do
+[] Remove unnecessary console.logs()
 [] Add Global Styling\
 [] Add Hotels component\
 [] Add updates from Flight components\
-[] Figure out why leaving comments breaks the chat\
+[] Figure out why leaving comments breaks the chat
   - Current hypothesis: after the comment is successfully posted, the entire messages list is refreshed (this expected behavior).  However, refreshing the list of messages seems to be remouting the component (or something like that) and thus 'wiping' the thread state (meaning that the new comment is trying to be mounted without a 'parent' message to attach to -- a react no-go that crashes the app).\
 [] Finish Itinerary Builder\
 [] Create Suggestions modal\
