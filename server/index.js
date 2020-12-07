@@ -37,6 +37,9 @@ app.use('*', (req, res, next) => {
 app.use('/auth', authRoute);
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 app.get('/login', (req, res) => {
+  res.redirect('/')
+})
+app.get('/signup', (req, res) => {
   console.log(req.session, req.user);
   res.redirect('/')
 })
@@ -215,8 +218,7 @@ io.on('connection', (socket) => {
     let newMsg = {
       user_id: Number(socket.handshake.auth.user_id),
       trip_id: 1,
-      message: text,
-      type: 'message'
+      message: text
     }
     console.log(newMsg);
     axios.post('https://morning-bayou-59969.herokuapp.com/messages', newMsg)
@@ -224,6 +226,7 @@ io.on('connection', (socket) => {
         console.log('successful message post to DB', result.data);
         newMsg.id = Number(result.data.message_id);
         newMsg.username = socket.handshake.auth.username;
+        newMsg.type = 'message';
         messages.push(newMsg);
         io.emit('updatedMessages', messages);
       })

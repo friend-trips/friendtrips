@@ -75,7 +75,7 @@ router.post('/login', (req, res, next) => {
       req.logIn(user, (err) => {
         console.log('logged in a user: ', user)
         if (err) throw err;
-        res.cookie('user_id', user.user_id).cookie('username', user.username).status(200).send(user.username);
+        res.cookie('user_id', user.user_id).status(200).send(user.username);
       });
     }
   })(req, res, next);

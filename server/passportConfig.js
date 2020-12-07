@@ -51,6 +51,7 @@ module.exports = function (passport) {
     console.log('DESERIALIZE')
     axios.get(`${ENV.USER_ROUTE + '/' + id}`)
       .then((req) => {
+        console.log('DS', req.data)
         const userInformation = {
           username: req.data[0].username,
           user_id: req.data[0].user_id
