@@ -4,7 +4,6 @@ import axios from 'axios';
 
 // this is the container for the div experiment
 const Container = styled.div`
-position: relative;
   display: grid;
   grid-template-columns: 75% 25%;
   grid-template-rows: 50% 50%;
@@ -144,15 +143,17 @@ const Suggest = styled.button`
 `;
 
 const Flights = ({ data }) => {
+
   const save = function(isSuggested) {
     const flightData = {
       "meta": {
         "trip_id": 1,
         "user_id": 1,
         "adults": 1,
-        "non_stop": "true",
+        "nonstop": "true",
         "is_suggested": isSuggested ? "true" : "false",
-        "is_saved": "true"
+        "is_saved": "true",
+        "total_price": data.totalPrice
       },
       "outgoing": {
         "duration": data.outgoingDuration,
@@ -162,10 +163,12 @@ const Flights = ({ data }) => {
         "departure_time": data.outgoingDepartureTime,
         "departure_date": data.outgoingDepartureDate,
         "flight_number": data.outgoingFlightNumber,
-        "number_of_stops": 1,
+        "number_of_stops": 0,
         "carrier_code": data.outgoingCarrierCode,
         "operating_carrier_code": data.outgoingOperatingCarrierCode,
-        "class": data.outgoingClass
+        "class": data.outgoingClass,
+        "abbreviated_carrier_code": data.outgoingAbbreviatedCarrierCode
+
       },
       "returning": {
         "duration": data.returnDuration,
@@ -175,10 +178,11 @@ const Flights = ({ data }) => {
         "departure_time": data.returnDepartureTime,
         "departure_date": data.returnDepartureDate,
         "flight_number": data.returnFlightNumber,
-        "number_of_stops": 1,
+        "number_of_stops": 0,
         "carrier_code": data.returnCarrierCode,
         "operating_carrier_code": data.returnOperatingCarrierCode,
-        "class": data.returnClass
+        "class": data.returnClass,
+        "abbreviated_carrier_code": data.returnAbbreviatedCarrierCode
       }
     }
 
