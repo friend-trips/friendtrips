@@ -2,7 +2,7 @@ import React, { Component, useState } from "react";
 import { DateRangeInput } from "@datepicker-react/styled";
 import styled, { ThemeProvider } from "styled-components";
 import moment from "moment";
-import keys from "../../../configs/amadeus.config.js";
+import keys from "../../../config.js";
 
 // import styles from './App.css';
 
@@ -15,10 +15,10 @@ var amadeus = new Amadeus({
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  max-height: 8%;
+  height: 8%;
 
   margin-bottom: 5%;
-  // margin-top: 2%;
+  margin-top: 2%;
 `;
 
 const StyledTopRow = styled.div`
@@ -218,6 +218,7 @@ function FlightForm({ displaySearchFeed }) {
         outgoingNumberOfStops: result.itineraries[0].segments[0].numberOfStops,
         outgoingCarrierCode:
           flightDictionary[result.itineraries[0].segments[0].carrierCode],
+        outgoingAbbreviatedCarrierCode: result.itineraries[0].segments[0].carrierCode,
         outgoingOperatingCarrierCode:
           result.itineraries[0].segments[0].operating.carrierCode,
         outgoingClass: result.travelerPricings[0].fareDetailsBySegment[0].cabin,
@@ -248,9 +249,12 @@ function FlightForm({ displaySearchFeed }) {
         returnNumberOfStops: result.itineraries[1].segments[0].numberOfStops,
         returnCarrierCode:
           flightDictionary[result.itineraries[1].segments[0].carrierCode],
+        returnAbbreviatedCarrierCode: result.itineraries[1].segments[0].carrierCode,
         returnOperatingCarrierCode:
           result.itineraries[1].segments[0].operating.carrierCode,
         returnClass: result.travelerPricings[0].fareDetailsBySegment[1].cabin,
+        outgoingAbbreviatedCarrierCode: result.itineraries[0].segments[0].carrierCode,
+        returnAbbreviatedCarrierCode: result.itineraries[1].segments[0].carrierCode
       };
       return filteredResult;
     });
