@@ -1,21 +1,30 @@
 import React from "react";
 import styled from "styled-components";
+import OneSuggestion from "./OneSuggestion.jsx";
 
 const SuggestionsContainer = styled.div`
-  border: solid 1px;
-  border-color: red;
-  height: 87%;
-  width: 30%;
-  left: 69%;
-  position: absolute;
-  font-family: helvetica;
-  text-align: center;
+  padding: 5px;
+  height: 99%;
+  overflow-y: scroll;
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const SuggestionsHeader = styled.h2`
+  font-family: "cerapro-bold",sans-serif;
 `;
 
 const Suggestions = (props) => {
   return (
   <SuggestionsContainer>
-    <h2>Flight Suggestions</h2>
+    <SuggestionsHeader>Flight Suggestions</SuggestionsHeader>
+    {props.savedResults.length > 0
+        ? props.savedResults.map((data, index) => (
+            <OneSuggestion key={index} data={data}></OneSuggestion>
+          ))
+        : null}
   </SuggestionsContainer>
   )
 };

@@ -6,7 +6,7 @@ const axios = require('axios');
 const app = express();
 
 const authRoute = require('./routes/auth.js');
-const chatRoute = require('./routes/chat.js');
+// const chatRoute = require('./routes/chat.js');
 
 app.use(morgan('dev'));
 app.use(express.static('public'));

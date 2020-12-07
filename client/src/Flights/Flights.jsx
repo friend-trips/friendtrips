@@ -3,32 +3,25 @@ import FlightForm from "./FlightForm.jsx";
 import SearchResults from "./SearchResults.jsx";
 import Suggestions from "./Suggestions.jsx";
 import styled from "styled-components";
+import axios from 'axios';
 
 //entire screen
 const Container = styled.div`
+  position: absolute;
   height: 99%;
   width: 99%;
-  position: absolute;
   padding: .5%;
-  display: flex;
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-direction: column;
 `
 const Content = styled.div`
-  position: relative;
   border: solid 3px;
   display: flex;
-  flex-grow: 1;
-  max-height: 82%;
-  width: 100%;
+  height: 89%;
   justify-content: space-between;
 `;
 //^^ height will control size of the bottom section
 // form height and content should add up to equal 1--%
 
 const PreSearchResults = styled.div`
-  position:relative;
   border: solid 1px;
   height: 100%;
   width: 66%;
@@ -41,9 +34,12 @@ class Flights extends React.Component {
 
     this.state = {
       searchResults: [],
+      savedResults: [],
     };
 
     this.displaySearchFeed = this.displaySearchFeed.bind(this);
+    this.getSavedResults = this.getSavedResults.bind(this);
+    this.getNewSavedResult = this.getNewSavedResult.bind(this);
   }
 
   displaySearchFeed(data) {
@@ -52,15 +48,42 @@ class Flights extends React.Component {
     });
   }
 
+
+  getNewSavedResult(result) {
+    console.log(result, " result from app")
+    let newSavedArray = [];
+    newSavedArray.push(result)
+    console.log(newSavedArray, "new saved array")
+    this.setState({savedResults: [...this.state.savedResults, newSavedArray[0]]});
+  }
+
+   getSavedResults() {
+    axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1")
+
+      .then((data) => {
+        let savedArray = [];
+        console.log(data, "data.data")
+        for (let keys in data.data) {
+          savedArray.push(data.data[keys])
+        }
+        this.setState({savedResults: savedArray })
+      })
+      .catch(console.log)
+   }
+
+  componentDidMount() {
+    this.getSavedResults();
+  }
+
   render() {
     return (
       <Container>
         <FlightForm displaySearchFeed={this.displaySearchFeed} />
         <Content>
           {this.state.searchResults.length > 0 ? (
-            <SearchResults searchResults={this.state.searchResults} />
+            <SearchResults searchResults={this.state.searchResults} getNewSavedResult={this.getNewSavedResult}/>
           ) : <PreSearchResults />}
-          <Suggestions />
+          <Suggestions savedResults={this.state.savedResults} />
         </Content>
       </Container>
     );
