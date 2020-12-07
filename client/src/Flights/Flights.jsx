@@ -50,10 +50,8 @@ class Flights extends React.Component {
 
 
   getNewSavedResult(result) {
-    console.log(result, " result from app")
     let newSavedArray = [];
     newSavedArray.push(result)
-    console.log(newSavedArray, "new saved array")
     this.setState({savedResults: [...this.state.savedResults, newSavedArray[0]]});
   }
 
@@ -62,7 +60,6 @@ class Flights extends React.Component {
 
       .then((data) => {
         let savedArray = [];
-        console.log(data, "data.data")
         for (let keys in data.data) {
           savedArray.push(data.data[keys])
         }

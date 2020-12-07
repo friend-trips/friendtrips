@@ -153,7 +153,7 @@ const Flights = ({ data, getNewSavedResult }) => {
         "is_suggested": isSuggested ? "true" : "false",
         "is_saved": "true",
         "total_price": data.totalPrice,
-        "username": "mo"
+        "username": data.username
       },
       "outgoing": {
         "duration": data.outgoingDuration,
