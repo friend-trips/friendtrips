@@ -2,17 +2,17 @@ const express = require('express');
 const router = express.Router({ 'caseSensitive': true });
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
-const session = require('express-session');
+// const session = require('express-session');
 const bcrypt = require("bcrypt");
 const axios = require('axios');
 const ENV = require('../../configs/environment.config.js');
-router.use(
-  session({
-    secret: ENV.SESS_SECRET,
-    resave: false,
-    saveUninitialized: false,
-  })
-);
+// router.use(
+//   session({
+//     secret: ENV.SESS_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//   })
+// );
 router.use(cookieParser(ENV.SESS_SECRET));
 router.use(passport.initialize());
 router.use(passport.session());
@@ -25,7 +25,6 @@ router.use('/', (req, res, next) => {
 
 router.post("/register", (req, res) => {
   let fieldToSearch = (req.body.username) ? {username: req.body.username} : {email: req.body.email};
-  console.log('fts', fieldToSearch);
   axios({
     method: 'get',
     url: ENV.AUTH_ROUTE,
@@ -62,21 +61,21 @@ router.post("/register", (req, res) => {
 
 router.get('/check', (req, res) => {
   if (req.isAuthenticated()) {
-    res.status(200).send({user: req.session.passport.user})
+    console.log('send user info back', req.user)
+    res.status(200).send({user_id: req.user.user_id, username: req.user.username})
   } else {
     res.status(403).end()
   }
 })
 router.post('/login', (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    console.log('.authenticate done', err, user, info)
     if (err) throw err;
     if (!user) res.status(500).send("No User Exists");
     else {
       req.logIn(user, (err) => {
-        console.log('loggged in a user: ', user)
+        console.log('logged in a user: ', user)
         if (err) throw err;
-        res.cookie('user_id', user.user_id).status(200).send(user.username);
+        res.cookie('user_id', user.user_id).cookie('username', user.username).status(200).send(user.username);
       });
     }
   })(req, res, next);

@@ -37,6 +37,7 @@ position: relative;
 `;
 
 const FriendTrips = () => {
+  console.log('FRIENDTRIPS MOUNTED')
   return (
     <Router>
       <Container>

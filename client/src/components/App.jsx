@@ -54,7 +54,9 @@ const App = () => {
       return axios.get('/auth/check')
         .then((result) => {
           console.log('You have been authenticated', result);
-          setUser(result.data.user);
+          setUser(result.data.user_id);
+          setUsername(result.data.username);
+          return result.data;
         })
         .catch(() => {
           console.log('You have not been authenticated');
@@ -66,8 +68,7 @@ const App = () => {
   }));
 
   useEffect(async () => {
-    await authContext.checkStatus();
-    console.log(user);
+    const user = await authContext.checkStatus();
   }, [])
   return (
     <AuthContext.Provider value={authContext}>

@@ -26,8 +26,8 @@ module.exports = function (passport) {
               if (err) throw err;
               if (passwordCompareResult === true) {
                 //user provided the correct password
-                delete result.data.password;
-                delete result.data.email;
+                // delete result.data.password;
+                // delete result.data.email;
                 return done(null, result.data);
               } else {
                 //user provided an incorrect password
@@ -52,8 +52,8 @@ module.exports = function (passport) {
     axios.get(`${ENV.USER_ROUTE + '/' + id}`)
       .then((req) => {
         const userInformation = {
-          username: req.data.username,
-          user_id: req.data.user_id
+          username: req.data[0].username,
+          user_id: req.data[0].user_id
         };
         cb(null, userInformation);
       })

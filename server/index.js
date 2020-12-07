@@ -5,6 +5,9 @@ const bodyParser = require("body-parser");
 const axios = require('axios');
 const app = express();
 
+const ENV = require('../configs/environment.config.js');
+const session = require('express-session');
+
 const authRoute = require('./routes/auth.js');
 // const chatRoute = require('./routes/chat.js');
 
@@ -14,10 +17,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
+app.use(session({
+  secret: ENV.SESS_SECRET,
+  resave: false,
+  saveUninitialized: false,
+}))
+
 app.use('*', (req, res, next) => {
   console.log(req.session);
   console.log(req.user);
   console.log(req.isAuthenticated())
+  if (!req.isAuthenticated() && req.session.passport) {
+    console.log('reauthenticate this user')
+    // console.log('check cookies on unauthenticated request', req);
+  }
   next();
 })
 
@@ -30,11 +43,6 @@ app.get('/login', (req, res) => {
 app.get('/home', (req, res) => {
   res.redirect('/')
 })
-
-app.get('/login', (req, res) => {
-  res.redirect('/')
-})
-
 app.get("/user", (req, res) => {
   res.send(req.user); // The req.user stores the entire user that has been authenticated inside of it.
 });
