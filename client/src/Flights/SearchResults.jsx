@@ -3,9 +3,8 @@ import Flight from "./Flight.jsx";
 import styled from "styled-components";
 
 const ResultsContainer = styled.div`
-position: relative;
   padding: 5px;
-  // height: 99%;
+  height: 99%;
   overflow-y: scroll;
   width: 66%;
   display: flex;
