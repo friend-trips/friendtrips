@@ -182,11 +182,11 @@ const Chat = () => {
     console.log('into', results.length, 'groups');
     return results;
   }
-
   return (
     <Container>
       <ChatWindow>
-        {(chatMessages) ? chatMessages.map((group) => {
+        {(chatMessages) ? chatMessages.map((group, i) => {
+          console.log(group.type, i)
           if (group.type === 'flight') {
             return <div>aFlight</div>
           } else if (group.type === 'message') {
