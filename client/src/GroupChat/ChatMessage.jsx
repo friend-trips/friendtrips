@@ -43,14 +43,18 @@ const ChatMessage = ({ message, handleClick }) => {
       setHighlight(true);
     }
   }
-  let style = {backgroundColor: (highlight) ? 'lightblue' : 'transparent'};
-  let deetStyl = {backgroundColor: (highlight) ? 'lightgreen' : 'transparent'};
+  let style = { backgroundColor: (highlight) ? 'lightblue' : 'transparent' };
+  let deetStyl = { backgroundColor: (highlight) ? 'lightgreen' : 'transparent' };
   return (
     <Container>
-    <ChatBody onClick={() => { handleClick(message) }} onMouseOver={toggleHighlight} onMouseLeave={toggleHighlight} style={style}>
-      <Message>{message.message}</Message>
-    </ChatBody>
-    {highlight ? <HoverDetails style={deetStyl}> {message.time}</HoverDetails> : null}
+      <ChatBody
+        onClick={() => { handleClick(message) }}
+        // onMouseOver={toggleHighlight}
+        // onMouseLeave={toggleHighlight} style={style}
+      >
+        <Message>{message.message}</Message>
+      </ChatBody>
+      {highlight ? <HoverDetails style={deetStyl}> {message.time}</HoverDetails> : null}
 
     </Container>
   );

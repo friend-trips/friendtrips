@@ -47,13 +47,21 @@ const Button = styled.button`
 `;
 
 //set up socket outside of react component, we don't want to socket to reload/refresh connection every time the component refreshes
-const socket = io({
+const socket = io('http://localhost:4000', {
   path: '/socket.io',
   auth: {
     token: ''
   },
   autoConnect: false
 });
+
+// const socket = io('http://localhost:4000', {
+//   path: '/chat/socket.io',
+//   auth: {
+//     token: ''
+//   },
+//   autoConnect: false
+// });
 
 const Chat = () => {
   const [connectedUserCount, setConnectedUserCount] = useState(0);
@@ -80,14 +88,15 @@ const Chat = () => {
     })
     socket.on('updatedMessages', (newMsgs) => {
       console.log('new messages received');
-      let sorted = groupMessages(newMsgs)
-      setChatMessages(sorted);
+      // let sorted = groupMessages(newMsgs)
+      // setChatMessages(sorted);
+      setChatMessages(groupMessages(newMsgs));
     })
 
     //clean up socket connection when the component unmounts
-    // return () => {
-    //   socket.disconnect();
-    // }
+    return () => {
+      socket.disconnect();
+    }
   }, [])
 
   useEffect(() => {
@@ -125,7 +134,7 @@ const Chat = () => {
     setThread(null);
   }
   const replyToMsg = (msg, comment) => {
-    // console.log(msg, comment);
+    console.log(msg, comment);
     socket.emit('comment', msg, comment);
   }
 
@@ -136,11 +145,12 @@ const Chat = () => {
   }
 
   const groupMessages = (messages) => {
-    if (messages.length === 0) return;
+    if (!messages) return null;
     let groupedMessages = [];
     let currentGroup = [];
     let last = messages[0];
     for (let i = 0; i <= messages.length - 1; i++) {
+      console.log('checking', messages[i].username, last.username)
       if (messages[i].username === last.username) {
         currentGroup.push(messages[i]);
       } else {
@@ -152,6 +162,8 @@ const Chat = () => {
         groupedMessages.push(currentGroup);
       }
     }
+    console.log('we turned', messages.length, 'messages')
+    console.log('into', groupedMessages.length, 'groups');
     return groupedMessages;
   }
 

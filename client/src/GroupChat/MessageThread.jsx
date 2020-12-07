@@ -57,9 +57,10 @@ const MessageThread = ({ main, hideThread, replyToMsg }) => {
 
   const sendReply = (e) => {
     e.preventDefault();
+    setLoading(true);
     replyToMsg(main, reply);
     setReply('');
-  }
+  };
 
   if (loading) {
     return (<div>Loading...</div>)
