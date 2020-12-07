@@ -109,7 +109,7 @@ const Chat = () => {
 
   const updateThread = () => {
     if (threadDisplay) {
-      setThread(chatMessages[thread.id])
+      setThread(chatMessages[thread.message_id])
     }
   }
   const writeMsg = (message) => {

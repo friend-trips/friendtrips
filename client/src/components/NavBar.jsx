@@ -8,8 +8,15 @@ const Container = styled.nav`
   flex-direction: column;
   border: 1px solid black;
   min-height: 100%;
-  width: 20%;
+  min-width: 20%;
 `
+const Header = styled.header`
+  display: flex;
+`
+const NavigationLinks = styled.div``;
+const UL = styled.ul``
+const LI = styled.li``
+const Button = styled.button``
 
 const NavBar = () => {
 
@@ -17,25 +24,27 @@ const NavBar = () => {
   return (
     <Container>
       <div>
-        Welcome back{(authContext.username) ? ', ' + authContext.username : null}!
-            <div >
-          <ul >
-            <li >
+        <Header>
+          Welcome back{(authContext.username) ? ', ' + authContext.username : null}!
+        </Header>
+        <NavigationLinks>
+          <UL >
+            <LI>
               <Link to="/chat">Chat</Link>
-            </li>
-            <li >
+            </LI>
+            <LI>
               <Link to="/itinerary">Itinerary Builder</Link>
-            </li>
-            <li >
+            </LI>
+            <LI>
               <Link to="/flights">Flights</Link>
-            </li>
-            <li>
+            </LI>
+            <LI>
               <Link to="/yellow">Yellow</Link>
-            </li>
-          </ul>
-        </div>
+            </LI>
+          </UL>
+        </NavigationLinks>
       </div>
-      <button onClick={authContext.signOut}>Log out</button>
+      <Button onClick={authContext.signOut}>Log out</Button>
     </Container>
   );
 };

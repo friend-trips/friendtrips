@@ -7,7 +7,7 @@ const Container = styled.aside`
   flex-direction: column;
   top: 0;
   right: 0;
-  height: 300px;
+  height: 90%;
   width: 25%;
   border-left: 1px solid black;
   background-color: yellow;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import moment from 'moment'
 
 const Container = styled.div`
   display:flex;
@@ -9,11 +10,13 @@ const ChatBody = styled.div`
   display: flex;
   flex-direction: column;
   width: 90%;
-  padding: 10px;
+  // padding: 10px;
   border-radius: 5px;
 `;
 const HoverDetails = styled.div`
   width: 10%;
+  font-size: 10px;
+  font-weight: 300;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,19 +46,18 @@ const ChatMessage = ({ message, handleClick }) => {
       setHighlight(true);
     }
   }
-  let style = { backgroundColor: (highlight) ? 'lightblue' : 'transparent' };
-  let deetStyl = { backgroundColor: (highlight) ? 'lightgreen' : 'transparent' };
+  // let style = { backgroundColor: (highlight) ? 'lightblue' : 'transparent' };
+  // let deetStyl = { backgroundColor: (highlight) ? 'lightgreen' : 'transparent' };
   return (
     <Container>
       <ChatBody
         onClick={() => { handleClick(message) }}
-        // onMouseOver={toggleHighlight}
-        // onMouseLeave={toggleHighlight} style={style}
+        onMouseOver={toggleHighlight}
+        onMouseLeave={()=>setHighlight(false)}
       >
         <Message>{message.message}</Message>
       </ChatBody>
-      {highlight ? <HoverDetails style={deetStyl}> {message.time}</HoverDetails> : null}
-
+      {highlight ? <HoverDetails > {moment(Date(message.timestamp)).startOf('day').fromNow()}</HoverDetails> : null}
     </Container>
   );
 };
