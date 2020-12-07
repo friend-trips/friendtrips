@@ -18,6 +18,11 @@ router.use(passport.initialize());
 router.use(passport.session());
 require("../passportConfig")(passport);
 
+router.use('/', (req, res, next) => {
+  console.log('inside auth', req.session, req.user)
+  next();
+})
+
 router.post("/register", (req, res) => {
   let fieldToSearch = (req.body.username) ? {username: req.body.username} : {email: req.body.email};
   console.log('fts', fieldToSearch);
@@ -63,7 +68,6 @@ router.get('/check', (req, res) => {
   }
 })
 router.post('/login', (req, res, next) => {
-  console.log('IS IT AUTHED? ', req.isAuthenticated())
   passport.authenticate("local", (err, user, info) => {
     console.log('.authenticate done', err, user, info)
     if (err) throw err;
@@ -72,7 +76,6 @@ router.post('/login', (req, res, next) => {
       req.logIn(user, (err) => {
         console.log('loggged in a user: ', user)
         if (err) throw err;
-        // res.cookie('user_id', user.user_id).render('chatIndex.ejs')
         res.cookie('user_id', user.user_id).status(200).send(user.username);
       });
     }
@@ -89,13 +92,13 @@ router.get('/logout', function(req, res){
       //logOut removes the user from our passport session
       req.logOut();
       // console.log('POST LOGOUT / PRE DESTROY', req.session)
-      req.session.destroy((err) => {
-        if (err) {
-          console.log('well we tried but we could not destroy the session');
-        } else {
-          console.log('IT HAS BEEN DONE!', req.session);
-        }
-      });
+      // req.session.destroy((err) => {
+      //   if (err) {
+      //     console.log('well we tried but we could not destroy the session');
+      //   } else {
+      //     console.log('IT HAS BEEN DONE!', req.session);
+      //   }
+      // });
   }
   res.redirect('/');
 });

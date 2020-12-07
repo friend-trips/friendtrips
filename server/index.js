@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use((req, res, next) => {
+app.use('*', (req, res, next) => {
   console.log(req.session);
   console.log(req.user);
   console.log(req.isAuthenticated())
@@ -24,6 +24,7 @@ app.use((req, res, next) => {
 app.use('/auth', authRoute);
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 app.get('/login', (req, res) => {
+  console.log(req.session, req.user);
   res.redirect('/')
 })
 app.get('/home', (req, res) => {
@@ -60,11 +61,10 @@ let hotels = [];
 // let comments = [];
 //on 'connection', io returns an object representing the client's socket
 io.use((socket, next) => {
-  console.log('Connected client ', socket.client.id, ' with authtoken ', socket.handshake.auth);
+  console.log('Connected socket.client ', socket.client.id, ' with authtoken ', socket.handshake.auth);
   next();
 })
 io.on('connection', (socket) => {
-
   countOfConnections++;
   io.emit('connectedUsers', countOfConnections)
   socket.on('greeting', () => {
@@ -74,7 +74,7 @@ io.on('connection', (socket) => {
         axios.get(`https://morning-bayou-59969.herokuapp.com/flights/?trip_id=${2}`)
           .then((result) => {
             flights = Object.values(result.data);
-            console.log('FLIGHTS', flights)
+            // console.log('FLIGHTS', flights)
           })
           .catch((err) => {
             console.log(err, 'couldnt get flights')
@@ -111,11 +111,11 @@ io.on('connection', (socket) => {
                   user_id: Number(socket.handshake.auth.user_id),
                   username: socket.handshake.auth.username,
                   trip_id: 1,
+                  type: 'message',
                   message: 'joined the room'
                 }
 
                 messages = Object.values(messageMap);
-
                 // console.log('send messages if no flights', flights)
                 if (flights.length > 0) {
                   let copyOfFlights = flights.slice().sort((a, b) => {
@@ -124,15 +124,13 @@ io.on('connection', (socket) => {
                   let copyOfMessages = messages.slice().sort((a, b) => {
                     return (Number(a.timestamp) - Number(b.timestamp))
                   });
-                  // console.log(copyOfMessages)
-                  // console.log(copyOfFlights);
                   let flightsPointer = 0;
                   let messagesPointer = 0;
                   let results = []
                   let obj = {}
                   while (flightsPointer < copyOfFlights.length && messagesPointer < copyOfMessages.length) {
-                    console.log(copyOfFlights[flightsPointer].meta.time_created, copyOfMessages[messagesPointer].timestamp)
-                    console.log(flightsPointer, messagesPointer)
+                    // console.log(copyOfFlights[flightsPointer].meta.time_created, copyOfMessages[messagesPointer].timestamp)
+                    // console.log(flightsPointer, messagesPointer)
                     if (copyOfFlights[flightsPointer].meta.time_created < copyOfMessages[messagesPointer].timestamp) {
                       let currentFlight = copyOfFlights[flightsPointer];
                       currentFlight.type = 'flight'
@@ -145,23 +143,21 @@ io.on('connection', (socket) => {
                       messagesPointer++;
                     }
                   }
-                  for (let i = messagesPointer; i <= copyOfMessages.length-1; i++) {
+                  for (let i = messagesPointer; i <= copyOfMessages.length - 1; i++) {
                     let currentMessage = copyOfMessages[messagesPointer];
-                      currentMessage.type = 'message'
+                    currentMessage.type = 'message'
                     results.push(copyOfMessages[i])
                   }
-                  for (let i = flightsPointer; i <= copyOfFlights.length-1; i++) {
+                  for (let i = flightsPointer; i <= copyOfFlights.length - 1; i++) {
                     let currentFlight = copyOfFlights[flightsPointer];
-                      currentFlight.type = 'flight'
+                    currentFlight.type = 'flight'
                     results.push(copyOfFlights[i])
 
                   }
-                  // let arrayToConcat = (flightsPointer === copyOfFlights.length) ? copyOfMessages.slice(messagesPointer) : copyOfFlights.slice(flightsPointer);
-                  // messages = results.concat(arrayToConcat);
                   messages = results;
                   messages.push(newMsg);
                 }
-                console.log('sending', messages.slice(messages.length - 5), 'messages');
+                // console.log('sending', messages.slice(messages.length - 5), 'messages');
                 io.emit('updatedMessages', messages);
               })
               .catch((commentQueryErr) => {
@@ -199,6 +195,7 @@ io.on('connection', (socket) => {
       }
       messages.push(newMsg);
       io.emit('updatedMessages', messages);
+      socket.disconnect();
     }
   });
 
@@ -206,7 +203,8 @@ io.on('connection', (socket) => {
     let newMsg = {
       user_id: Number(socket.handshake.auth.user_id),
       trip_id: 1,
-      message: text
+      message: text,
+      type: 'message'
     }
     console.log(newMsg);
     axios.post('https://morning-bayou-59969.herokuapp.com/messages', newMsg)
@@ -228,7 +226,6 @@ io.on('connection', (socket) => {
       user_id: Number(socket.handshake.auth.user_id),
       comment: comment
     }
-    console.log(' c', newComment)
     axios.post('https://morning-bayou-59969.herokuapp.com/comments', newComment)
       .then((result) => {
         console.log('successful message post to DB', result.data);
@@ -248,7 +245,6 @@ io.on('connection', (socket) => {
     io.emit('updatedMessages', messages);
   })
 });
-
 
 http.listen(4000, () => {
   console.log('listening at http://localhost:4000');

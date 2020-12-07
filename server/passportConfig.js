@@ -48,6 +48,7 @@ module.exports = function (passport) {
     cb(null, user.user_id);
   });
   passport.deserializeUser((id, cb) => {
+    console.log('DESERIALIZE')
     axios.get(`${ENV.USER_ROUTE + '/' + id}`)
       .then((req) => {
         const userInformation = {
