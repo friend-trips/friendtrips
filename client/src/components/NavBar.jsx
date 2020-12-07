@@ -30,6 +30,9 @@ const NavBar = () => {
         <NavigationLinks>
           <UL >
             <LI>
+              <Link to="/home">Home</Link>
+            </LI>
+            <LI>
               <Link to="/chat">Chat</Link>
             </LI>
             <LI>

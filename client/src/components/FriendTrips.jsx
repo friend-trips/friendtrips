@@ -6,6 +6,7 @@ import Chat from '../GroupChat/Chat.jsx';
 import ItineraryBuilder from '../ItineraryBuilder/ItineraryBuilder.jsx';
 import Flights from '../Flights/Flights.jsx';
 import Hotels from '../Hotels/Hotels.jsx';
+import Welcome from './Welcome.jsx';
 
 import {
   HashRouter as Router,
@@ -29,7 +30,7 @@ const Container = styled.div`
 `;
 
 const Section = styled.section`
-position: relative;
+  position: relative;
   height: 100%;
   margin-left: 2%;
   flex-grow: 1;
@@ -37,24 +38,26 @@ position: relative;
 `;
 
 const FriendTrips = () => {
-  console.log('FRIENDTRIPS MOUNTED')
   return (
     <Router>
       <Container>
         <NavBar></NavBar>
         <Section>
           <Switch>
-            <Route exactly path="/chat">
-              <Chat/>
+            <Route path="/chat">
+              <Chat />
             </Route>
             <Route exactly path="/itinerary">
-              <ItineraryBuilder/>
+              <ItineraryBuilder />
             </Route>
             <Route exactly path="/flights">
-              <Flights/>
+              <Flights />
             </Route>
             <Route exactly path="/hotels">
-              <Hotels/>
+              <Hotels />
+            </Route>
+            <Route>
+              <Welcome></Welcome>
             </Route>
           </Switch>
         </Section>
