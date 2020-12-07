@@ -14,7 +14,8 @@ const Container = styled.div`
   width: 97%;
   padding: 10px;
   font-family: "cerapro-bold",sans-serif;
-  position: relative
+  position: relative;
+  background-color: #E6DBFF;
 `;
 const Direction = styled.h1``;
 const FlightNumber = styled.span``;
@@ -205,7 +206,7 @@ const OneSuggestion = ({ data }) => {
         "type": "+",
         "user_id": meta.user_id,
         "suggestion_id": meta.suggestion_id,
-        "trip_id": 1
+        "trip_id": 2
       }
     })
       .then(() => {
@@ -223,7 +224,7 @@ const OneSuggestion = ({ data }) => {
         "type": "-",
         "user_id": meta.user_id,
         "suggestion_id": meta.suggestion_id,
-        "trip_id": 1
+        "trip_id": 2
       }
     })
       .then(() => {

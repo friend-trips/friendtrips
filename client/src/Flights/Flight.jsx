@@ -142,18 +142,18 @@ const Suggest = styled.button`
   right: 0;
 `;
 
-const Flights = ({ data }) => {
-
+const Flights = ({ data, getNewSavedResult }) => {
   const save = function(isSuggested) {
     const flightData = {
       "meta": {
-        "trip_id": 1,
+        "trip_id": 2,
         "user_id": 1,
         "adults": 1,
         "nonstop": "true",
         "is_suggested": isSuggested ? "true" : "false",
         "is_saved": "true",
-        "total_price": data.totalPrice
+        "total_price": data.totalPrice,
+        "username": data.username
       },
       "outgoing": {
         "duration": data.outgoingDuration,
@@ -195,7 +195,8 @@ const Flights = ({ data }) => {
       header: {'Access-Control-Allow-Origin': '*'}
     })
       .then((data) => {
-        console.log(data);
+        console.log(data,"data from flight.jsx");
+        getNewSavedResult(data.data);
       })
       .catch(console.log)
   }

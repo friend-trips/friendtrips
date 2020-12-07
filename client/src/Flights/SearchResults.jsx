@@ -17,7 +17,7 @@ const SearchResults = (props) => {
     <ResultsContainer>
       {props.searchResults.length > 0
         ? props.searchResults.map((data, index) => (
-            <Flight key={index} data={data}></Flight>
+            <Flight key={index} data={data} getNewSavedResult={props.getNewSavedResult}></Flight>
           ))
         : null}
     </ResultsContainer>

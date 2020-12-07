@@ -22,6 +22,7 @@ const Content = styled.div`
 // form height and content should add up to equal 1--%
 
 const PreSearchResults = styled.div`
+  border: solid 1px;
   height: 100%;
   width: 66%;
   float: left;
@@ -40,6 +41,7 @@ class App extends React.Component {
 
     this.displaySearchFeed = this.displaySearchFeed.bind(this);
     this.getSavedResults = this.getSavedResults.bind(this);
+    this.getNewSavedResult = this.getNewSavedResult.bind(this);
   }
 
   displaySearchFeed(data) {
@@ -49,8 +51,14 @@ class App extends React.Component {
   }
 
 
+  getNewSavedResult(result) {
+    let newSavedArray = [];
+    newSavedArray.push(result)
+    this.setState({savedResults: [...this.state.savedResults, newSavedArray[0]]});
+  }
+
    getSavedResults() {
-    axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1")
+    axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=2")
 
       .then((data) => {
         let savedArray = [];
@@ -65,7 +73,6 @@ class App extends React.Component {
           upvoteNames.push(savedArray[i].meta.upvote_names);
           downvoteNames.push(savedArray[i].meta.downvote_names);
         }
-
         this.setState({
           savedResults: savedArray,
           upvotes: upvoteNames,
@@ -85,7 +92,7 @@ class App extends React.Component {
         <FlightForm displaySearchFeed={this.displaySearchFeed} />
         <Content>
           {this.state.searchResults.length > 0 ? (
-            <SearchResults searchResults={this.state.searchResults} />
+            <SearchResults searchResults={this.state.searchResults} getNewSavedResult={this.getNewSavedResult}/>
           ) : <PreSearchResults />}
           <Suggestions savedResults={this.state.savedResults} />
         </Content>

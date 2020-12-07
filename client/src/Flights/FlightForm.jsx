@@ -2,7 +2,7 @@ import React, { Component, useState } from "react";
 import { DateRangeInput } from "@datepicker-react/styled";
 import styled, { ThemeProvider } from "styled-components";
 import moment from "moment";
-import keys from "../../../configs/amadeus.config.js";
+import keys from "../../../config.js";
 
 // import styles from './App.css';
 
