@@ -5,6 +5,7 @@ import Page from './Page.jsx'
 import Chat from '../GroupChat/Chat.jsx';
 import ItineraryBuilder from '../ItineraryBuilder/ItineraryBuilder.jsx';
 import Flights from '../Flights/Flights.jsx';
+import Hotels from '../Hotels/Hotels.jsx';
 
 import {
   HashRouter as Router,
@@ -51,8 +52,8 @@ const FriendTrips = () => {
             <Route exactly path="/flights">
               <Flights/>
             </Route>
-            <Route exactly path="/yellow">
-              <Page color={'yellow'}></Page>
+            <Route exactly path="/hotels">
+              <Hotels/>
             </Route>
           </Switch>
         </Section>

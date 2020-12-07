@@ -39,7 +39,7 @@ const NavBar = () => {
               <Link to="/flights">Flights</Link>
             </LI>
             <LI>
-              <Link to="/yellow">Yellow</Link>
+              <Link to="/hotels">Hotels</Link>
             </LI>
           </UL>
         </NavigationLinks>
