@@ -2,3 +2,4 @@
 *.env
 *.config.*
 /configs
+/public/bundle.js
