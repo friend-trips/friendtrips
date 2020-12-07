@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import io from 'socket.io-client';
 import styled from 'styled-components';
 
-import {AuthContext} from '../components/providers/AuthenticationProvider.jsx'
+import { AuthContext } from '../components/providers/AuthenticationProvider.jsx'
 import MessageGroup from './MessageGroup.jsx'
 import MessageThread from './MessageThread.jsx'
 
@@ -146,33 +146,53 @@ const Chat = () => {
 
   const groupMessages = (messages) => {
     if (!messages) return null;
-    let groupedMessages = [];
-    let currentGroup = [];
+    let results = [];
+    let currentGroup = {
+      isFlight: false,
+      messages: [],
+      username: ''
+    };
     let last = messages[0];
     for (let i = 0; i <= messages.length - 1; i++) {
-      console.log('checking', messages[i].username, last.username)
-      if (messages[i].username === last.username) {
-        currentGroup.push(messages[i]);
+      let current = messages[i];
+      if (messages[i].type === 'message') {
+        if (messages[i].username === last.username) {
+          currentGroup.messages.push(messages[i]);
+        } else {
+          currentGroup.username = last.username;
+          currentGroup.type = 'message';
+          results.push(currentGroup);
+          currentGroup = {
+            isFlight: false,
+            messages: [messages[i]],
+            username: ''
+          }
+        }
+        last = messages[i];
+        if (i === messages.length - 1 && currentGroup.messages.length > 0) {
+          currentGroup.type = 'message';
+          results.push(currentGroup);
+        }
       } else {
-        groupedMessages.push(currentGroup);
-        currentGroup = [messages[i]];
-      }
-      last = messages[i]
-      if (i === messages.length - 1 && currentGroup.length > 0) {
-        groupedMessages.push(currentGroup);
+        current.isFlight = true;
+        results.push(current);
       }
     }
     console.log('we turned', messages.length, 'messages')
-    console.log('into', groupedMessages.length, 'groups');
-    return groupedMessages;
+    console.log('into', results.length, 'groups');
+    return results;
   }
 
   return (
     <Container>
       <ChatWindow>
-        {(chatMessages) ? chatMessages.map((group) => (
-          <MessageGroup group={group} showThread={showThread}></MessageGroup>
-        )) : <h1>Loading...</h1>}
+        {(chatMessages) ? chatMessages.map((group) => {
+          if (group.type === 'flight') {
+            return <div>aFlight</div>
+          } else if (group.type === 'message') {
+            return <MessageGroup group={group} showThread={showThread}></MessageGroup>
+          }
+        }) : <h1>Loading...</h1>}
         <div ref={messagesEndRef} />
         {(threadDisplay) ? <MessageThread main={thread} hideThread={hideThread} replyToMsg={replyToMsg} /> : null}
       </ChatWindow>

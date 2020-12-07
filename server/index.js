@@ -23,7 +23,9 @@ app.use((req, res, next) => {
 
 app.use('/auth', authRoute);
 //----------------------------------------- END OF ROUTES---------------------------------------------------
-
+app.get('/login', (req, res) => {
+  res.redirect('/')
+})
 app.get('/home', (req, res) => {
   res.redirect('/')
 })
@@ -53,6 +55,8 @@ const io = require('socket.io')(http, {
 
 let countOfConnections = 0;
 let messages = [];
+let flights = [];
+let hotels = [];
 // let comments = [];
 //on 'connection', io returns an object representing the client's socket
 io.use((socket, next) => {
@@ -60,11 +64,22 @@ io.use((socket, next) => {
   next();
 })
 io.on('connection', (socket) => {
+
   countOfConnections++;
   io.emit('connectedUsers', countOfConnections)
   socket.on('greeting', () => {
     console.log('greeting', socket.id)
     if (messages.length === 0) {
+      if (flights.length === 0) {
+        axios.get(`https://morning-bayou-59969.herokuapp.com/flights/?trip_id=${2}`)
+          .then((result) => {
+            flights = Object.values(result.data);
+            console.log('FLIGHTS', flights)
+          })
+          .catch((err) => {
+            console.log(err, 'couldnt get flights')
+          })
+      }
       console.log('Fetching new messages')
       axios({
         method: 'get',
@@ -87,41 +102,87 @@ io.on('connection', (socket) => {
             })
               .then((commentQueryResult) => {
                 let comments = commentQueryResult.data
-                console.log(comments, messageMap);
                 for (let i = 0; i <= comments.length - 1; i++) {
-                  console.log(messageMap[comments[i].message_id]);
                   if (messageMap[comments[i].message_id]) {
-                  messageMap[comments[i].message_id].comments.push(comments[i]);
+                    messageMap[comments[i].message_id].comments.push(comments[i]);
                   }
                 }
                 let newMsg = {
                   user_id: Number(socket.handshake.auth.user_id),
+                  username: socket.handshake.auth.username,
                   trip_id: 1,
                   message: 'joined the room'
                 }
 
                 messages = Object.values(messageMap);
-                messages.push(newMsg);
-                console.log('sending', messages.length, 'messages');
+
+                // console.log('send messages if no flights', flights)
+                if (flights.length > 0) {
+                  let copyOfFlights = flights.slice().sort((a, b) => {
+                    return (Number(a.meta.time_created) - Number(b.meta.time_created))
+                  });
+                  let copyOfMessages = messages.slice().sort((a, b) => {
+                    return (Number(a.timestamp) - Number(b.timestamp))
+                  });
+                  // console.log(copyOfMessages)
+                  // console.log(copyOfFlights);
+                  let flightsPointer = 0;
+                  let messagesPointer = 0;
+                  let results = []
+                  let obj = {}
+                  while (flightsPointer < copyOfFlights.length && messagesPointer < copyOfMessages.length) {
+                    console.log(copyOfFlights[flightsPointer].meta.time_created, copyOfMessages[messagesPointer].timestamp)
+                    console.log(flightsPointer, messagesPointer)
+                    if (copyOfFlights[flightsPointer].meta.time_created < copyOfMessages[messagesPointer].timestamp) {
+                      let currentFlight = copyOfFlights[flightsPointer];
+                      currentFlight.type = 'flight'
+                      results.push(currentFlight)
+                      flightsPointer++;
+                    } else {
+                      let currentMessage = copyOfMessages[messagesPointer];
+                      currentMessage.type = 'message'
+                      results.push(currentMessage)
+                      messagesPointer++;
+                    }
+                  }
+                  for (let i = messagesPointer; i <= copyOfMessages.length-1; i++) {
+                    let currentMessage = copyOfMessages[messagesPointer];
+                      currentMessage.type = 'message'
+                    results.push(copyOfMessages[i])
+                  }
+                  for (let i = flightsPointer; i <= copyOfFlights.length-1; i++) {
+                    let currentFlight = copyOfFlights[flightsPointer];
+                      currentFlight.type = 'flight'
+                    results.push(copyOfFlights[i])
+
+                  }
+                  // let arrayToConcat = (flightsPointer === copyOfFlights.length) ? copyOfMessages.slice(messagesPointer) : copyOfFlights.slice(flightsPointer);
+                  // messages = results.concat(arrayToConcat);
+                  messages = results;
+                  messages.push(newMsg);
+                }
+                console.log('sending', messages.slice(messages.length - 5), 'messages');
                 io.emit('updatedMessages', messages);
               })
               .catch((commentQueryErr) => {
                 console.log('couldnt handle teh comments', commentQueryErr)
               })
-            }
-          })
+          }
+        })
         .catch((err) => {
           console.log(err);
         });
     } else {
-      let newMsg = {
-        user_id: Number(socket.handshake.auth.user_id),
-        username: socket.handshake.auth.username,
-        trip_id: 1,
-        message: 'joined the room'
+      if (socket.handshake.auth.username) {
+        let newMsg = {
+          user_id: Number(socket.handshake.auth.user_id),
+          username: socket.handshake.auth.username,
+          trip_id: 1,
+          message: 'joined the room'
+        }
+        messages.push(newMsg);
+        io.emit('updatedMessages', messages);
       }
-      messages.push(newMsg);
-      io.emit('updatedMessages', messages);
     }
   })
 
@@ -129,14 +190,16 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
     countOfConnections--;
     io.emit('connectedUsers', countOfConnections);
-    let newMsg = {
-      user_id: Number(socket.handshake.auth.user_id),
-      username: socket.handshake.auth.username,
-      trip_id: 1,
-      message: 'has left the room'
+    if (socket.handshake.auth.username) {
+      let newMsg = {
+        user_id: Number(socket.handshake.auth.user_id),
+        username: socket.handshake.auth.username,
+        trip_id: 1,
+        message: 'has left the room'
+      }
+      messages.push(newMsg);
+      io.emit('updatedMessages', messages);
     }
-    messages.push(newMsg);
-    io.emit('updatedMessages', messages);
   });
 
   socket.on('message', (text) => {

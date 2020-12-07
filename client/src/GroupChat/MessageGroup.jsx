@@ -28,15 +28,16 @@ const Messages = styled.div`
 `;
 
 const MessageGroup = ({ group, showThread }) => {
+  console.log(group)
   return (
     <ChatBlock>
       <ChatBlockHeader>
-        <H3>{group[0].username}</H3>
+        <H3>{group.username}</H3>
       </ChatBlockHeader>
       <Messages>
-      {group.map((chatmsg) => (
-        <ChatMessage handleClick={showThread} message={chatmsg} />
-      ))}
+        {group.messages.map((chatmsg) => (
+          <ChatMessage handleClick={showThread} message={chatmsg} />
+        ))}
       </Messages>
     </ChatBlock>
   );
