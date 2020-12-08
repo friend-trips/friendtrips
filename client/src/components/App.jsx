@@ -21,8 +21,11 @@ import {
 
 const Application = styled.div`
   position: absolute;
-  height: 98%;
-  width: 98%;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: ##0F4C81;
 `;
 
 const App = () => {
@@ -72,7 +75,7 @@ const App = () => {
   return (
     <AuthContext.Provider value={authContext}>
 
-      <Router>
+      <Router style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <Application>
           <Switch>
             <Route exact path="/">

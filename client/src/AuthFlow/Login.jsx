@@ -8,22 +8,26 @@ import {
 import styled from 'styled-components';
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
+  position: relative;
   height: 100%;
   width: 100%;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: #0F4C81;
 `;
 const Content = styled.section`
+  position: relative;
   border: 1px solid black;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-self: center;
   justify-content: spaced-evenly;
   width: 30%;
   height: 50%;
+  background-color: #FFFFFF;
 `
 const Header = styled.header`
   display: flex;
@@ -47,6 +51,7 @@ const Form = styled.form`
   padding-bottom: 2%;
   border-top: 1px solid black;
   border-radius: 10px;
+  background-color: #F0F8FF;
 `;
 const Field = styled.div`
   width: 80%;
@@ -61,8 +66,12 @@ const Input = styled.input`
 `;
 const Button = styled.button`
   margin-top: 2%;
-  width: 60%;
+  width: 40%;
   height: 10%;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: #0F4C81;
+  color: white;
 `;
 const Label = styled.label`
   text-align: left;
@@ -76,8 +85,8 @@ const P = styled.p`
 
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('harrison');
+  const [password, setPassword] = useState('password');
   const authContext = useContext(AuthContext);
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -101,7 +110,7 @@ const Login = () => {
               <Label>Password</Label>
               <Input value={password} onChange={(e) => { setPassword(e.target.value) }} placeholder='Password' />
             </Field>
-            <Button type="submit">Log In</Button>
+            <Button type="submit">Sign In</Button>
             <P>Don't have an account? <Link to='/signup'>Sign Up</Link> </P>
 
           </Form>

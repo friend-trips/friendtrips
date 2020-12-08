@@ -15,6 +15,7 @@ const Container = styled.div`
   width: 100%;
   align-items: center;
   justify-content: center;
+  background-color: #0F4C81;
 `;
 const Content = styled.section`
   border: 1px solid black;
@@ -25,6 +26,7 @@ const Content = styled.section`
   justify-content: spaced-evenly;
   width: 40%;
   height: 70%;
+  background-color: #FFFFFF;
 `
 const Header = styled.header`
   display: flex;
@@ -48,6 +50,7 @@ const Form = styled.form`
   padding-bottom: 2%;
   border-top: 1px solid black;
   border-radius: 10px;
+  background-color: #F0F8FF;
 `;
 const Field = styled.div`
   width: 80%;
@@ -62,8 +65,12 @@ const Input = styled.input`
 `;
 const Button = styled.button`
   margin-top: 2%;
-  width: 60%;
+  width: 40%;
   height: 10%;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: #0F4C81;
+  color: white;
 `;
 const Label = styled.label`
   text-align: left;

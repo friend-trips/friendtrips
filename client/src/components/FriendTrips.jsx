@@ -22,11 +22,14 @@ import NavBar from './NavBar.jsx';
 
 const Container = styled.div`
   display: flex;
-  height: 100%;
-  width: 100%;
+  height: 97%;
+  width: 98%;
+  padding: 1%;
   justify-content: space-around;
   align-items: center;
   position: relative;
+  background-color: #6886c5;
+  border: 1px solid black;
 `;
 
 const Section = styled.section`
@@ -35,6 +38,8 @@ const Section = styled.section`
   margin-left: 2%;
   flex-grow: 1;
   border: 1px solid black;
+  border-radius: 15px;
+  background-color: #f9f9f9;
 `;
 
 const FriendTrips = () => {

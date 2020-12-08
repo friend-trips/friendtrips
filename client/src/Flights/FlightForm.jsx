@@ -17,9 +17,11 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-evenly;
   flex-direction: column;
-  height: 18%;
+  height: 20%;
   border: 1px solid black;
-  border-radius: 10px;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  background-color: #f9f9f9;
 `;
 
 const StyledTopRow = styled.div`

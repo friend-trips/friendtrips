@@ -3,13 +3,11 @@ import styled from 'styled-components';
 import ChatMessage from './ChatMessage.jsx';
 
 const ChatBlock = styled.div`
-  width: 100%;
-  padding: 5px;
-  border: .5px solid black;
+  width: 98%;
+  padding: 2%;
+  border-bottom: .5px solid black;
   display: flex;
   flex-direction: row;
-  // align-items: center;
-  // justify-content: center;
 `;
 const ChatBlockHeader = styled.header`
   display: flex;
