@@ -51,7 +51,6 @@ const ChatMessage = ({ message, handleClick }) => {
   return (
     <Container>
       <ChatBody
-        onClick={() => { handleClick(message) }}
         onMouseOver={toggleHighlight}
         onMouseLeave={()=>setHighlight(false)}
       >

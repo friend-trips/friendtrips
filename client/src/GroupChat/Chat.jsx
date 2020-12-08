@@ -14,11 +14,28 @@ const Container = styled.div`
 `;
 
 const ChatWindow = styled.div`
+  position: relative;
   height: 90%;
   overflow-y: scroll;
   overflow-x: wrap;
   border-bottom: 1px solid black;
   // padding-left: 10px;
+`;
+
+const ChatHeader = styled.header`
+  margin: 0;
+  padding-left: 2%;
+  top: 1%;
+  left: 22.75%;
+  right: 1%;
+  position: fixed;
+  height: 8%;
+  border-bottom: 1px solid black;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
 `;
 
 const ChatForm = styled.form`
@@ -194,12 +211,13 @@ const Chat = () => {
   return (
     <Container>
       <ChatWindow>
+        <ChatHeader>Chat!</ChatHeader>
         {(chatMessages) ? chatMessages.map((group, i) => {
           console.log(group.type, i)
           if (group.type === 'flight') {
             return <div>aFlight</div>
           } else if (group.type === 'message') {
-            return <MessageGroup group={group} showThread={showThread}></MessageGroup>
+            return <MessageGroup group={group} ></MessageGroup>
           }
         }) : <h1>Loading...</h1>}
         <div ref={messagesEndRef} />

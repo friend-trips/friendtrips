@@ -10,7 +10,8 @@ const Container = styled.div`
   grid-template-rows: 50% 50%;
   border: solid 1px;
   border-radius: 7px;
-  margin-bottom: 20px;
+  margin-top: 10px
+  margin-bottom: 10px;
   height: 150px;
   width: 97%;
   padding: 10px;

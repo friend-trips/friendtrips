@@ -7,8 +7,9 @@ const ResultsContainer = styled.div`
   position: relative;
   display: flex;
   justify-content: center;
-  overflow-y: scroll;
-  height: 98%;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
 `;
 
 export default function HotelPageContent(props) {
