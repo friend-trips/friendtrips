@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ChatMessage from './ChatMessage.jsx';
 
-const ChatBlock = styled.div`
+import FlightSuggestion from '../Flights/OneSuggestion.jsx'
 
+const ChatBlock = styled.div`
   width: 98%;
   padding: 2%;
   border-bottom: .5px solid black;
@@ -26,17 +27,18 @@ const Messages = styled.div`
   width: 90%;
 `;
 
-const MessageGroup = ({ group, showThread }) => {
-  console.log(group)
+const MessageGroup = ({ data }) => {
+  console.log(data)
   return (
     <ChatBlock>
       <ChatBlockHeader>
-        <H3>{group.username}</H3>
+        {(data.type === 'flight') ?
+        <H3>{data.meta.username}</H3>
+        : null
+      }
       </ChatBlockHeader>
       <Messages>
-        {group.messages.map((chatmsg) => (
-          <ChatMessage handleClick={showThread} message={chatmsg} />
-        ))}
+        <FlightSuggestion data={data}/>
       </Messages>
     </ChatBlock>
   );

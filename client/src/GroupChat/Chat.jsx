@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { AuthContext } from '../components/providers/AuthenticationProvider.jsx'
 import MessageGroup from './MessageGroup.jsx'
 import MessageThread from './MessageThread.jsx'
+import Suggestion from './Suggestion.jsx'
 
 
 const Container = styled.div`
@@ -23,6 +24,7 @@ const ChatWindow = styled.div`
 `;
 
 const ChatHeader = styled.header`
+  z-index: 1;
   margin: 0;
   padding-left: 2%;
   top: 1%;
@@ -81,14 +83,6 @@ const socket = io('http://localhost:4000', {
   },
   autoConnect: false
 });
-
-// const socket = io('http://localhost:4000', {
-//   path: '/chat/socket.io',
-//   auth: {
-//     token: ''
-//   },
-//   autoConnect: false
-// });
 
 const Chat = () => {
   const [connectedUserCount, setConnectedUserCount] = useState(0);
@@ -213,9 +207,8 @@ const Chat = () => {
       <ChatWindow>
         <ChatHeader>Chat!</ChatHeader>
         {(chatMessages) ? chatMessages.map((group, i) => {
-          console.log(group.type, i)
           if (group.type === 'flight') {
-            return <div>aFlight</div>
+            return <Suggestion data={group}/>
           } else if (group.type === 'message') {
             return <MessageGroup group={group} ></MessageGroup>
           }
