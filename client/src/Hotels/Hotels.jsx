@@ -73,6 +73,7 @@ export default class App extends React.Component {
     this.filterData = this.filterData.bind(this);
     this.searchForHotels = this.searchForHotels.bind(this);
     this.getSavedResults = this.getSavedResults.bind(this);
+    this.getNewSavedResult = this.getNewSavedResult.bind(this);
   }
 
   setSearchFeed(data) {
@@ -159,6 +160,12 @@ export default class App extends React.Component {
       });
   }
 
+  getNewSavedResult(result) {
+    let newSavedArray = [];
+    newSavedArray.push(result)
+    this.setState({savedResults: [...this.state.savedResults, newSavedArray[0]]});
+  }
+
   getSavedResults() {
     axios.get("http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1")
       .then(({data}) => {
@@ -168,16 +175,8 @@ export default class App extends React.Component {
           savedArray.push(data[keys])
         }
         console.log("savedArray", savedArray);
-        // let upvoteNames = [];
-        // let downvoteNames = [];
-        // for (var i = 0; i < savedArray.length; i++) {
-        //   upvoteNames.push(savedArray[i].upvote_names);
-        //   downvoteNames.push(savedArray[i].downvote_names);
-        // }
         this.setState({
           savedResults: savedArray
-          // upvotes: upvoteNames,
-          // downvotes: downvoteNames
         })
       })
       .catch(console.log)
@@ -191,8 +190,7 @@ export default class App extends React.Component {
     return (
       <Wrapper>
         <SearchBar searchForHotels={this.searchForHotels} />
-        <HotelPageContent searchResults={this.state.searchResults} savedResults={this.state.savedResults} cityCode={this.state.cityCode} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} roomQuantity={this.state.roomQuantity} adults={this.state.adults}
-        />
+        <HotelPageContent searchResults={this.state.searchResults} savedResults={this.state.savedResults} cityCode={this.state.cityCode} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} roomQuantity={this.state.roomQuantity} adults={this.state.adults} getNewSavedResult={this.getNewSavedResult}/>
       </Wrapper>
     );
   }
