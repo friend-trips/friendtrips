@@ -18,7 +18,6 @@ const Container = styled.div`
   justify-content: space-evenly;
   flex-direction: column;
   height: 20%;
-  border: 1px solid black;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   background-color: #f9f9f9;
@@ -125,7 +124,7 @@ const Form = styled.form`
   justify-content: center;
 
   position: relative;
-  z-index: 100;
+  z-index: 2;
 `;
 
 function FlightForm({ displaySearchFeed }) {

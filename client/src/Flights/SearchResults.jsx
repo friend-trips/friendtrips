@@ -3,8 +3,9 @@ import Flight from "./Flight.jsx";
 import styled from "styled-components";
 
 const ResultsContainer = styled.div`
-  padding: 5px;
-  height: 99%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  height: 100%;
   overflow-y: scroll;
   width: 66%;
   display: flex;
@@ -12,21 +13,23 @@ const ResultsContainer = styled.div`
   align-items: center;
 `;
 const Header = styled.header`
-  margin: 0;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-const SuggestionsHeader = styled.h2`
+  min-height: 40px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  border-bottom: .5px solid black;
   font-family: "cerapro-bold",sans-serif;
 `;
+
 
 const SearchResults = (props) => {
   return (
     <ResultsContainer>
       <Header>
-        <SuggestionsHeader>Search Results</SuggestionsHeader>
+        Search Results
       </Header>
       {props.searchResults.length > 0
         ? props.searchResults.map((data, index) => (

@@ -8,13 +8,12 @@ import axios from "axios";
 
 //entire screen
 const Wrapper = styled.div`
-  position: relative;
+  position: absolute;
   display: flex;
   flex-direction: column;
-  height: 99%;
-  width: 99%;
-  padding: .5%;
-  overflow-y: scroll
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 `;
 
 var Amadeus = require("amadeus");

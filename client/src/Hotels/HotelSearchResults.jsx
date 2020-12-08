@@ -4,12 +4,13 @@ import styled from "styled-components";
 
 const Container = styled.div`
   position: relative;
-  border: .5px solid black;
+  border-top: .5px solid black;
+  border-right: .5px solid black;
   display: flex;
   flex-direction: column;
   // justify-content: center;
   align-items: center;
-  height: 99%;
+  height: 100%;
   width: 64%;
   overflow-y: scroll;
 `;
@@ -21,9 +22,8 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
+  min-height: 40px;
   width: 100%;
-  margin: 10px;
   padding: 10px;
   text-align: center;
   border-bottom: .5px solid black;

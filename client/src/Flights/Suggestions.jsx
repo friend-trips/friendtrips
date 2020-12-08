@@ -4,34 +4,37 @@ import OneSuggestion from "./OneSuggestion.jsx";
 // import ItinerarySuggestion from '../ItineraryBuilder/ItinerarySuggestion.jsx';
 
 const SuggestionsContainer = styled.div`
-  padding: 5px;
-  height: 99%;
+  height: 100%;
   overflow-y: scroll;
-  width: 33%;
+  width: 34%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-left: 1px solid black;
 `;
 const Header = styled.header`
-  margin: 0;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-const SuggestionsHeader = styled.h2`
+  min-height: 45px;
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  border-bottom: .5px solid black;
   font-family: "cerapro-bold",sans-serif;
 `;
+
 const SuggestionList = styled.div`
   height: 100%;
-  width: 98%;
+  width: 100%;
 `;
 
 const Suggestions = (props) => {
   return (
     <SuggestionsContainer>
       <Header>
-        <SuggestionsHeader>Flight Suggestions</SuggestionsHeader>
+        Flight Suggestions
       </Header>
       <SuggestionList>
       {props.savedResults.length > 0

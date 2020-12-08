@@ -11,26 +11,21 @@ const Container = styled.div`
   position: absolute;
   height: 100%;
   width: 100%;
-  background-color: #6886c5;
+  border-radius: 15px;
+  background-color: #f9f9f9;
+  overflow: hidden;
 `
 const Content = styled.div`
-  border: solid 1px;
+  position: relative;
+  border-top: 1px solid black;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   display: flex;
   height: 80%;
   justify-content: space-between;
-  background-color: #E6DBFF;
+  background-color: #f9f9f9;
 `;
-//^^ height will control size of the bottom section
-// form height and content should add up to equal 1--%
 
-const PreSearchResults = styled.div`
-  border: solid 1px;
-  height: 100%;
-  width: 66%;
-  float: left;
-`;
 
 class App extends React.Component {
   constructor(props) {

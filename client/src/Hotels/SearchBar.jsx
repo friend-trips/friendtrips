@@ -4,13 +4,13 @@ import styled from "styled-components";
 import moment from "moment";
 
 const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+  height: 20%;
   position: relative;
-  margin-top: 2%;
-  margin-bottom: 3%;
   max-height: 20%;
-  /* border-color: black; */
-  /* border-style: solid; */
-  /* border-width: 4px; */
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -19,13 +19,17 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: 1px solid grey;
+  width: 100%;
+  height: 100%;
 `;
 
 const TopRow = styled.div`
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 0.4%;
+  align-items: center;
+  justify-content: center;
   position: relative;
+  height: 50%;
 `;
 
 const StyledLabelClass = styled.label`
@@ -83,6 +87,7 @@ const StyledAdultsSelect = styled.select`
 const BottomRow = styled.div`
   display: flex;
   position: relative;
+  height: 50%;
 `;
 
 const StyledForm = styled.form`
