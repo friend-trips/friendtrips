@@ -17,8 +17,9 @@ export default function HotelPageContent(props) {
   console.log(props.searchResults);
   return (
     <ResultsContainer>
-      <HotelSearchResults searchResults={props.searchResults} cityCode={props.cityCode} checkInDate={props.checkInDate} checkOutDate={props.checkOutDate} roomQuantity={props.roomQuantity} adults={props.adults} />
-      <HotelSuggestions searchResults={props.searchResults}/>
+      <HotelSearchResults searchResults={props.searchResults} cityCode={props.cityCode} checkInDate={props.checkInDate} checkOutDate={props.checkOutDate} roomQuantity={props.roomQuantity} adults={props.adults}
+      />
+      <HotelSuggestions savedResults={props.savedResults}/>
     </ResultsContainer>
   );
 }
