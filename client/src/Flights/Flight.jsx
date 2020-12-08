@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import axios from 'axios';
+import {AuthContext} from '../components/providers/AuthenticationProvider.jsx';
 
 // this is the container for the div experiment
 const Container = styled.div`
@@ -143,17 +144,18 @@ const Suggest = styled.button`
 `;
 
 const Flights = ({ data, getNewSavedResult }) => {
+  const authContext = useContext(AuthContext);
   const save = function(isSuggested) {
     const flightData = {
       "meta": {
         "trip_id": 2,
-        "user_id": 1,
+        "user_id": authContext.user,
         "adults": 1,
         "nonstop": "true",
         "is_suggested": isSuggested ? "true" : "false",
         "is_saved": "true",
         "total_price": data.totalPrice,
-        "username": data.username
+        "username": authContext.username
       },
       "outgoing": {
         "duration": data.outgoingDuration,
