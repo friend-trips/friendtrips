@@ -87,7 +87,7 @@ const BottomRow = styled.div`
 
 const StyledForm = styled.form`
   display: flex;
-  z-index: 2
+  z-index: 2;
 `;
 
 const StyledInput = styled.input`
