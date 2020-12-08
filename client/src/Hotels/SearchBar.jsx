@@ -4,6 +4,7 @@ import styled from "styled-components";
 import moment from "moment";
 
 const Wrapper = styled.div`
+  position: relative;
   margin-top: 2%;
   margin-bottom: 3%;
   max-height: 20%;
@@ -86,6 +87,7 @@ const BottomRow = styled.div`
 
 const StyledForm = styled.form`
   display: flex;
+  z-index: 2
 `;
 
 const StyledInput = styled.input`
@@ -221,7 +223,7 @@ export default function SearchBar(props) {
               startDate={checkInDate} // Date or null
               endDate={checkOutDate} // Date or null
               focusedInput={focusedCalendar} // START_DATE, END_DATE or null
-              style="border-width: 100px;"
+
             />
             <StyledSubmit type="submit" value="Search" />
           </StyledForm>

@@ -7,10 +7,10 @@ import moment from "moment";
 
 //entire screen
 const Wrapper = styled.div`
-  position: absolute;
+  position: relative;
   display: flex;
   flex-direction: column;
-  max-height: 99%;
+  height: 99%;
   width: 99%;
   padding: .5%;
   overflow-y: scroll
