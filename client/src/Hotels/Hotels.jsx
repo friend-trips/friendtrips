@@ -62,8 +62,8 @@ export default class App extends React.Component {
       cityCode: "",
       checkInDate: "",
       checkOutDate: "",
-      roomQuantity: 0,
-      adults: 0,
+      roomQuantity: 1,
+      adults: 1,
     };
     this.setSearchFeed = this.setSearchFeed.bind(this);
     this.filterData = this.filterData.bind(this);

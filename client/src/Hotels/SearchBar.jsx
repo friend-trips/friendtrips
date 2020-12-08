@@ -86,6 +86,8 @@ const BottomRow = styled.div`
 
 const StyledForm = styled.form`
   display: flex;
+  position: relative;
+  z-index: 1;
 `;
 
 const StyledInput = styled.input`
@@ -113,16 +115,16 @@ const StyledSubmit = styled.input`
   margin-top: 0.05em;
 `;
 
-const roomNumChoices = [1, 2, 3, 4, 5, 6];
-const adultNumChoices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const roomNumChoices = [2, 3, 4, 5, 6];
+const adultNumChoices = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 export default function SearchBar(props) {
   const [cityCode, setCityCode] = useState("");
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
   const [focusedCalendar, setFocusedCalendar] = useState(null);
-  const [roomQuantity, setRoomQuantity] = useState("");
-  const [adults, setAdults] = useState("");
+  const [roomQuantity, setRoomQuantity] = useState(1);
+  const [adults, setAdults] = useState(1);
 
   const setDates = (data) => {
     console.log(data);
@@ -141,7 +143,7 @@ export default function SearchBar(props) {
       case "roomQuantity":
         return setRoomQuantity(event.target.value);
       case "adults":
-        return setRoomQuantity(event.target.value);
+        return setAdults(event.target.value);
       default:
         return;
     }
@@ -173,7 +175,7 @@ export default function SearchBar(props) {
                 handleChange("roomQuantity", e);
               }}
             >
-              <option>All</option>
+              <option>1</option>
               {roomNumChoices.map((quantity) => (
                 <option key={quantity} value={quantity}>
                   {quantity}
@@ -190,7 +192,7 @@ export default function SearchBar(props) {
                 handleChange("adults", e);
               }}
             >
-              <option>All</option>
+              <option>1</option>
               {adultNumChoices.map((quantity) => (
                 <option key={quantity} value={quantity}>
                   {quantity}
