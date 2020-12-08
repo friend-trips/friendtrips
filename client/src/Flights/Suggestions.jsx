@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import OneSuggestion from "./OneSuggestion.jsx";
+// import ItinerarySuggestion from '../ItineraryBuilder/ItinerarySuggestion.jsx';
 
 const SuggestionsContainer = styled.div`
   padding: 5px;
@@ -23,6 +24,7 @@ const Suggestions = (props) => {
     {props.savedResults.length > 0
         ? props.savedResults.map((data, index) => (
             <OneSuggestion key={index} data={data}></OneSuggestion>
+            // <ItinerarySuggestion key={index} data={data}></ItinerarySuggestion>
           ))
         : null}
   </SuggestionsContainer>
