@@ -5,28 +5,44 @@ import styled from "styled-components";
 const Container = styled.div`
   position: relative;
   border: .5px solid black;
-  display: grid;
-  max-height: 75%;
-  grid-template-rows: 1fr 15fr;
+  display: flex;
+  flex-direction: column;
+  // justify-content: center;
+  align-items: center;
+  height: 99%;
+  width: 64%;
+  overflow-y: scroll;
 `;
 const FeedContainer = styled.div`
-  overflow-y: scroll;
-  display: grid;
+  height: 100%;
+  width: 100%;
 `;
+const Header = styled.header`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 100%;
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  border-bottom: .5px solid black;
+`;
+
 
 // display: grid;
 
 export default function SearchResults(props) {
   return (
     <Container>
-      <p>Hotel Search Results</p>
-      <FeedContainer>
-        {props.searchResults.length > 0
+      <Header>Search Results</Header>
+      {/* <FeedContainer> */}
+        {props.searchResults
           ? props.searchResults.map((data, index) => {
-              return <HotelCard key={index} HotelData={data} cityCode={props.cityCode} checkInDate={props.checkInDate} checkOutDate={props.checkOutDate} roomQuantity={props.roomQuantity} adults={props.adults}/>;
+              return (<HotelCard key={index} HotelData={data} cityCode={props.cityCode} checkInDate={props.checkInDate} checkOutDate={props.checkOutDate} roomQuantity={props.roomQuantity} adults={props.adults}/>)
             })
           : null}
-      </FeedContainer>
+      {/* </FeedContainer> */}
     </Container>
   );
 }

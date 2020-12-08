@@ -8,7 +8,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   border-bottom: 1px solid black;
-  width: 100%;
+  min-width: 100%;
+  min-height: 30%;
   position: relative;
 `;
 

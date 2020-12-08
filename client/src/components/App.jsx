@@ -61,8 +61,7 @@ const App = () => {
         .catch(() => {
           console.log('You have not been authenticated');
         })
-    }
-    ,
+    },
     user: user,
     username: username
   }));

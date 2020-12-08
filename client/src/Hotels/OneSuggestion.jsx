@@ -14,7 +14,7 @@ const Container = styled.div`
   width: 97%;
   padding: 10px;
   font-family: "cerapro-bold",sans-serif;
-  position: relative
+  // position: relative
 `;
 
 const User = styled.span`
