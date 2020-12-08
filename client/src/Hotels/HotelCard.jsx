@@ -118,6 +118,7 @@ const Save = styled.div`
   width: 8%;
   right: 10%;
   top: 10%;
+  cursor: pointer;
 `;
 const Suggest = styled.div`
   position: absolute;
@@ -125,6 +126,7 @@ const Suggest = styled.div`
   width: 8%;
   right: 10%;
   bottom: 10%;
+  cursor: pointer;
 `;
 
 
@@ -139,17 +141,18 @@ export default function HotelCard({ HotelData, cityCode, checkInDate, checkOutDa
       "user_id": 1,
       "check_in_date": checkInDate,
       "check_out_date": checkOutDate,
-      "room_quantity": 1,
-      "adults": 1,
+      "room_quantity": roomQuantity,
+      "adults": adults,
       "hotel_name": HotelData.name,
       "hotel_address": HotelData.address,
       "city_code": cityCode,
-      "rating": 5,
-      "amenities": "amenities",
-      "price": 1,
+      "rating": HotelData.rating ? HotelData.rating : 5,
+      "amenities": HotelData.amenities,
+      "price": HotelData.Price,
       "distance_from_city_center": HotelData.milesFromCenter.toString(),
-      // "is_suggested": isSuggested ? "true" : "false",
-      // "is_saved": "true",
+      "is_suggested": isSuggested ? "true" : "false",
+      "is_saved": "true",
+      "num_of_nights": HotelData.numOfNights,
 
       "number_of_reviews": 1,
       "number_of_ratings": 1,
@@ -163,10 +166,10 @@ export default function HotelCard({ HotelData, cityCode, checkInDate, checkOutDa
       "location_rating": 1,
       "points_of_interest_rating": 1,
       "staff_rating": 1,
-      "hotel_id": "abc"
+      "hotel_id": HotelData.hotelId
     }
 
-    console.log(hotelData);
+    console.log("This is the data we are saving for each saved hotel result ", hotelData);
 
     axios({
       method: 'post',
@@ -175,7 +178,7 @@ export default function HotelCard({ HotelData, cityCode, checkInDate, checkOutDa
       header: {'Access-Control-Allow-Origin': '*'}
     })
       .then((data) => {
-        console.log(data,"data from HotelCard.jsx");
+        console.log("Data from HotelCard.jsx ", data);
         // getNewSavedResult(data.data);
       })
       .catch(console.log)
@@ -197,6 +200,7 @@ export default function HotelCard({ HotelData, cityCode, checkInDate, checkOutDa
         <HotelInfo>
           <HotelName>{HotelData.name}</HotelName>
           <HotelAddress>{HotelData.address}</HotelAddress>
+          <HotelAddress>{HotelData.milesFromCenter} miles from city center</HotelAddress>
         </HotelInfo>
         {(HotelData.amenities) ?
           <>

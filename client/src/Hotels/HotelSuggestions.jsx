@@ -27,9 +27,9 @@ const Header = styled.header`
 export default function HotelSuggestions(props) {
   return (
     <Container>
-      <Header>Hotel Suggestions</Header>
-      {props.searchResults.length > 0
-        ? props.searchResults.map((data, index) => (
+      <div>Hotel Suggestions</div>
+      {props.savedResults.length > 0
+        ? props.savedResults.map((data, index) => (
             <OneSuggestion key={index} data={data}></OneSuggestion>
           ))
         : null}
