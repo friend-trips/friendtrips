@@ -4,6 +4,7 @@ import HotelPageContent from "./HotelPageContent.jsx";
 import styled from "styled-components";
 // import "./App.css";
 import moment from "moment";
+import axios from "axios";
 
 //entire screen
 const Wrapper = styled.div`
@@ -62,12 +63,17 @@ export default class App extends React.Component {
       cityCode: "",
       checkInDate: "",
       checkOutDate: "",
-      roomQuantity: 0,
-      adults: 0,
+      roomQuantity: 1,
+      adults: 1,
+      upvotes: [],
+      downvotes: [],
+      savedResults: []
     };
     this.setSearchFeed = this.setSearchFeed.bind(this);
     this.filterData = this.filterData.bind(this);
     this.searchForHotels = this.searchForHotels.bind(this);
+    this.getSavedResults = this.getSavedResults.bind(this);
+    this.getNewSavedResult = this.getNewSavedResult.bind(this);
   }
 
   setSearchFeed(data) {
@@ -129,6 +135,7 @@ export default class App extends React.Component {
     this.setState({ roomQuantity: roomQuantity });
     this.setState({ adults: adults });
 
+    // the below are old comments. we are sending roomQuantity and adult fields to the api
     // for the demo, we are not sending the roomQuantity or adult fields to the api since most hotels do not have offers during this time.
     // instead, we will calculate the price based on the searchBar inputs and calculate price manually
     console.log(cityCode);
@@ -153,11 +160,37 @@ export default class App extends React.Component {
       });
   }
 
+  getNewSavedResult(result) {
+    let newSavedArray = [];
+    newSavedArray.push(result)
+    this.setState({savedResults: [...this.state.savedResults, newSavedArray[0]]});
+  }
+
+  getSavedResults() {
+    axios.get("http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1")
+      .then(({data}) => {
+        let savedArray = [];
+        console.log("data ", data)
+        for (let keys in data) {
+          savedArray.push(data[keys])
+        }
+        console.log("savedArray", savedArray);
+        this.setState({
+          savedResults: savedArray
+        })
+      })
+      .catch(console.log)
+  }
+
+  componentDidMount() {
+    this.getSavedResults();
+  }
+
   render() {
     return (
       <Wrapper>
         <SearchBar searchForHotels={this.searchForHotels} />
-        <HotelPageContent searchResults={this.state.searchResults} cityCode={this.state.cityCode} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} roomQuantity={this.state.roomQuantity} adults={this.state.adults}/>
+        <HotelPageContent searchResults={this.state.searchResults} savedResults={this.state.savedResults} cityCode={this.state.cityCode} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} roomQuantity={this.state.roomQuantity} adults={this.state.adults} getNewSavedResult={this.getNewSavedResult}/>
       </Wrapper>
     );
   }

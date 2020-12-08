@@ -101,19 +101,28 @@ const Price = styled.div`
   grid-row: 1 / span 2;
   justify-self: center;
   font-family: "cerapro-bold",sans-serif;
-  font-weight: 500;
-  font-size: 20px;
   line-height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   width: 100%;
   position: relative;
 `;
+
+const Seats = styled.div`
+  vertical-align: middle;
+  display: inline-block;
+  font-weight: 500;
+  font-size: 11px;
+`;
+
 const Amount = styled.span`
   vertical-align: middle;
   display: inline-block;
+  font-size: 20px;
 `;
+
 const Upvote = styled.button`
   color: #ff6666;
   cursor: pointer;
@@ -198,6 +207,7 @@ const OneSuggestion = ({ data }) => {
   }, [])
 
   const upvote = function() {
+    console.log(meta.suggestion_id, "meta suggestion id");
     axios({
       method: 'post',
       url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
@@ -206,7 +216,7 @@ const OneSuggestion = ({ data }) => {
         "type": "+",
         "user_id": meta.user_id,
         "suggestion_id": meta.suggestion_id,
-        "trip_id": 2
+        "trip_id": 1,
       }
     })
       .then(() => {
@@ -224,7 +234,7 @@ const OneSuggestion = ({ data }) => {
         "type": "-",
         "user_id": meta.user_id,
         "suggestion_id": meta.suggestion_id,
-        "trip_id": 2
+        "trip_id": 1
       }
     })
       .then(() => {
@@ -268,6 +278,7 @@ const OneSuggestion = ({ data }) => {
       </Returning>
       <Price>
         <Amount>${meta.total_price}</Amount>
+        <Seats>{meta.num_of_seats} Seats Left</Seats>
         <Upvote onClick={() => upvote()}>
           <UpArrow viewBox="0 0 18 18" role="presentation" ariaHidden="true" focusable="false"><path d="m13.7 16.29a1 1 0 1 1 -1.42 1.41l-8-8a1 1 0 0 1 0-1.41l8-8a1 1 0 1 1 1.42 1.41l-7.29 7.29z" fillRule="evenodd"></path></UpArrow>
         </Upvote>
