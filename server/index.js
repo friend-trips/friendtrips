@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const axios = require('axios');
 const app = express();
 
+const chatController = require('./controllers/chatController.js');
+
 const ENV = require('../configs/environment.config.js');
 const session = require('express-session');
 
@@ -61,18 +63,24 @@ const io = require('socket.io')(http, {
   path: '/socket.io'
 });
 
-// app.get('/chat', chatRoute(io));
 
-// app.listen(4000, () => {
-//   console.log('Friendtrips is running on http://localhost:4000')
-// })
-
-/* End Socket Auth Flow */
 
 let countOfConnections = 0;
 let messages = [];
 let flights = [];
 let hotels = [];
+let MessageController = require('./controllers/chatController.js');
+
+let myMessageController = new MessageController();
+myMessageController.initialize(2)
+  .then((res)=>{
+    console.log('Message Controller Initialized')
+  })
+  .catch((err)=>{
+    console.log('Error Initializing Controller')
+  })
+
+
 // let comments = [];
 //on 'connection', io returns an object representing the client's socket
 io.use((socket, next) => {
@@ -84,117 +92,16 @@ io.on('connection', (socket) => {
   io.emit('connectedUsers', countOfConnections)
   socket.on('greeting', () => {
     console.log('greeting', socket.id)
-    if (messages.length === 0) {
-      if (flights.length === 0) {
-        axios.get(`https://morning-bayou-59969.herokuapp.com/flights/?trip_id=${2}`)
-          .then((result) => {
-            flights = Object.values(result.data);
-            // console.log('FLIGHTS', flights)
-          })
-          .catch((err) => {
-            console.log(err, 'couldnt get flights')
-          })
-      }
-      console.log('Fetching new messages')
-      axios({
-        method: 'get',
-        url: `https://morning-bayou-59969.herokuapp.com/messages/?trip_id=${1}`
-      })
-        .then((messageQueryResult) => {
-          let listOfMessages = messageQueryResult.data;
-          if (messages.length === 0) {
-            let messageMap = {}
-            for (let i = 0; i <= listOfMessages.length - 1; i++) {
-              if (!messageMap[listOfMessages[i].message_id]) {
-                let msgToReturn = listOfMessages[i];
-                msgToReturn.comments = [];
-                messageMap[listOfMessages[i].message_id] = msgToReturn
-              }
-            }
-            axios({
-              method: 'get',
-              url: `https://morning-bayou-59969.herokuapp.com/comments/?trip_id=${1}`
-            })
-              .then((commentQueryResult) => {
-                let comments = commentQueryResult.data
-                for (let i = 0; i <= comments.length - 1; i++) {
-                  if (messageMap[comments[i].message_id]) {
-                    messageMap[comments[i].message_id].comments.push(comments[i]);
-                  }
-                }
-                let newMsg = {
-                  user_id: Number(socket.handshake.auth.user_id),
-                  username: socket.handshake.auth.username,
-                  trip_id: 1,
-                  type: 'message',
-                  message: 'joined the room'
-                }
-
-                messages = Object.values(messageMap);
-                // console.log('send messages if no flights', flights)
-                if (flights.length > 0) {
-                  let copyOfFlights = flights.slice().sort((a, b) => {
-                    return (Number(a.meta.time_created) - Number(b.meta.time_created))
-                  });
-                  let copyOfMessages = messages.slice().sort((a, b) => {
-                    return (Number(a.timestamp) - Number(b.timestamp))
-                  });
-                  let flightsPointer = 0;
-                  let messagesPointer = 0;
-                  let results = []
-                  let obj = {}
-                  while (flightsPointer < copyOfFlights.length && messagesPointer < copyOfMessages.length) {
-                    // console.log(copyOfFlights[flightsPointer].meta.time_created, copyOfMessages[messagesPointer].timestamp)
-                    // console.log(flightsPointer, messagesPointer)
-                    if (copyOfFlights[flightsPointer].meta.time_created < copyOfMessages[messagesPointer].timestamp) {
-                      let currentFlight = copyOfFlights[flightsPointer];
-                      currentFlight.type = 'flight'
-                      results.push(currentFlight)
-                      flightsPointer++;
-                    } else {
-                      let currentMessage = copyOfMessages[messagesPointer];
-                      currentMessage.type = 'message'
-                      results.push(currentMessage)
-                      messagesPointer++;
-                    }
-                  }
-                  for (let i = messagesPointer; i <= copyOfMessages.length - 1; i++) {
-                    let currentMessage = copyOfMessages[messagesPointer];
-                    currentMessage.type = 'message'
-                    results.push(copyOfMessages[i])
-                  }
-                  for (let i = flightsPointer; i <= copyOfFlights.length - 1; i++) {
-                    let currentFlight = copyOfFlights[flightsPointer];
-                    currentFlight.type = 'flight'
-                    results.push(copyOfFlights[i])
-
-                  }
-                  messages = results;
-                  messages.push(newMsg);
-                }
-                // console.log('sending', messages.slice(messages.length - 5), 'messages');
-                io.emit('updatedMessages', messages);
-              })
-              .catch((commentQueryErr) => {
-                console.log('couldnt handle teh comments', commentQueryErr)
-              })
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      if (socket.handshake.auth.username) {
-        let newMsg = {
-          user_id: Number(socket.handshake.auth.user_id),
-          username: socket.handshake.auth.username,
-          trip_id: 1,
-          message: 'joined the room'
-        }
-        messages.push(newMsg);
-        io.emit('updatedMessages', messages);
-      }
-    }
+    let newMsg = {
+      user_id: Number(socket.handshake.auth.user_id),
+      username: socket.handshake.auth.username,
+      trip_id: 1,
+      type: 'message',
+      message: 'joined the room'
+    };
+    let feed = myMessageController.feed;
+    feed[Date.now()] = newMsg;
+    io.emit('updatedMessages', feed)
   })
 
   socket.on('disconnect', () => {
@@ -208,8 +115,9 @@ io.on('connection', (socket) => {
         trip_id: 1,
         message: 'has left the room'
       }
-      messages.push(newMsg);
-      io.emit('updatedMessages', messages);
+      let feed = myMessageController.feed;
+      feed[Date.now()] = newMsg;
+      io.emit('updatedMessages', feed);
       socket.disconnect();
     }
   });
@@ -217,7 +125,7 @@ io.on('connection', (socket) => {
   socket.on('message', (text) => {
     let newMsg = {
       user_id: Number(socket.handshake.auth.user_id),
-      trip_id: 1,
+      trip_id: 2,
       message: text
     }
     console.log(newMsg);
@@ -227,8 +135,11 @@ io.on('connection', (socket) => {
         newMsg.id = Number(result.data.message_id);
         newMsg.username = socket.handshake.auth.username;
         newMsg.type = 'message';
-        messages.push(newMsg);
-        io.emit('updatedMessages', messages);
+        myMessageController.addToFeed(newMsg, 'message');
+
+        // messages = chatController.mergeFlights(messages, flights);
+        // messages.push(newMsg);
+        io.emit('updatedMessages', myMessageController.feed);
       })
       .catch((err) => {
         console.log('error in post to DB', err)
@@ -236,6 +147,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('comment', (message, comment) => {
+    console.log('Message', message.message_id ,'received a comment: "', comment, '"');
     let newComment = {
       message_id: message.message_id,
       user_id: Number(socket.handshake.auth.user_id),
@@ -243,21 +155,14 @@ io.on('connection', (socket) => {
     }
     axios.post('https://morning-bayou-59969.herokuapp.com/comments', newComment)
       .then((result) => {
-        console.log('successful message post to DB', result.data);
+        console.log('successful comment post to DB', result.data);
         newComment.id = result.data.message_id;
-        // messages.push(newComment);
-        if (messages[message.message_id]) {
-          if (Array.isArray(messages[message.message_id].comments)) {
-            messages[message.message_id].comments.push(newComment)
-          } else {
-            messages[message.message_id].comments = [newComment]
-          }
-        }
+        myMessageController.addToFeed(newComment, 'comment');
       })
       .catch((err) => {
         console.log('error in post to DB', err)
       })
-    io.emit('updatedMessages', messages);
+    io.emit('updatedMessages', myMessageController.feed);
   })
 });
 

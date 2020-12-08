@@ -88,9 +88,7 @@ const Chat = () => {
     })
     socket.on('updatedMessages', (newMsgs) => {
       console.log('new messages received');
-      // let sorted = groupMessages(newMsgs)
-      // setChatMessages(sorted);
-      setChatMessages(groupMessages(newMsgs));
+      setChatMessages(groupMessages(Object.values(newMsgs)));
     })
 
     //clean up socket connection when the component unmounts
@@ -135,6 +133,7 @@ const Chat = () => {
   }
   const replyToMsg = (msg, comment) => {
     console.log(msg, comment);
+    //TODO: get trip_id from context
     socket.emit('comment', msg, comment);
   }
 
