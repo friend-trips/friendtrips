@@ -18,8 +18,9 @@ const UL = styled.ul``
 const LI = styled.li``
 const Button = styled.button``
 
-const NavBar = () => {
+//TODO: GET all trips and trip_ids from the database
 
+const NavBar = () => {
   const authContext = useContext(AuthContext);
   return (
     <Container>
@@ -27,6 +28,9 @@ const NavBar = () => {
         <Header>
           Welcome back{(authContext.username) ? ', ' + authContext.username : null}!
         </Header>
+        <select>
+          {}
+        </select>
         <NavigationLinks>
           <UL >
             <LI>
