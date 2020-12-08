@@ -9,13 +9,14 @@ import axios from 'axios';
 //entire screen
 const Container = styled.div`
   position: absolute;
-  height: 99%;
-  width: 99%;
-  padding: .5%;
+  height: 100%;
+  width: 100%;
+  background-color: #6886c5;
 `
 const Content = styled.div`
   border: solid 1px;
-  border-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
   display: flex;
   height: 80%;
   justify-content: space-between;
@@ -60,13 +61,8 @@ class App extends React.Component {
     this.setState({ savedResults: [...this.state.savedResults, newSavedArray[0]] });
   }
 
-<<<<<<< HEAD
   getSavedResults() {
     axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=2")
-=======
-   getSavedResults() {
-    axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1")
->>>>>>> d1b6260c13f563c46da244a4054b849dc29e48f2
 
       .then((data) => {
         let savedArray = [];

@@ -11,40 +11,50 @@ const Container = styled.div`
   height: 99%;
   width: 100%;
   position: relative;
-  border: 1px solid black;
 `;
 
 const ChatWindow = styled.div`
   height: 90%;
   overflow-y: scroll;
   overflow-x: wrap;
-  border: 1px solid black;
-  padding-left: 10px;
+  border-bottom: 1px solid black;
+  // padding-left: 10px;
 `;
 
 const ChatForm = styled.form`
   position: relative;
-  height: 50px;
-  padding: 0px;
+  height: 5%;
+  padding: 1%;
   margin: 0px;
   width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
 `;
 
-const Input = styled.input`
-  position: absolute;
-  margin: 0px;
-  padding: 0px;
-  width: 89.5%;
-  height: 90%;
+const TextArea = styled.textarea`
+  position: relative;
+  width: 88%;
+  height: 60%;
+  padding: 0;
+  padding-top: .5%;
+  padding-bottom: .5%;
+  margin: 0;
 `;
 
 const Button = styled.button`
-  position: absolute;
+  position: relative;
   height: 100%;
-  width: 10%;
-  right: 0;
+  width: 5%;
   font-size: 18px;
 `;
+
+const Info = styled.div`
+  position: relative;
+  margin-left: 1%;
+`;
+
 
 //set up socket outside of react component, we don't want to socket to reload/refresh connection every time the component refreshes
 const socket = io('http://localhost:4000', {
@@ -196,10 +206,12 @@ const Chat = () => {
         {(threadDisplay) ? <MessageThread main={thread} hideThread={hideThread} replyToMsg={replyToMsg} /> : null}
       </ChatWindow>
       <ChatForm onSubmit={sendMsg}>
-        <Input value={msg} onChange={(e) => { setMsg(e.target.value) }}></Input>
+        <TextArea value={msg} onChange={(e) => { setMsg(e.target.value) }}></TextArea>
         <Button type='submit'> &#8680; </Button>
       </ChatForm>
-      Connected users: {connectedUserCount}
+      <Info>
+        Connected users: {connectedUserCount}
+      </Info>
     </Container>
   );
 };
