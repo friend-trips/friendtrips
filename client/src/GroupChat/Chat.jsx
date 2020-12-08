@@ -26,11 +26,11 @@ const ChatHeader = styled.header`
   margin: 0;
   padding-left: 2%;
   top: 1%;
-  left: 22.75%;
+  left: 22.7%;
   right: 1%;
   position: fixed;
   height: 8%;
-  border-bottom: 1px solid black;
+  border-bottom: .5px solid black;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
   background-color: #f9f9f9;

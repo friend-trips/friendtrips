@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { AuthContext } from '../components/providers/AuthenticationProvider.jsx';
+import { ApplicationContext } from '../components/providers/ApplicationProvider.jsx';
 import { Link } from 'react-router-dom';
 
 const Container = styled.nav`
@@ -75,10 +76,10 @@ const Footer = styled.footer`
   border-bottom-right-radius: 15px;
 `;
 
-//TODO: GET all trips and trip_ids from the database
 
 const NavBar = () => {
   const authContext = useContext(AuthContext);
+  const appContext = useContext(ApplicationContext);
   const linkStyle = {
 
   }
@@ -87,7 +88,11 @@ const NavBar = () => {
       <Header>
         <H3>Welcome back{(authContext.username) ? ', ' + authContext.username : null}!</H3>
         <Select>
-          { }
+          {appContext.tripList.map((trip, i)=>{
+            return (
+              <option key={`trip-${i}`} value={trip.id}>{trip.name}</option>
+            )
+          })}
         </Select>
       </Header>
 

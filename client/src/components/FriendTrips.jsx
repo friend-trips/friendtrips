@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-// import { AuthContext } from '../components/providers/AuthenticationProvider.jsx';
+import axios from 'axios';
+import { ApplicationProvider, ApplicationContext } from '../components/providers/ApplicationProvider.jsx';
 import Page from './Page.jsx'
 import Chat from '../GroupChat/Chat.jsx';
 import ItineraryBuilder from '../ItineraryBuilder/ItineraryBuilder.jsx';
@@ -43,31 +44,35 @@ const Section = styled.section`
 `;
 
 const FriendTrips = () => {
+
+
   return (
-    <Router>
-      <Container>
-        <NavBar></NavBar>
-        <Section>
-          <Switch>
-            <Route path="/chat">
-              <Chat />
-            </Route>
-            <Route exactly path="/itinerary">
-              <ItineraryBuilder />
-            </Route>
-            <Route exactly path="/flights">
-              <Flights />
-            </Route>
-            <Route exactly path="/hotels">
-              <Hotels />
-            </Route>
-            <Route>
-              <Welcome></Welcome>
-            </Route>
-          </Switch>
-        </Section>
-      </Container>
-    </Router>
+    <ApplicationProvider>
+      <Router>
+        <Container>
+          <NavBar></NavBar>
+          <Section>
+            <Switch>
+              <Route path="/chat">
+                <Chat />
+              </Route>
+              <Route exactly path="/itinerary">
+                <ItineraryBuilder />
+              </Route>
+              <Route exactly path="/flights">
+                <Flights />
+              </Route>
+              <Route exactly path="/hotels">
+                <Hotels />
+              </Route>
+              <Route>
+                <Welcome></Welcome>
+              </Route>
+            </Switch>
+          </Section>
+        </Container>
+      </Router>
+    </ApplicationProvider>
   );
 };
 
