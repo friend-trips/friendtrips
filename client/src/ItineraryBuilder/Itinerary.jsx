@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Droppable } from 'react-beautiful-dnd';
 import axios from 'axios';
-import ItinerarySuggestion from './ItinerarySuggestion.jsx';
-// import OneSuggestion from '../Flights/OneSuggestion.jsx'
+import ItineraryFlightSuggestion from './ItineraryFlightSuggestion.jsx';
+import ItineraryHotelSuggestion from './ItineraryHotelSuggestion.jsx';
 
 const Container = styled.div`
   display: flex;
@@ -18,7 +18,7 @@ const DropZone = styled.ul`
   width: 90%;
   background-color: lightblue;
   list-style: none;
-  height: 300px;
+  height: 50%;
   overflow-y: scroll;
   align-items: center;
 `
@@ -36,32 +36,28 @@ const Itinerary = ({ flights, hotels}) => {
               {...provided.droppableProps}
             >
               {flights.map((data, index) => (
-                <ItinerarySuggestion data={data} index={index} />
+                <ItineraryFlightSuggestion data={data} index={index} />
               ))}
-              {/* {flights.map((el, i) => (
-                <Suggestion data={el} index={i} />
-              ))} */}
             </DropZone>
           )
         }}
       </Droppable>
 
       <h3>Hotels</h3>
-      {/* <Droppable droppableId={'hotels'}>
+      <Droppable droppableId={'hotels'}>
         {(provided) => {
           return (
             <DropZone
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {hotels.map((el, i) => (
-                <ItinerarySuggestion data={el} index={i} />
+              {hotels.map((data, index) => (
+                <ItineraryHotelSuggestion data={data} index={index} />
               ))}
-              {provided.placeholder}
             </DropZone>
           )
         }}
-      </Droppable> */}
+      </Droppable>
     </Container>
   );
 };

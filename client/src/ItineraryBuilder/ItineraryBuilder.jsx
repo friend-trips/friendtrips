@@ -17,22 +17,37 @@ const App = () => {
   const [selectedFlights, setSelectedFlights] = useState([]);
   const [selectedHotels, setSelectedHotels] = useState([]);
 
-  const getSavedResults = () => {
-    axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1")
-
+  const getSavedFlightResults = async () => {
+    await axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1")
       .then((data) => {
         console.log(data)
         let savedArray = [];
         for (let keys in data.data) {
           savedArray.push(data.data[keys])
         }
+        console.log(savedArray, "flights saved array")
         setFlights(savedArray)
       })
       .catch(console.log)
    }
 
+  const getSavedHotelResults = async () => {
+    await axios.get("http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1")
+      .then(({data}) => {
+        let savedArray = [];
+        console.log("data ", data)
+        for (let keys in data) {
+          savedArray.push(data[keys])
+        }
+        console.log(savedArray, "hotels saved array")
+        setHotels(savedArray)
+      })
+      .catch(console.log)
+  }
+
    useEffect(() => {
-     getSavedResults()
+    getSavedFlightResults();
+    getSavedHotelResults()
    }, [])
 
   const handleDragEnd = (dragEvent) => {
@@ -85,6 +100,8 @@ const App = () => {
     }
   }
 
+  console.log(flights, "FLIGHTS")
+  console.log(hotels, "HOTELS")
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Container>

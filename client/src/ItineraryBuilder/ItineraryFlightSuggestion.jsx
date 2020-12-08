@@ -121,13 +121,13 @@ const Seats = styled.div`
   vertical-align: middle;
   display: inline-block;
   font-weight: 500;
-  font-size: 11px;
+  font-size: 8px;
 `;
 
 const Amount = styled.span`
   vertical-align: middle;
   display: inline-block;
-  font-size: 20px;
+  font-size: 12px;
 `;
 
 const Upvote = styled.button`
@@ -194,7 +194,7 @@ const DownvoteTotals = styled.span`
 `;
 
 
-const ItinerarySuggestion = ({ data, index }) => {
+const ItineraryFlightSuggestion = ({ data, index, hotelData }) => {
 
   let { outgoing, returning, meta } = data;
   console.log(data, "data from itinerary suggestion");
@@ -260,4 +260,4 @@ const ItinerarySuggestion = ({ data, index }) => {
   );
 };
 
-export default ItinerarySuggestion;
+export default ItineraryFlightSuggestion;
