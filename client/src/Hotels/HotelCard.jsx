@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useContext} from "react";
 import styled from "styled-components";
 const imgSrc = "./../assets/images/hotel_3.jpeg";
-// import imgSrc from "none";
+import {AuthContext} from '../components/providers/AuthenticationProvider.jsx';
+import {ApplicationContext} from '../components/providers/ApplicationProvider.jsx';
 import axios from "axios";
 
 const Container = styled.div`
@@ -133,12 +134,14 @@ const Suggest = styled.div`
 const ratingStrings = ['none', 'Poor', 'Fair', 'Good', 'Great', 'Excellent']
 
 export default function HotelCard({ HotelData, cityCode, checkInDate, checkOutDate, roomQuantity, adults, getNewSavedResult }) {
+  const authContext = useContext(AuthContext);
+  const appContext = useContext(ApplicationContext);
   const numOfNights = HotelData["numOfNights"];
 
   const save = function(isSuggested) {
     const hotelData = {
-      "trip_id": 1,
-      "user_id": 1,
+      "trip_id": appContext.selectedTrip.trip_id,
+      "user_id": authContext.user,
       "check_in_date": checkInDate,
       "check_out_date": checkOutDate,
       "room_quantity": roomQuantity,
