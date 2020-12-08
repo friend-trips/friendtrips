@@ -132,7 +132,7 @@ const Suggest = styled.div`
 
 const ratingStrings = ['none', 'Poor', 'Fair', 'Good', 'Great', 'Excellent']
 
-export default function HotelCard({ HotelData, cityCode, checkInDate, checkOutDate, roomQuantity, adultsm getNewSavedResult }) {
+export default function HotelCard({ HotelData, cityCode, checkInDate, checkOutDate, roomQuantity, adults, getNewSavedResult }) {
   const numOfNights = HotelData["numOfNights"];
 
   const save = function(isSuggested) {
@@ -179,7 +179,7 @@ export default function HotelCard({ HotelData, cityCode, checkInDate, checkOutDa
     })
       .then((data) => {
         console.log("Data from HotelCard.jsx ", data);
-        getNewSavedResult(data.data);
+        getNewSavedResult(data.data.rows[0]);
       })
       .catch(console.log)
   }
