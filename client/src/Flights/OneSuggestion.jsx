@@ -15,7 +15,7 @@ const Container = styled.div`
   padding: 10px;
   font-family: "cerapro-bold",sans-serif;
   position: relative;
-  background-color: #E6DBFF;
+  background-color: #FFFFFF;
 `;
 const Direction = styled.h1``;
 const FlightNumber = styled.span``;
