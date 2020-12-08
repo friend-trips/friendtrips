@@ -89,18 +89,27 @@ const Price = styled.div`
   grid-row: 1 / span 2;
   justify-self: center;
   font-family: "cerapro-bold",sans-serif;
-  font-weight: 500;
-  font-size: 20px;
   line-height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   width: 100%;
   position: relative;
 `;
+
+const Seats = styled.div`
+  vertical-align: middle;
+  display: inline-block;
+  font-weight: 500;
+  font-size: 14px;
+`;
+
 const Amount = styled.span`
   vertical-align: middle;
   display: inline-block;
+  font-size: 20px;
+  font-weight: 500;
 `;
 const Save = styled.button`
   color: #ff6666;
@@ -148,7 +157,7 @@ const Flights = ({ data, getNewSavedResult }) => {
   const save = function(isSuggested) {
     const flightData = {
       "meta": {
-        "trip_id": 2,
+        "trip_id": 1,
         "user_id": authContext.user,
         "adults": 1,
         "nonstop": "true",
@@ -169,8 +178,8 @@ const Flights = ({ data, getNewSavedResult }) => {
         "carrier_code": data.outgoingCarrierCode,
         "operating_carrier_code": data.outgoingOperatingCarrierCode,
         "class": data.outgoingClass,
-        "abbreviated_carrier_code": data.outgoingAbbreviatedCarrierCode
-
+        "abbreviated_carrier_code": data.outgoingAbbreviatedCarrierCode,
+        "num_of_seats": data.bookableSeats
       },
       "returning": {
         "duration": data.returnDuration,
@@ -184,7 +193,8 @@ const Flights = ({ data, getNewSavedResult }) => {
         "carrier_code": data.returnCarrierCode,
         "operating_carrier_code": data.returnOperatingCarrierCode,
         "class": data.returnClass,
-        "abbreviated_carrier_code": data.returnAbbreviatedCarrierCode
+        "abbreviated_carrier_code": data.returnAbbreviatedCarrierCode,
+        "num_of_seats": data.bookableSeats
       }
     }
 
@@ -197,8 +207,10 @@ const Flights = ({ data, getNewSavedResult }) => {
       header: {'Access-Control-Allow-Origin': '*'}
     })
       .then((data) => {
-        console.log(data,"data from flight.jsx");
-        getNewSavedResult(data.data);
+        console.log(data.data,"data from flight.jsx");
+        flightData.meta.suggestion_id = data.data.outgoing.suggestion_id
+        getNewSavedResult(flightData);
+
       })
       .catch(console.log)
   }
@@ -238,6 +250,7 @@ const Flights = ({ data, getNewSavedResult }) => {
       </Returning>
       <Price>
         <Amount>${data.totalPrice}</Amount>
+          <Seats>{data.bookableSeats} Seats Left</Seats>
         <Save onClick={() => save(false)}>
           <svg aria-hidden="true" role="presentation" focusable="false" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" className="sc-fzqzlV sc-fzqLLg kCMTKY"><path d="m16 28c7-4.733 14-10 14-17 0-1.792-.683-3.583-2.05-4.95-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05l-2.051 2.051-2.05-2.051c-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05-1.367 1.367-2.051 3.158-2.051 4.95 0 7 7 12.267 14 17z"></path></svg>
         </Save>

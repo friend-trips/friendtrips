@@ -4,6 +4,7 @@ import SearchResults from "./SearchResults.jsx";
 import Suggestions from "./Suggestions.jsx";
 import styled from "styled-components";
 import axios from 'axios';
+// import Itinerary from '../ItineraryBuilder/Itinerary.jsx';
 
 //entire screen
 const Container = styled.div`
@@ -58,7 +59,7 @@ class App extends React.Component {
   }
 
    getSavedResults() {
-    axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=2")
+    axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1")
 
       .then((data) => {
         let savedArray = [];

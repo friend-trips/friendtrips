@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { DragDropContext } from 'react-beautiful-dnd';
-
 import SuggestionList from './SuggestionList.jsx';
 import Itinerary from './Itinerary.jsx';
+import axios from 'axios';
 
 const Container = styled.div`
   display: flex;
@@ -12,22 +12,28 @@ const Container = styled.div`
 
 const App = () => {
 
-  const [flights, setFlights] = useState([
-    { id: 3, type: 'flight' },
-    { id: 2, type: 'flight' },
-    { id: 1, type: 'flight' }
-  ])
-
-  const [hotels, setHotels] = useState([
-    { id: 4, type: 'hotel' },
-    { id: 5, type: 'hotel' },
-    { id: 6, type: 'hotel' },
-    { id: 7, type: 'hotel' }
-  ])
-
-
+  const [flights, setFlights] = useState([])
+  const [hotels, setHotels] = useState([])
   const [selectedFlights, setSelectedFlights] = useState([]);
   const [selectedHotels, setSelectedHotels] = useState([]);
+
+  const getSavedResults = () => {
+    axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1")
+
+      .then((data) => {
+        console.log(data)
+        let savedArray = [];
+        for (let keys in data.data) {
+          savedArray.push(data.data[keys])
+        }
+        setFlights(savedArray)
+      })
+      .catch(console.log)
+   }
+
+   useEffect(() => {
+     getSavedResults()
+   }, [])
 
   const handleDragEnd = (dragEvent) => {
     let { destination, source } = dragEvent

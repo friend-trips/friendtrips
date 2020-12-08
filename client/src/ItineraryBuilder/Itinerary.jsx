@@ -1,24 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Droppable } from 'react-beautiful-dnd';
-import Suggestion from './Suggestion.jsx';
+import axios from 'axios';
+import ItinerarySuggestion from './ItinerarySuggestion.jsx';
+// import OneSuggestion from '../Flights/OneSuggestion.jsx'
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
-  width: 50%;
-  min-height: 100%;
+  width: 100%;
 `;
+
+// min-height: 100%;
 
 const DropZone = styled.ul`
   min-height: 20%;
   width: 90%;
   background-color: lightblue;
   list-style: none;
+  height: 300px;
+  overflow-y: scroll;
+  align-items: center;
 `
 
-const Itinerary = ({ flights, hotels }) => {
+const Itinerary = ({ flights, hotels}) => {
   return (
     <Container>
       Itinerary
@@ -30,16 +35,19 @@ const Itinerary = ({ flights, hotels }) => {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {flights.map((el, i) => (
-                <Suggestion data={el} index={i} />
+              {flights.map((data, index) => (
+                <ItinerarySuggestion data={data} index={index} />
               ))}
+              {/* {flights.map((el, i) => (
+                <Suggestion data={el} index={i} />
+              ))} */}
             </DropZone>
           )
         }}
       </Droppable>
 
       <h3>Hotels</h3>
-      <Droppable droppableId={'hotels'}>
+      {/* <Droppable droppableId={'hotels'}>
         {(provided) => {
           return (
             <DropZone
@@ -47,13 +55,13 @@ const Itinerary = ({ flights, hotels }) => {
               {...provided.droppableProps}
             >
               {hotels.map((el, i) => (
-                <Suggestion data={el} index={i} />
+                <ItinerarySuggestion data={el} index={i} />
               ))}
               {provided.placeholder}
             </DropZone>
           )
         }}
-      </Droppable>
+      </Droppable> */}
     </Container>
   );
 };

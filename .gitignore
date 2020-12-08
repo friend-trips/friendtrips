@@ -3,3 +3,4 @@
 *.config.*
 /configs
 public/bundle.js
+bundle.js
