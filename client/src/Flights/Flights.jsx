@@ -13,10 +13,12 @@ const Container = styled.div`
   padding: .5%;
 `
 const Content = styled.div`
-  border: solid 3px;
+  border: solid 1px;
+  border-radius: 10px;
   display: flex;
-  height: 89%;
+  height: 80%;
   justify-content: space-between;
+  background-color: #E6DBFF;
 `;
 //^^ height will control size of the bottom section
 // form height and content should add up to equal 1--%
@@ -54,10 +56,10 @@ class App extends React.Component {
   getNewSavedResult(result) {
     let newSavedArray = [];
     newSavedArray.push(result)
-    this.setState({savedResults: [...this.state.savedResults, newSavedArray[0]]});
+    this.setState({ savedResults: [...this.state.savedResults, newSavedArray[0]] });
   }
 
-   getSavedResults() {
+  getSavedResults() {
     axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=2")
 
       .then((data) => {
@@ -80,7 +82,7 @@ class App extends React.Component {
         })
       })
       .catch(console.log)
-   }
+  }
 
   componentDidMount() {
     this.getSavedResults();
@@ -91,9 +93,8 @@ class App extends React.Component {
       <Container>
         <FlightForm displaySearchFeed={this.displaySearchFeed} />
         <Content>
-          {this.state.searchResults.length > 0 ? (
-            <SearchResults searchResults={this.state.searchResults} getNewSavedResult={this.getNewSavedResult}/>
-          ) : <PreSearchResults />}
+
+          <SearchResults searchResults={this.state.searchResults} getNewSavedResult={this.getNewSavedResult} />
           <Suggestions savedResults={this.state.savedResults} />
         </Content>
       </Container>

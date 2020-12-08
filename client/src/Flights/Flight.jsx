@@ -14,6 +14,7 @@ const Container = styled.div`
   height: 150px;
   width: 97%;
   padding: 10px;
+  background-color: #FFFFFF;
 `;
 const Direction = styled.h1``;
 const FlightNumber = styled.span``;

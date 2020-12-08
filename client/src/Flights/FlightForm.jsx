@@ -14,18 +14,21 @@ var amadeus = new Amadeus({
 
 const Container = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: space-evenly;
   flex-direction: column;
-  height: 8%;
-
-  margin-bottom: 5%;
-  margin-top: 2%;
+  height: 18%;
+  border: 1px solid black;
+  border-radius: 10px;
 `;
 
 const StyledTopRow = styled.div`
   display: flex;
-  margin-left: 33em;
-  margin-top: 0.5em;
-  margin-bottom: 0.4em;
+  align-items: center;
+  justify-content: center;
+  // margin-left: 33em;
+  // margin-top: 0.5em;
+  // margin-bottom: 0.4em;
 `;
 //  -webkit-appearance: none;
 
