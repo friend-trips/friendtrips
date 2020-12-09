@@ -72,7 +72,7 @@ let hotels = [];
 let MessageController = require('./controllers/chatController.js');
 
 let myMessageController = new MessageController();
-myMessageController.initialize(2)
+myMessageController.initialize(1)
   .then((res)=>{
     console.log('Message Controller Initialized')
   })

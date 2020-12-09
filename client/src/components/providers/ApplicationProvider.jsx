@@ -12,6 +12,7 @@ const ApplicationProvider = (props) => {
     await axios.get('https://morning-bayou-59969.herokuapp.com/trips')
       .then((result) => {
         const trips = result.data;
+        console.log(trips);
         if (!selectedTrip) {
           setTripList(trips);
           setSelectedTrip(result.data[0]);

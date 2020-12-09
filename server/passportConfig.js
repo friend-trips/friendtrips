@@ -6,7 +6,7 @@ const ENV = require('../configs/environment.config.js')
 module.exports = function (passport) {
   passport.use(
     new localStrategy((username, password, done) => {
-      console.log('begin verification')
+      console.log('begin verification', username, password)
       //grab matching user record from the database
       axios({
         method: 'get',

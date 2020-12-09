@@ -25,6 +25,7 @@ router.use('/', (req, res, next) => {
 
 router.post("/register", (req, res) => {
   let fieldToSearch = (req.body.username) ? {username: req.body.username} : {email: req.body.email};
+  console.log(fieldToSearch);
   axios({
     method: 'get',
     url: ENV.AUTH_ROUTE,
@@ -39,12 +40,14 @@ router.post("/register", (req, res) => {
         const newUser = {
           username: req.body.username,
           password: hashedPassword,
-          email: req.body.email
+          email: req.body.email,
+          trip_id: 1
         };
         console.log('NEW USER', newUser);
         //send new user with hashed password to the database
         axios.post(ENV.USER_ROUTE, newUser)
           .then((result) => {
+            console.log('CERATED USER HERE IS THE RESULT', result)
             res.cookie('user_id', result.data.user_id).status(201).send('Successfully Registered!');
           })
           .catch((err) => {

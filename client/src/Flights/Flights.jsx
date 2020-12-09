@@ -30,7 +30,6 @@ const Content = styled.div`
 class App extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       searchResults: [],
       savedResults: [],
@@ -65,7 +64,7 @@ class App extends React.Component {
   }
 
   getSavedResults() {
-    axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=2")
+    axios.get(`http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1`)
 
       .then((data) => {
         let savedArray = [];
