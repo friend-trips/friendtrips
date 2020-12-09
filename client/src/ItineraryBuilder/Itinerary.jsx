@@ -51,14 +51,14 @@ const DropZone = styled.ul`
   align-items: center;
 `
 
-const Itinerary = ({ itemsToDisplay }) => {
+const Itinerary = ({ itemsToDisplay, postSavedItinerary }) => {
 
   return (
     <Container>
       <Header>
         <H3>Itinerary Builder</H3>
       </Header>
-      <Subheader><Button onClick={() => { console.log('click') }}>Save Itinerary</Button></Subheader>
+      <Subheader><Button onClick={() => { postSavedItinerary()}}>Save Itinerary</Button></Subheader>
       <Droppable droppableId={'itinerary'}>
         {(provided) => {
           return (

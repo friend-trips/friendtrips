@@ -29,6 +29,8 @@ const App = () => {
   const [hotels, setHotels] = useState([])
   //list of items to display
   const [displayedItems, setDisplayedItems] = useState([]);
+  const [savedItems, setSavedItems] = useState([])
+  // const [suggestedIds, setSuggestedIds] = useState({})
 
   const appContext = useContext(ApplicationContext)
   // const [selectedFlights, setSelectedFlights] = useState([]);
@@ -75,8 +77,42 @@ const App = () => {
 
   useEffect(() => {
     getSavedFlightResults();
-    getSavedHotelResults()
+    getSavedHotelResults();
+    getSavedItinerary();
+    getSavedItineraryList()
   }, [])
+
+  const postSavedItinerary = async () => {
+    let itineraryObj = {};
+    itineraryObj.itinerary_id = 3;
+    if (displayedItems) {
+      for (let i = 0; i < displayedItems.length; i++) {
+        if (displayedItems[i].meta) {
+          itineraryObj.suggestion_id = displayedItems[i].meta.suggestion_id
+        } else {
+          itineraryObj.suggestion_id = displayedItems[i].suggestion_id;
+        }
+      }
+    }
+    console.log(itineraryObj, "itineraryobj")
+    // const itineraryData =  {...displayedItems};
+
+    await axios.post(`http://morning-bayou-59969.herokuapp.com/api/itinerary`, itineraryObj)
+      .then((response) => {
+        console.log("saved in db", response)
+      })
+      .catch(console.log)
+  }
+
+
+  const getSavedItineraryList = async () => {
+    await axios.get(`http://morning-bayou-59969.herokuapp.com/api/itinerary/?itinerary_id=${appContext.selectedTrip.itinerary_id}&trip_id=${appContext.selected.trip_id}`)
+      .then(({ data }) => {
+        setSavedItems(data)
+      })
+      .catch(console.log)
+  }
+
 
   //when drag ends, this function will be run with a dragEvent (referencing the item that you dragged)
   const handleDragEnd = (dragEvent) => {
@@ -127,7 +163,7 @@ const App = () => {
       <DragDropContext onDragEnd={handleDragEnd}>
         <Section>
           {/* <button onClick={()=>{console.log('click')}}>Save Itinerary</button> */}
-          <Itinerary itemsToDisplay={displayedItems} />
+          <Itinerary itemsToDisplay={displayedItems} postSavedItinerary={postSavedItinerary}/>
           <SuggestionList flights={flights} hotels={hotels} getSavedItinerary={getSavedItinerary}/>
         </Section>
       </DragDropContext>
