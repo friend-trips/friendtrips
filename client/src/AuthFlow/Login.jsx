@@ -87,11 +87,16 @@ const P = styled.p`
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [hidden, setHidden] = useState(true)
   const authContext = useContext(AuthContext);
   const handleSubmit = (event) => {
     event.preventDefault();
     let attemptedLogin = { username, password };
     authContext.signIn(attemptedLogin);
+  }
+
+  const hidePassword = () => {
+    setHidden(!hidden)
   }
 
   return (
@@ -108,7 +113,7 @@ const Login = () => {
             </Field>
             <Field>
               <Label>Password</Label>
-              <Input value={password} onChange={(e) => { setPassword(e.target.value) }} placeholder='Password' />
+              <Input value={password} onChange={(e) => { setPassword(e.target.value)}} type={hidden ? 'password' : 'text'} placeholder='Password' />
             </Field>
             <Button type="submit">Sign In</Button>
             <P>Don't have an account? <Link to='/signup'>Sign Up</Link> </P>
