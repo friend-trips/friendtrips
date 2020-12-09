@@ -66,7 +66,7 @@ export default class App extends React.Component {
       adults: 1,
       upvotes: [],
       downvotes: [],
-      savedResults: []
+      savedResults: [],
     };
     this.setSearchFeed = this.setSearchFeed.bind(this);
     this.filterData = this.filterData.bind(this);
@@ -115,8 +115,12 @@ export default class App extends React.Component {
             )
         )
       );
-      filteredResult["numOfNights"] = calculateNumberOfNights(this.state.checkInDate, this.state.checkOutDate);
-      filteredResult["milesFromCenter"] = result["hotel"]["hotelDistance"]["distance"];
+      filteredResult["numOfNights"] = calculateNumberOfNights(
+        this.state.checkInDate,
+        this.state.checkOutDate
+      );
+      filteredResult["milesFromCenter"] =
+        result["hotel"]["hotelDistance"]["distance"];
       return filteredResult;
     });
 
@@ -137,9 +141,6 @@ export default class App extends React.Component {
     // the below are old comments. we are sending roomQuantity and adult fields to the api
     // for the demo, we are not sending the roomQuantity or adult fields to the api since most hotels do not have offers during this time.
     // instead, we will calculate the price based on the searchBar inputs and calculate price manually
-    console.log(cityCode);
-    console.log(checkInDate);
-    console.log(checkOutDate);
     amadeus.shopping.hotelOffers
       .get({
         cityCode: cityCode,
@@ -148,7 +149,7 @@ export default class App extends React.Component {
         radius: "15",
         radiusUnit: "MILE",
         includeClosed: "true",
-        currency: "USD"
+        currency: "USD",
       })
       .then(function (response) {
         console.log(response.data);
@@ -161,24 +162,27 @@ export default class App extends React.Component {
 
   getNewSavedResult(result) {
     let newSavedArray = [];
-    newSavedArray.push(result)
-    this.setState({savedResults: [...this.state.savedResults, newSavedArray[0]]});
+    newSavedArray.push(result);
+    this.setState({
+      savedResults: [...this.state.savedResults, newSavedArray[0]],
+    });
   }
 
   getSavedResults() {
-    axios.get("http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1")
-      .then(({data}) => {
+    axios
+      .get("http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1")
+      .then(({ data }) => {
         let savedArray = [];
-        console.log("data ", data)
+        console.log("data ", data);
         for (let keys in data) {
-          savedArray.push(data[keys])
+          savedArray.push(data[keys]);
         }
         console.log("savedArray", savedArray);
         this.setState({
-          savedResults: savedArray
-        })
+          savedResults: savedArray,
+        });
       })
-      .catch(console.log)
+      .catch(console.log);
   }
 
   componentDidMount() {
@@ -189,7 +193,16 @@ export default class App extends React.Component {
     return (
       <Wrapper>
         <SearchBar searchForHotels={this.searchForHotels} />
-        <HotelPageContent searchResults={this.state.searchResults} savedResults={this.state.savedResults} cityCode={this.state.cityCode} checkInDate={this.state.checkInDate} checkOutDate={this.state.checkOutDate} roomQuantity={this.state.roomQuantity} adults={this.state.adults} getNewSavedResult={this.getNewSavedResult}/>
+        <HotelPageContent
+          searchResults={this.state.searchResults}
+          savedResults={this.state.savedResults}
+          cityCode={this.state.cityCode}
+          checkInDate={this.state.checkInDate}
+          checkOutDate={this.state.checkOutDate}
+          roomQuantity={this.state.roomQuantity}
+          adults={this.state.adults}
+          getNewSavedResult={this.getNewSavedResult}
+        />
       </Wrapper>
     );
   }
