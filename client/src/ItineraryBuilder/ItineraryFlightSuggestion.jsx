@@ -198,7 +198,7 @@ const ItineraryFlightSuggestion = ({ data, index }) => {
 
   let { outgoing, returning, meta } = data;
   return (
-    <Draggable key={`draggable-${meta.suggestion_id}`} index={index} draggableId={meta.suggestion_id.toString()}>
+    <Draggable key={`draggable-${meta.suggestion_id}`} index={index} draggableId={meta.suggestion_id}>
       {(provided, snapshot) => {
         return (
           <Container

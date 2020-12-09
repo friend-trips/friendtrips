@@ -86,7 +86,7 @@ const SuggestionList = ({ flights, hotels, getSavedItinerary }) => {
               <List
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                style={{ backgroundColor: 'transparent', border: '1px solid black' }}
+                style={{border: '1px solid black' }}
                 className={'droppable-col'}
               >
                 {flights.map((row, ind) => (
@@ -106,7 +106,7 @@ const SuggestionList = ({ flights, hotels, getSavedItinerary }) => {
               <List
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                style={{ backgroundColor: 'transparent', border: '1px solid black' }}
+                style={{border: '1px solid black' }}
                 className={'droppable-col'}
               >
                 {hotels.map((row, ind) => (
