@@ -1,11 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { DragDropContext } from 'react-beautiful-dnd';
 import SuggestionList from './SuggestionList.jsx';
 import Itinerary from './Itinerary.jsx';
 import axios from 'axios';
+import { ApplicationContext } from '../components/providers/ApplicationProvider.jsx'
 
 const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+  width: 100%;
+`;
+
+const Section = styled.section`
   display: flex;
   flex-direction: row;
   position: absolute;
@@ -21,11 +30,12 @@ const App = () => {
   //list of items to display
   const [displayedItems, setDisplayedItems] = useState([]);
 
+  const appContext = useContext(ApplicationContext)
   // const [selectedFlights, setSelectedFlights] = useState([]);
   // const [selectedHotels, setSelectedHotels] = useState([]);
 
   const getSavedFlightResults = async () => {
-    await axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1")
+    await axios.get(`http://morning-bayou-59969.herokuapp.com/flights/?trip_id=${appContext.selectedTrip.trip_id}`)
       .then((data) => {
         console.log(data)
         let savedArray = [];
@@ -39,15 +49,26 @@ const App = () => {
   }
 
   const getSavedHotelResults = async () => {
-    await axios.get("http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1")
+    await axios.get(`http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=${appContext.selectedTrip.trip_id}`)
       .then(({ data }) => {
         let savedArray = [];
-        console.log("data ", data)
         for (let keys in data) {
           savedArray.push(data[keys])
         }
         console.log(savedArray, "hotels saved array")
         setHotels(savedArray)
+      })
+      .catch(console.log)
+  }
+
+  const getSavedItinerary = async (e) => {
+    console.log('searchedFor', e.target.value)
+    e.preventDefault();
+    await axios.get(`http://morning-bayou-59969.herokuapp.com/api/itinerary/?itinerary_id=${e.target.value}&trip_id=${appContext.selectedTrip.trip_id}`)
+      .then(({ data }) => {
+        let { flights, hotels } = data;
+        let itineraryToDisplay = flights.concat(hotels);
+        setDisplayedItems(itineraryToDisplay);
       })
       .catch(console.log)
   }
@@ -87,7 +108,6 @@ const App = () => {
       let currentDisplayedItems = displayedItems;
       currentDisplayedItems.splice(destination.index, 0, itemWeDropped)
       setDisplayedItems(currentDisplayedItems);
-      console.log(currentDisplayedItems);
     }
 
     //handle reordering
@@ -96,17 +116,23 @@ const App = () => {
       let itemsToDisplay = displayedItems;
       itemsToDisplay.splice(source.index, 1);
       itemsToDisplay.splice(destination.index, 0, itemYouAreHolding);
+      itemsToDisplay = itemsToDisplay.filter((item) => item);
       setDisplayedItems(itemsToDisplay);
     }
   }
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <Container>
-        <Itinerary itemsToDisplay={displayedItems} />
-        <SuggestionList flights={flights} hotels={hotels} />
-      </Container>
-    </DragDropContext>
+
+    <Container>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Section>
+          {/* <button onClick={()=>{console.log('click')}}>Save Itinerary</button> */}
+          <Itinerary itemsToDisplay={displayedItems} />
+          <SuggestionList flights={flights} hotels={hotels} getSavedItinerary={getSavedItinerary}/>
+        </Section>
+      </DragDropContext>
+    </Container>
+
   )
 }
 

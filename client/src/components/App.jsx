@@ -41,8 +41,12 @@ const App = () => {
         data: attemptedLogin
       })
         .then((response) => {
-          console.log('USER LOGGED IN', response.data)
-          setUser(document.cookie.slice(document.cookie.indexOf('=') + 1));
+          console.log('USER LOGGED IN', response.data);
+          if (typeof document.cookie.slice(document.cookie.indexOf('=') + 1) === 'string') {
+            setUser(Number(document.cookie.slice(document.cookie.indexOf('=') + 1)))
+          } else {
+            setUser(document.cookie.slice(document.cookie.indexOf('=') + 1));
+          }
           setUsername(response.data)
         })
         .catch((err) => {

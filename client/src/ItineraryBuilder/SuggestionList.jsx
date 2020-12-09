@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { Droppable } from 'react-beautiful-dnd';
 import ItineraryFlightSuggestion from './ItineraryFlightSuggestion.jsx';
 import ItineraryHotelSuggestion from './ItineraryHotelSuggestion.jsx';
+import { ApplicationContext } from '../components/providers/ApplicationProvider.jsx'
 
 const Container = styled.div`
   display: flex;
+  height: 90%;
   flex-direction: column;
   position: relative;
+  width: 34%;
 `;
 
 const Header = styled.header`
@@ -22,6 +25,15 @@ const H3 = styled.h3`
   margin: 0;
   padding: 0;
 `;
+const Subheader = styled.div`
+  width: 100%;
+  min-height: 2.5%;
+`;
+const Select = styled.select`
+  margin:0;
+  padding: 0;
+  width: 100%;
+`
 
 const FlightContainer = styled.div`
   display: flex;
@@ -51,13 +63,21 @@ const List = styled.ul`
   overflow-y: scroll;
 `;
 
-const SuggestionList = ({ flights, hotels }) => {
+const SuggestionList = ({ flights, hotels, getSavedItinerary }) => {
+  const appContext = useContext(ApplicationContext);
   return (
     <Container>
       <Header>
         <H3>Group Suggestions</H3>
       </Header>
+      <Subheader>
+          <Select onChange={(e) => { console.log('clik'); getSavedItinerary(e) }} value={appContext.selectedTrip.trip_id}>
+            <option value={1}> 1 </option>
+            <option value={2}> 2 </option>
+            <option value={3}> 3 </option>
+          </Select>
 
+      </Subheader>
       <FlightContainer>
         <h3>Flights</h3>
         <Droppable droppableId={'flightItems'}>

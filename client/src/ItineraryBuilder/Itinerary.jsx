@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { Droppable } from 'react-beautiful-dnd';
+
 import axios from 'axios';
 import ItineraryFlightSuggestion from './ItineraryFlightSuggestion.jsx';
 import ItineraryHotelSuggestion from './ItineraryHotelSuggestion.jsx';
 
 const Container = styled.div`
+  height: 90%;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 66%;
   position: relative;
 `;
 
@@ -20,6 +22,15 @@ const Header = styled.header`
   align-items: center;
   justify-content: center;
 `;
+const Subheader = styled.div`
+  width: 100%;
+  min-height: 2.5%;
+  border-bottom: 1px solid black;
+`
+const Button = styled.button`
+  margin: 0;
+  padding: 0;
+`;
 
 const H3 = styled.h3`
   margin: 0;
@@ -29,7 +40,7 @@ const H3 = styled.h3`
 const DropZone = styled.ul`
   position: relative;
   min-height: 20%;
-  width: 100%;
+  width: 90%;
   margin-left: 1%;
   margin-right: 1%;
   // background-color: lightblue;
@@ -40,13 +51,14 @@ const DropZone = styled.ul`
   align-items: center;
 `
 
-const Itinerary = ({itemsToDisplay }) => {
+const Itinerary = ({ itemsToDisplay }) => {
+
   return (
     <Container>
       <Header>
         <H3>Itinerary Builder</H3>
       </Header>
-
+      <Subheader><Button onClick={() => { console.log('click') }}>Save Itinerary</Button></Subheader>
       <Droppable droppableId={'itinerary'}>
         {(provided) => {
           return (
@@ -55,10 +67,12 @@ const Itinerary = ({itemsToDisplay }) => {
               {...provided.droppableProps}
             >
               {itemsToDisplay ? itemsToDisplay.map((data, index) => {
-                if (data.meta) {
-                  return (<ItineraryFlightSuggestion data={data} index={index} />)
-                } else {
-                  return (<ItineraryHotelSuggestion data={data} index={index} />)
+                if (data) {
+                  if (data.meta) {
+                    return (<ItineraryFlightSuggestion data={data} index={index} />)
+                  } else {
+                    return (<ItineraryHotelSuggestion data={data} index={index} />)
+                  }
                 }
               }) : null}
             </DropZone>
