@@ -1,23 +1,16 @@
 # Friendtrips
 
 ### About Friendtrips
-Application
+Travel days are more fun with a friend. Use the Flights tab to search for the perfect route and
+suggest it to the group. Vote for routes that work for you.
 
-### Things to do
-[] Remove unnecessary console.logs()
-[] Add Global Styling\
-[] Add Hotels component\
-[] Add updates from Flight components\
-[] Figure out why leaving comments breaks the chat
-  - Current hypothesis: after the comment is successfully posted, the entire messages list is refreshed (this expected behavior).  However, refreshing the list of messages seems to be remouting the component (or something like that) and thus 'wiping' the thread state (meaning that the new comment is trying to be mounted without a 'parent' message to attach to -- a react no-go that crashes the app).\
-[] Finish Itinerary Builder\
-[] Create Suggestions modal\
-[] Refactor imported components (Flights, hotels, ItinBuilder etc) to grant access to user variables through AuthContext\
-[] Create Trip selector drop down for the Navbar\
-[] Create Login and Signup components\
-[] Create Splash page\
-[] Testing (lol)
+A perfect place to stay can make or break your trip. Use the Hotels tab to search for the ideal hotel and suggest it to the group. Use the distance from the city center and the rating to inform your decision about what to suggest. Vote for the hotel suggestion that you like the best.
+
+Build your own itinerary using any of the suggestions that have been made by the group. Find and view each trip member’s individual itinerary in the “Itinerary Builder” tab. Work together to create a master itinerary that will form the backbone of your trip!
 
 
-### Tech Debt
-[] server/index.js is a mess because of the socket.io stuff -- would be nice if this could all live in middleware but I haven't figured out how to do that yet\
+### How to Start this Application
+```
+npm install
+npm start
+```

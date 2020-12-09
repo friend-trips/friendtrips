@@ -97,23 +97,17 @@ class ChatController {
   }
 
   createFeed() {
-    let copyOfFlights = Object.values(this.flights).sort((a, b) => {
-      return (Number(a.meta.time_created) - Number(b.meta.time_created))
-    });
-    let copyOfMessages = Object.values(this.messages).sort((a, b) => {
-      return (Number(a.timestamp) - Number(b.timestamp))
-    });
-    let copyOfHotels = Object.values(this.hotels).sort((a, b) => {
-      return (Number(a.time_created) - Number(b.time_created))
-    });
+    let flights = Object.values(this.flights).sort((a, b) => a.meta.time_created - b.meta.time_created)
+    let hotels = Object.values(this.hotels).sort((a, b) => a.time_created - b.time_created)
+    let messages = Object.values(this.messages).sort((a, b) => a.timestamp - b.timestamp)
 
-    let res = [copyOfMessages, copyOfFlights, copyOfHotels]
+    let res = [messages, flights, hotels]
     .flat()
     .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
     res.forEach((element) => {
+      console.log(element.type)
       if (this.feed[element.timestamp] !== undefined) {
-        // use moment to incremenet timestamp by 1 ms/s/min/hour/day/etc
         let newTime = (Number(element.timestamp) + 1).toString();
         while (this.feed[newTime]) {
           newTime = (Number(newTime) + 1).toString()
@@ -123,7 +117,7 @@ class ChatController {
         this.feed[element.timestamp] = element;
       }
     });
-    console.log(this.feed);
+    // console.log(this.feed);
   }
 
   mergeFlights() {
