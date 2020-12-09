@@ -8,8 +8,6 @@ const Container = styled.li`
   margin: 0;
 `;
 
-// margin: 0;
-//   padding: 0;
 const FlightContainer = styled.span`
   display: grid;
   grid-template-columns: 75% 25%;
