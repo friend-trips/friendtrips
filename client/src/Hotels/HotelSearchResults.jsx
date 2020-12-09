@@ -28,7 +28,12 @@ const Header = styled.header`
   text-align: center;
   border-bottom: .5px solid black;
 `;
-
+const Loader = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 50%
+`;
 
 // display: grid;
 
@@ -36,6 +41,7 @@ export default function SearchResults(props) {
   return (
     <Container>
       <Header>Search Results</Header>
+      {props.isLoading ? <Loader><img src={`./assets/loadingwheel.gif`}></img></Loader> : null}
       {/* <FeedContainer> */}
         {props.searchResults
           ? props.searchResults.map((data, index) => {

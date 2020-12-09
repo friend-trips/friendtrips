@@ -67,17 +67,26 @@ export default class App extends React.Component {
       upvotes: [],
       downvotes: [],
       savedResults: [],
+      loading: false
     };
     this.setSearchFeed = this.setSearchFeed.bind(this);
     this.filterData = this.filterData.bind(this);
     this.searchForHotels = this.searchForHotels.bind(this);
     this.getSavedResults = this.getSavedResults.bind(this);
     this.getNewSavedResult = this.getNewSavedResult.bind(this);
+    this.displayLoadingWheel = this.displayLoadingWheel.bind(this);
   }
 
   setSearchFeed(data) {
     this.setState({
       searchResults: data,
+      loading: false
+    });
+  }
+
+  displayLoadingWheel() {
+    this.setState({
+      loading: true
     });
   }
 
@@ -192,7 +201,7 @@ export default class App extends React.Component {
   render() {
     return (
       <Wrapper>
-        <SearchBar searchForHotels={this.searchForHotels} />
+        <SearchBar searchForHotels={this.searchForHotels} displayLoadingWheel={this.displayLoadingWheel}/>
         <HotelPageContent
           searchResults={this.state.searchResults}
           savedResults={this.state.savedResults}
@@ -201,7 +210,7 @@ export default class App extends React.Component {
           checkOutDate={this.state.checkOutDate}
           roomQuantity={this.state.roomQuantity}
           adults={this.state.adults}
-          getNewSavedResult={this.getNewSavedResult}
+          getNewSavedResult={this.getNewSavedResult} isLoading={this.state.loading}
         />
       </Wrapper>
     );
