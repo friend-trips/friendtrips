@@ -78,9 +78,9 @@ const App = () => {
         itemWeDropped = remainingFlightSuggestions.splice(source.index, 1)[0];
         setFlights(remainingFlightSuggestions);
       }
-      if (source.droppableId === 'hotelItems') {
+      if (source.droppableId === 'hotelItems')  {
         let remainingHotelSuggestions = hotels;
-        itemWeDropped = remainingHotelSuggestions.splice(source.index, 1);
+        itemWeDropped = remainingHotelSuggestions.splice(source.index, 1)[0];
         setHotels(remainingHotelSuggestions);
       }
       //...then add the item to the list of selected/displayed items

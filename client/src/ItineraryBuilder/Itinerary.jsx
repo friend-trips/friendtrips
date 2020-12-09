@@ -40,7 +40,7 @@ const DropZone = styled.ul`
   align-items: center;
 `
 
-const Itinerary = ({itemsToDisplay }) => {
+const Itinerary = ({itemsToDisplay}) => {
   return (
     <Container>
       <Header>
@@ -54,13 +54,35 @@ const Itinerary = ({itemsToDisplay }) => {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
+{/*
+              {hotels.map((data, index) => (
+                <ItinerarySuggestion data={data} index={index} />
+              ))} */}
+
               {itemsToDisplay ? itemsToDisplay.map((data, index) => {
-                if (data.meta) {
-                  return (<ItineraryFlightSuggestion data={data} index={index} />)
-                } else {
-                  return (<ItineraryHotelSuggestion data={data} index={index} />)
+                if (data.username) {
+                  console.log("data from hotels itinerary", data)
+                  return
+                  (<ItineraryHotelSuggestion data={data} index={index} />)
+                }  else if (data.meta) {
+                  console.log("data from flights itinerary", data)
+                  return
+                  (<ItineraryFlightSuggestion data={data} index={index} />)
+
                 }
-              }) : null}
+              }) : console.log("test")}
+
+              {/* {itemsToDisplay ? itemsToDisplay.map((data, index) => {
+                if (data.username) {
+                  return (<ItineraryHotelSuggestion data={data} index={index} />)
+                  // // meta) {
+                  // return (<ItineraryFlightSuggestion data={data} index={index} />)
+                } if (data.meta) {
+                  return (<ItineraryFlightSuggestion data={data} index={index} />)
+
+                  // return (<ItineraryHotelSuggestion data={data} index={index} />)
+                }
+              }) : null} */}
             </DropZone>
           )
         }}

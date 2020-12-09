@@ -8,19 +8,18 @@ const Container = styled.li`
   margin: 0;
 `;
 
-const HotelContainer = styled.div`
+const HotelContainer = styled.span`
   display: grid;
   grid-template-columns: 75% 25%;
   grid-template-rows: 1fr 1fr;
   border: solid 1px;
   border-radius: 7px;
-  // margin-bottom: 20px;
   height: 75px;
   width: 97%;
   padding: 10px;
   font-family: "cerapro-bold",sans-serif;
   position: relative
-  background-color: ##E6DBFF;
+  background-color: #bedbbb;
 `;
 
 const User = styled.span`
