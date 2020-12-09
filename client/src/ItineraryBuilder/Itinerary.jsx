@@ -54,25 +54,7 @@ const Itinerary = ({itemsToDisplay}) => {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-{/*
-              {hotels.map((data, index) => (
-                <ItinerarySuggestion data={data} index={index} />
-              ))} */}
-
               {itemsToDisplay ? itemsToDisplay.map((data, index) => {
-                if (data.username) {
-                  console.log("data from hotels itinerary", data)
-                  return
-                  (<ItineraryHotelSuggestion data={data} index={index} />)
-                }  else if (data.meta) {
-                  console.log("data from flights itinerary", data)
-                  return
-                  (<ItineraryFlightSuggestion data={data} index={index} />)
-
-                }
-              }) : console.log("test")}
-
-              {/* {itemsToDisplay ? itemsToDisplay.map((data, index) => {
                 if (data.username) {
                   return (<ItineraryHotelSuggestion data={data} index={index} />)
                   // // meta) {
@@ -82,7 +64,7 @@ const Itinerary = ({itemsToDisplay}) => {
 
                   // return (<ItineraryHotelSuggestion data={data} index={index} />)
                 }
-              }) : null} */}
+              }) : null}
             </DropZone>
           )
         }}

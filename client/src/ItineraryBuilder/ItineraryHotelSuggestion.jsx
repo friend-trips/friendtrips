@@ -18,7 +18,7 @@ const HotelContainer = styled.span`
   width: 97%;
   padding: 10px;
   font-family: "cerapro-bold",sans-serif;
-  position: relative
+  position: relative;
   background-color: #bedbbb;
 `;
 
