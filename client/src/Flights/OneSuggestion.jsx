@@ -193,54 +193,64 @@ const DownvoteTotals = styled.span`
 `;
 
 const OneSuggestion = ({ data }) => {
+  console.log('This is the data for a single saved flight suggestion ', data);
   let {outgoing, returning, meta} = data;
 
   const [upvotes, setUpvotes] = useState(0);
   const [downvotes, setDownvotes] = useState(0);
+  const [upvoteNames, setUpvoteNames] = useState([]);
+  const [downvoteNames, setDownvoteNames] = useState([]);
   useEffect(() => {
     if (meta.upvote_names) {
-      setUpvotes(meta.upvote_names.length)
+      setUpvotes(meta.upvote_names.length);
+      setUpvoteNames(meta.upvote_names);
     }
     if (meta.downvote_names) {
-      setDownvotes(meta.downvote_names.length)
+      setDownvotes(meta.downvote_names.length);
+      setDownvoteNames(meta.downvote_names);
     }
   }, [])
 
   const upvote = function() {
-    console.log(meta.suggestion_id, "meta suggestion id");
-    axios({
-      method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
-      header: {'Access-Control-Allow-Origin': '*'},
-      data: {
-        "type": "+",
-        "user_id": meta.user_id,
-        "suggestion_id": meta.suggestion_id,
-        "trip_id": 1,
-      }
-    })
-      .then(() => {
-        setUpvotes(upvotes + 1);
+    if (upvoteNames.indexOf(meta.username) === -1) {
+      setUpvoteNames(upvoteNames => [...upvoteNames, meta.username]);
+      axios({
+        method: 'post',
+        url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+        header: {'Access-Control-Allow-Origin': '*'},
+        data: {
+          "type": "+",
+          "user_id": meta.user_id,
+          "suggestion_id": meta.suggestion_id,
+          "trip_id": 1,
+        }
       })
-      .catch(console.log)
+        .then(() => {
+          setUpvotes(upvotes + 1);
+        })
+        .catch(console.log)
+    }
   }
 
   const downvote = function() {
-    axios({
-      method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
-      header: {'Access-Control-Allow-Origin': '*'},
-      data: {
-        "type": "-",
-        "user_id": meta.user_id,
-        "suggestion_id": meta.suggestion_id,
-        "trip_id": 1
-      }
-    })
-      .then(() => {
-        setDownvotes(downvotes + 1);
+    if (downvoteNames.indexOf(meta.username) === -1) {
+      setDownvoteNames(downvoteNames => [...downvoteNames, meta.username]);
+      axios({
+        method: 'post',
+        url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+        header: {'Access-Control-Allow-Origin': '*'},
+        data: {
+          "type": "-",
+          "user_id": meta.user_id,
+          "suggestion_id": meta.suggestion_id,
+          "trip_id": 1
+        }
       })
-      .catch(console.log)
+        .then(() => {
+          setDownvotes(downvotes + 1);
+        })
+        .catch(console.log)
+    }
   }
 
   return (
