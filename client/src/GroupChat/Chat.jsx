@@ -207,10 +207,13 @@ const Chat = () => {
       <ChatWindow>
         <ChatHeader>Chat!</ChatHeader>
         {(chatMessages) ? chatMessages.map((group, i) => {
+          console.log('group.type', group.type)
           if (group.type === 'flight') {
             return <Suggestion data={group}/>
           } else if (group.type === 'message') {
             return <MessageGroup group={group} ></MessageGroup>
+          } else if (group.type === 'hotel') {
+            return <Suggestion data={group}/>
           }
         }) : <h1>Loading...</h1>}
         <div ref={messagesEndRef} />

@@ -24,14 +24,20 @@ const ApplicationProvider = (props) => {
         console.log('couldnt get trips from server', err)
       })
   }
-
-
   useEffect(() => {
     getTrips()
   }, [])
 
+  const updateTripList = (trip_id) => {
+    for (let i = 0; i <= tripList.length - 1; i++) {
+      if (tripList[i].id === trip_id) {
+        setSelectedTrip(tripList[i]);
+      }
+    }
+  }
+
   return (
-    <ApplicationContext.Provider value={{ tripList, selectedTrip, loading, setSelectedTrip, getTrips }}>
+    <ApplicationContext.Provider value={{ tripList, selectedTrip, loading, updateTripList, getTrips }}>
       {props.children}
     </ApplicationContext.Provider>
   )

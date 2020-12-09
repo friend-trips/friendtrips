@@ -33,6 +33,7 @@ const Select = styled.select`
   margin:0;
   padding: 0;
   width: 100%;
+  height: 99%;
 `
 
 const FlightContainer = styled.div`
@@ -64,6 +65,7 @@ const List = styled.ul`
 `;
 
 const SuggestionList = ({ flights, hotels, getSavedItinerary }) => {
+  const [selectedOption, setSelectedOption] = useState(1);
   const appContext = useContext(ApplicationContext);
   return (
     <Container>
@@ -71,12 +73,11 @@ const SuggestionList = ({ flights, hotels, getSavedItinerary }) => {
         <H3>Group Suggestions</H3>
       </Header>
       <Subheader>
-          <Select onChange={(e) => { console.log('clik'); getSavedItinerary(e) }} value={appContext.selectedTrip.trip_id}>
+          <Select onChange={(e) => { setSelectedOption(e.target.value); getSavedItinerary(e) }} value={appContext.selectedTrip.trip_id} value={selectedOption}>
             <option value={1}> 1 </option>
             <option value={2}> 2 </option>
             <option value={3}> 3 </option>
           </Select>
-
       </Subheader>
       <FlightContainer>
         <h3>Flights</h3>

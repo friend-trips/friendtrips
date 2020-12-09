@@ -25,6 +25,9 @@ const Header = styled.header`
 const Subheader = styled.div`
   width: 100%;
   min-height: 2.5%;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
   border-bottom: 1px solid black;
 `
 const Button = styled.button`
@@ -58,7 +61,10 @@ const Itinerary = ({ itemsToDisplay }) => {
       <Header>
         <H3>Itinerary Builder</H3>
       </Header>
-      <Subheader><Button onClick={() => { console.log('click') }}>Save Itinerary</Button></Subheader>
+      <Subheader>
+        <Button onClick={() => { console.log('click') }}>Save Itinerary</Button>
+        <Button onClick={() => { console.log('click') }}>Reset</Button>
+      </Subheader>
       <Droppable droppableId={'itinerary'}>
         {(provided) => {
           return (

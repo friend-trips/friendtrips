@@ -87,7 +87,7 @@ const NavBar = () => {
     <Container>
       <Header>
         <H3>Welcome back{(authContext.username) ? ', ' + authContext.username : null}!</H3>
-        <Select>
+        <Select onChange={(e) => {appContext.updateTripList(e.target.value)}}>
           {appContext.tripList.map((trip, i)=>{
             return (
               <option key={`trip-${i}`} value={trip.id}>{trip.name}</option>

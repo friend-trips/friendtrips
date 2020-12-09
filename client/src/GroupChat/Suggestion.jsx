@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import ChatMessage from './ChatMessage.jsx';
 
 import FlightSuggestion from '../Flights/OneSuggestion.jsx'
+import HotelSuggestion from '../Hotels/OneSuggestion.jsx'
 
 const ChatBlock = styled.div`
   width: 98%;
@@ -34,11 +35,15 @@ const MessageGroup = ({ data }) => {
       <ChatBlockHeader>
         {(data.type === 'flight') ?
         <H3>{data.meta.username}</H3>
-        : null
+        : <H3>{(data.upvote_names[0]) ? data.upvote_names[0] : 'Alex'}</H3>
       }
       </ChatBlockHeader>
       <Messages>
+        {(data.type === 'flight') ?
         <FlightSuggestion data={data}/>
+        :
+        <HotelSuggestion data={data}/>
+      }
       </Messages>
     </ChatBlock>
   );

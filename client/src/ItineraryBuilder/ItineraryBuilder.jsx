@@ -78,6 +78,11 @@ const App = () => {
     getSavedHotelResults()
   }, [])
 
+
+  const clearBoard = () => {
+
+  }
+
   //when drag ends, this function will be run with a dragEvent (referencing the item that you dragged)
   const handleDragEnd = (dragEvent) => {
     console.log('DRAG')
