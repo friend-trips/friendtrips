@@ -7,7 +7,20 @@ import ItineraryHotelSuggestion from './ItineraryHotelSuggestion.jsx';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
+  position: relative;
+`;
+
+const Header = styled.header`
+  min-height: 10%;
+  border-bottom: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+const H3 = styled.h3`
+  margin: 0;
+  padding: 0;
 `;
 
 const FlightContainer = styled.div`
@@ -41,16 +54,19 @@ const List = styled.ul`
 const SuggestionList = ({ flights, hotels }) => {
   return (
     <Container>
-      Suggestions
+      <Header>
+        <H3>Group Suggestions</H3>
+      </Header>
+
       <FlightContainer>
-      <h3>Flights</h3>
+        <h3>Flights</h3>
         <Droppable droppableId={'flightItems'}>
           {(provided) => {
             return (
               <List
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                style={{backgroundColor: 'transparent', border: '1px solid black' }}
+                style={{ backgroundColor: 'transparent', border: '1px solid black' }}
                 className={'droppable-col'}
               >
                 {flights.map((row, ind) => (
@@ -61,16 +77,16 @@ const SuggestionList = ({ flights, hotels }) => {
             )
           }}
         </Droppable>
-        </FlightContainer>
-        <HotelContainer>
-      <h3>Hotels</h3>
+      </FlightContainer>
+      <HotelContainer>
+        <h3>Hotels</h3>
         <Droppable droppableId={'hotelItems'}>
           {(provided) => {
             return (
               <List
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                style={{backgroundColor: 'transparent', border: '1px solid black' }}
+                style={{ backgroundColor: 'transparent', border: '1px solid black' }}
                 className={'droppable-col'}
               >
                 {hotels.map((row, ind) => (
@@ -81,7 +97,7 @@ const SuggestionList = ({ flights, hotels }) => {
             )
           }}
         </Droppable>
-        </HotelContainer>
+      </HotelContainer>
 
     </Container>
   );

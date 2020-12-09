@@ -8,6 +8,9 @@ import axios from 'axios';
 const Container = styled.div`
   display: flex;
   flex-direction: row;
+  position: absolute;
+  height: 100%;
+  width: 100%;
 `;
 
 const App = () => {
@@ -16,6 +19,7 @@ const App = () => {
   const [hotels, setHotels] = useState([])
   const [selectedFlights, setSelectedFlights] = useState([]);
   const [selectedHotels, setSelectedHotels] = useState([]);
+  const [displayedItems, setDisplayedItems] = useState([]);
 
   const getSavedFlightResults = async () => {
     await axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1")
@@ -64,18 +68,23 @@ const App = () => {
     if (source.droppableId === 'flightItems' && destination.droppableId === 'flights') {
       let currentSelections = selectedFlights;
       currentSelections.splice(destination.index, 0, flights[source.index])
-      // currentSelections.push(flights[source.index])
+      currentSelections.push(flights[source.index])
       setSelectedFlights(currentSelections);
 
       let remainingFlightSuggestions = flights;
       remainingFlightSuggestions.splice(source.index, 1);
       setFlights(remainingFlightSuggestions);
+
+      let currentDisplayedItems = displayedItems;
+      currentDisplayedItems.splice(destination.index, 0, flights[source.index])
+      currentDisplayedItems.push(flights[source.index])
+      setSelectedFlights(currentDisplayedItems);
     }
 
     if (source.droppableId === 'hotelItems' && destination.droppableId === 'hotels') {
       let currentSelections = selectedHotels;
       currentSelections.splice(destination.index, 0, hotels[source.index])
-      // currentSelections.push(hotels[source.index])
+      currentSelections.push(hotels[source.index])
       setSelectedHotels(currentSelections);
 
       let remainingHotelSuggestions = hotels;

@@ -9,11 +9,25 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  position: relative;
 `;
 
-// min-height: 100%;
+const Header = styled.header`
+  min-height: 10%;
+  border-bottom: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const H3 = styled.h3`
+  margin: 0;
+  padding: 0;
+`;
 
 const DropZone = styled.ul`
+  position: relative;
   min-height: 20%;
   width: 90%;
   background-color: lightblue;
@@ -26,7 +40,9 @@ const DropZone = styled.ul`
 const Itinerary = ({ flights, hotels}) => {
   return (
     <Container>
-      Itinerary
+      <Header>
+        <H3>Itinerary Builder</H3>
+      </Header>
       <h3>Flights</h3>
       <Droppable droppableId={'flights'}>
         {(provided) => {
