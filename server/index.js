@@ -77,7 +77,7 @@ myMessageController.initialize(1)
     console.log('Message Controller Initialized')
   })
   .catch((err)=>{
-    console.log('Error Initializing Controller')
+    console.log('Error Initializing Controller', err)
   })
 
 
@@ -91,16 +91,16 @@ io.on('connection', (socket) => {
   countOfConnections++;
   io.emit('connectedUsers', countOfConnections)
   socket.on('greeting', () => {
-    console.log('greeting', socket.id)
-    let newMsg = {
-      user_id: Number(socket.handshake.auth.user_id),
-      username: socket.handshake.auth.username,
-      trip_id: 1,
-      type: 'message',
-      message: 'joined the room'
-    };
+    // console.log('greeting', socket.id)
+    // let newMsg = {
+    //   user_id: Number(socket.handshake.auth.user_id),
+    //   username: socket.handshake.auth.username,
+    //   trip_id: 1,
+    //   type: 'message',
+    //   message: 'joined the room'
+    // };
     let feed = myMessageController.feed;
-    feed[Date.now()] = newMsg;
+    // feed[Date.now()] = newMsg;
     io.emit('updatedMessages', feed)
   })
 
@@ -108,24 +108,24 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
     countOfConnections--;
     io.emit('connectedUsers', countOfConnections);
-    if (socket.handshake.auth.username) {
-      let newMsg = {
-        user_id: Number(socket.handshake.auth.user_id),
-        username: socket.handshake.auth.username,
-        trip_id: 1,
-        message: 'has left the room'
-      }
+    // if (socket.handshake.auth.username) {
+    //   let newMsg = {
+    //     user_id: Number(socket.handshake.auth.user_id),
+    //     username: socket.handshake.auth.username,
+    //     trip_id: 1,
+    //     message: 'has left the room'
+    //   }
       let feed = myMessageController.feed;
-      feed[Date.now()] = newMsg;
+      // feed[Date.now()] = newMsg;
       io.emit('updatedMessages', feed);
       socket.disconnect();
-    }
+    // }
   });
 
   socket.on('message', (text) => {
     let newMsg = {
       user_id: Number(socket.handshake.auth.user_id),
-      trip_id: 2,
+      trip_id: 1,
       message: text
     }
     console.log(newMsg);

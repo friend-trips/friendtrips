@@ -99,19 +99,16 @@ const NavBar = () => {
       <NavigationLinks>
         <UL >
           <LI>
-            <Link to="/home">Home</Link>
-          </LI>
-          <LI>
             <Link to="/chat">Chat</Link>
-          </LI>
-          <LI>
-            <Link to="/itinerary">Itinerary Builder</Link>
           </LI>
           <LI>
             <Link to="/flights">Flights</Link>
           </LI>
           <LI>
             <Link to="/hotels">Hotels</Link>
+          </LI>
+          <LI>
+            <Link to="/itinerary">Itinerary Builder</Link>
           </LI>
         </UL>
       </NavigationLinks>

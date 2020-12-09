@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ChatMessage from './ChatMessage.jsx';
 
+import HotelSuggestion from '../Hotels/OneSuggestion.jsx'
 import FlightSuggestion from '../Flights/OneSuggestion.jsx'
 
 const ChatBlock = styled.div`
@@ -34,11 +35,15 @@ const MessageGroup = ({ data }) => {
       <ChatBlockHeader>
         {(data.type === 'flight') ?
         <H3>{data.meta.username}</H3>
-        : null
+        : <H3>{data.username}</H3>
       }
       </ChatBlockHeader>
       <Messages>
+      {(data.type === 'flight') ?
         <FlightSuggestion data={data}/>
+        : <HotelSuggestion data={data}/>
+      }
+
       </Messages>
     </ChatBlock>
   );

@@ -19,6 +19,7 @@ class ChatController {
         for (let i = 0; i <= queriedMessages.length - 1; i++) {
           if (!this.messages[queriedMessages[i].message_id]) {
             let msgToReturn = queriedMessages[i];
+            msgToReturn.type = 'message';
             msgToReturn.comments = [];
             this.messages[queriedMessages[i].message_id] = msgToReturn
           }
@@ -52,6 +53,8 @@ class ChatController {
         let flightList = result.data;
         for (let id in flightList) {
           if (!this.flights[id]) {
+            flightList[id].type = 'flight'
+            flightList[id].timestamp = flightList[id].meta.time_created;
             this.flights[id] = flightList[id];
           }
         }
@@ -62,9 +65,27 @@ class ChatController {
         console.log('error getting flights from database', err)
         return {};
       })
+    //get flights from db
+    let hotels = await axios.get(`https://morning-bayou-59969.herokuapp.com/hotels/?trip_id=${trip_id}`)
+    .then((result) => {
+      let hotelList = result.data;
+      for (let id in hotelList) {
+        if (!this.hotels[id]) {
+          hotelList[id].type = 'hotel'
+          hotelList[id].timestamp = hotelList[id].time_created;
+          this.hotels[id] = hotelList[id];
+        }
+      }
+      console.log('hotelCount', Object.keys(this.hotels).length)
+      return this.hotels;
+    })
+    .catch((err) => {
+      console.log('error getting flights from database', err)
+      return {};
+    })
     console.log('Merging Records..')
     this.mergeComments();
-    this.mergeFlights();
+    this.createFeed();
   };
 
   mergeComments() {
@@ -73,6 +94,36 @@ class ChatController {
       this.messages[currentComment.message_id].comments.push(currentComment);
     }
     return;
+  }
+
+  createFeed() {
+    let copyOfFlights = Object.values(this.flights).sort((a, b) => {
+      return (Number(a.meta.time_created) - Number(b.meta.time_created))
+    });
+    let copyOfMessages = Object.values(this.messages).sort((a, b) => {
+      return (Number(a.timestamp) - Number(b.timestamp))
+    });
+    let copyOfHotels = Object.values(this.hotels).sort((a, b) => {
+      return (Number(a.time_created) - Number(b.time_created))
+    });
+
+    let res = [copyOfMessages, copyOfFlights, copyOfHotels]
+    .flat()
+    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+    res.forEach((element) => {
+      if (this.feed[element.timestamp] !== undefined) {
+        // use moment to incremenet timestamp by 1 ms/s/min/hour/day/etc
+        let newTime = (Number(element.timestamp) + 1).toString();
+        while (this.feed[newTime]) {
+          newTime = (Number(newTime) + 1).toString()
+        }
+        this.feed[newTime] = element;
+      } else {
+        this.feed[element.timestamp] = element;
+      }
+    });
+    console.log(this.feed);
   }
 
   mergeFlights() {
