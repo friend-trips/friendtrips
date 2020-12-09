@@ -1,4 +1,11 @@
 # Friendtrips
+![chatsImg]
+(https://github.com/friend-trips/friendtrips/blob/main/public/assets/images/Screen%20Shot%202020-12-09%20at%2012.42.21%20PM.png)
+![flightsImg]
+(https://github.com/friend-trips/friendtrips/blob/main/public/assets/images/Screen%20Shot%202020-12-09%20at%2012.44.39%20PM.png)
+![hotelsImg]
+(https://github.com/friend-trips/friendtrips/blob/main/public/assets/images/Screen%20Shot%202020-12-09%20at%2012.45.45%20PM.png)
+
 
 ### About Friendtrips
 Travel days are more fun with a friend. Use the Flights tab to search for the perfect route and
