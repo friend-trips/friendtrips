@@ -26,7 +26,7 @@ const HotelImage = styled.img`
   max-height: 50%;
   max-width: 80%;
   background-color: white;
-  margin-left: 5%;
+  margin-left: 4%;
   object-fit: contain;
 `;
 

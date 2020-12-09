@@ -85,8 +85,8 @@ const P = styled.p`
 
 
 const Login = () => {
-  const [username, setUsername] = useState('harrison');
-  const [password, setPassword] = useState('password');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const authContext = useContext(AuthContext);
   const handleSubmit = (event) => {
     event.preventDefault();

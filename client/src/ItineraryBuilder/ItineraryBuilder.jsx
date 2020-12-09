@@ -121,13 +121,28 @@ const App = () => {
     }
   }
 
+  const resetSelectedSuggestions = () => {
+    let hotelSuggestions = hotels;
+    let flightSuggestions = flights;
+    for (let i = 0; i <= displayedItems.length - 1; i++) {
+      if (displayedItems[i].meta) {
+        flightSuggestions.push(displayedItems[i])
+      } else {
+        hotelSuggestions.push(displayedItems[i])
+      }
+    }
+    setDisplayedItems([]);
+    setHotels(hotelSuggestions);
+    setFlights(flightSuggestions);
+  }
+
   return (
 
     <Container>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Section>
           {/* <button onClick={()=>{console.log('click')}}>Save Itinerary</button> */}
-          <Itinerary itemsToDisplay={displayedItems} />
+          <Itinerary itemsToDisplay={displayedItems} resetSelectedSuggestions={resetSelectedSuggestions} />
           <SuggestionList flights={flights} hotels={hotels} getSavedItinerary={getSavedItinerary}/>
         </Section>
       </DragDropContext>

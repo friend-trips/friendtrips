@@ -191,6 +191,7 @@ const Chat = () => {
         last = messages[i];
         if (i === messages.length - 1 && currentGroup.messages.length > 0) {
           currentGroup.type = 'message';
+          currentGroup.username = last.username;
           results.push(currentGroup);
         }
       } else {

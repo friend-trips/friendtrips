@@ -16,14 +16,15 @@ const Container = styled.div`
 `;
 const FeedContainer = styled.div`
   height: 100%;
-  width: 100%;
+  width: 99%;
+  overflow-x: hidden;
 `;
 const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 40px;
-  width: 100%;
+  width: 99%;
   padding: 10px;
   text-align: center;
   border-bottom: .5px solid black;

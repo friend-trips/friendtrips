@@ -7,13 +7,14 @@ import { ApplicationContext } from '../components/providers/ApplicationProvider.
 
 const Container = styled.div`
   display: flex;
-  height: 90%;
+  height: 100%;
   flex-direction: column;
   position: relative;
   width: 34%;
 `;
 
 const Header = styled.header`
+
   min-height: 10%;
   border-bottom: 1px solid black;
   display: flex;
@@ -28,6 +29,7 @@ const H3 = styled.h3`
 const Subheader = styled.div`
   width: 100%;
   min-height: 2.5%;
+  border-bottom: 1px solid black;
 `;
 const Select = styled.select`
   margin:0;
@@ -36,23 +38,38 @@ const Select = styled.select`
 `
 
 const FlightContainer = styled.div`
+border-top-right-radius: 15px;
+border-top-left-radius: 15px;
+margin-top: 3%;
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
-  width: 100%;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-top: 1px solid black;
+  width: 94%;
   overflow-y: scroll;
-  height: 600px;
+  height: 50%;
   align-items: center;
+  margin-right: 2%;
+  padding: 2%;
 `;
 
 const HotelContainer = styled.div`
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
-  width: 100%;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  width: 94%;
   overflow-y: scroll;
-  height: 600px;
+  height: 50%;
   align-items: center;
+  margin-bottom: 3%;
+  margin-right: 2%;
+  padding: 2%;
+  align-items: center;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px;
 `;
 
 const List = styled.ul`
