@@ -16,7 +16,7 @@ export default function HotelPageContent(props) {
   return (
     <ResultsContainer>
       <HotelSearchResults searchResults={props.searchResults} cityCode={props.cityCode} checkInDate={props.checkInDate} checkOutDate={props.checkOutDate} roomQuantity={props.roomQuantity} adults={props.adults}
-      getNewSavedResult={props.getNewSavedResult}/>
+      getNewSavedResult={props.getNewSavedResult} isLoading={props.isLoading} />
       <HotelSuggestions savedResults={props.savedResults}/>
     </ResultsContainer>
   );

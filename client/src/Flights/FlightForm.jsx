@@ -127,7 +127,7 @@ const Form = styled.form`
   z-index: 2;
 `;
 
-function FlightForm({ displaySearchFeed }) {
+function FlightForm({ displaySearchFeed, displayLoadingWheel }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -268,7 +268,7 @@ function FlightForm({ displaySearchFeed }) {
     event.preventDefault();
     let startingDate = moment(startDate).format("YYYY-MM-DD");
     let endingDate = moment(endDate).format("YYYY-MM-DD");
-
+    displayLoadingWheel();
     amadeus.shopping.flightOffersSearch
       .get({
         originLocationCode: to,

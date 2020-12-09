@@ -35,20 +35,28 @@ class App extends React.Component {
       searchResults: [],
       savedResults: [],
       upvotes: [],
-      downvotes: []
+      downvotes: [],
+      loading: false
     };
 
     this.displaySearchFeed = this.displaySearchFeed.bind(this);
     this.getSavedResults = this.getSavedResults.bind(this);
     this.getNewSavedResult = this.getNewSavedResult.bind(this);
+    this.displayLoadingWheel = this.displayLoadingWheel.bind(this);
   }
 
   displaySearchFeed(data) {
     this.setState({
       searchResults: data,
+      loading: false
     });
   }
 
+  displayLoadingWheel() {
+    this.setState({
+      loading: true
+    });
+  }
 
   getNewSavedResult(result) {
     let newSavedArray = [];
@@ -88,10 +96,9 @@ class App extends React.Component {
   render() {
     return (
       <Container>
-        <FlightForm displaySearchFeed={this.displaySearchFeed} />
+        <FlightForm displaySearchFeed={this.displaySearchFeed} displayLoadingWheel={this.displayLoadingWheel}/>
         <Content>
-
-          <SearchResults searchResults={this.state.searchResults} getNewSavedResult={this.getNewSavedResult} />
+          <SearchResults searchResults={this.state.searchResults} getNewSavedResult={this.getNewSavedResult} isLoading={this.state.loading}/>
           <Suggestions savedResults={this.state.savedResults} />
         </Content>
       </Container>
