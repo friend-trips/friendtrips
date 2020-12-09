@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useReducer } from "react";
 import { DateRangeInput } from "@datepicker-react/styled";
 import styled from "styled-components";
 import moment from "moment";
@@ -123,6 +123,24 @@ const StyledSubmit = styled.input`
 const roomNumChoices = [2, 3, 4, 5, 6];
 const adultNumChoices = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
+const initialState = {
+  startDate: null,
+  endDate: null,
+  focusedInput: null,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "focusChange":
+      console.log("got here!!!!");
+      return { ...state, focusedInput: action.payload };
+    case "dateChange":
+      return action.payload;
+    default:
+      throw new Error();
+  }
+}
+
 export default function SearchBar(props) {
   const [cityCode, setCityCode] = useState("");
   const [checkInDate, setCheckInDate] = useState("");
@@ -130,6 +148,7 @@ export default function SearchBar(props) {
   const [focusedCalendar, setFocusedCalendar] = useState(null);
   const [roomQuantity, setRoomQuantity] = useState(1);
   const [adults, setAdults] = useState(1);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const setDates = (data) => {
     console.log(data);
@@ -224,12 +243,14 @@ export default function SearchBar(props) {
               className="datePicker"
               onDatesChange={(data) => {
                 setDates(data);
+                dispatch({ type: "dateChange", payload: data });
               }}
-              onFocusChange={(focusedInput) => setFocusedCalendar(focusedInput)}
+              onFocusChange={(focusedInput) =>
+                dispatch({ type: "focusChange", payload: focusedInput })
+              }
               startDate={checkInDate} // Date or null
               endDate={checkOutDate} // Date or null
-              focusedInput={focusedCalendar} // START_DATE, END_DATE or null
-
+              focusedInput={state.focusedInput} // START_DATE, END_DATE or null
             />
             <StyledSubmit type="submit" value="Search" />
           </StyledForm>

@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useReducer } from "react";
 import { DateRangeInput } from "@datepicker-react/styled";
 import styled, { ThemeProvider } from "styled-components";
 import moment from "moment";
@@ -127,6 +127,24 @@ const Form = styled.form`
   z-index: 2;
 `;
 
+const initialState = {
+  startDate: null,
+  endDate: null,
+  focusedInput: null,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "focusChange":
+      console.log("got here!!!!");
+      return { ...state, focusedInput: action.payload };
+    case "dateChange":
+      return action.payload;
+    default:
+      throw new Error();
+  }
+}
+
 function FlightForm({ displaySearchFeed, displayLoadingWheel }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -137,6 +155,7 @@ function FlightForm({ displaySearchFeed, displayLoadingWheel }) {
   const [nonstop, setNonstop] = useState(true);
   const [focusedCalendar, setFocusedCalendar] = useState(null);
   const [flights, setFlights] = useState([]);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   // const [test, setTest] = useState(false);
 
@@ -222,7 +241,8 @@ function FlightForm({ displaySearchFeed, displayLoadingWheel }) {
         outgoingNumberOfStops: result.itineraries[0].segments[0].numberOfStops,
         outgoingCarrierCode:
           flightDictionary[result.itineraries[0].segments[0].carrierCode],
-        outgoingAbbreviatedCarrierCode: result.itineraries[0].segments[0].carrierCode,
+        outgoingAbbreviatedCarrierCode:
+          result.itineraries[0].segments[0].carrierCode,
         outgoingOperatingCarrierCode:
           result.itineraries[0].segments[0].operating.carrierCode,
         outgoingClass: result.travelerPricings[0].fareDetailsBySegment[0].cabin,
@@ -253,12 +273,15 @@ function FlightForm({ displaySearchFeed, displayLoadingWheel }) {
         returnNumberOfStops: result.itineraries[1].segments[0].numberOfStops,
         returnCarrierCode:
           flightDictionary[result.itineraries[1].segments[0].carrierCode],
-        returnAbbreviatedCarrierCode: result.itineraries[1].segments[0].carrierCode,
+        returnAbbreviatedCarrierCode:
+          result.itineraries[1].segments[0].carrierCode,
         returnOperatingCarrierCode:
           result.itineraries[1].segments[0].operating.carrierCode,
         returnClass: result.travelerPricings[0].fareDetailsBySegment[1].cabin,
-        outgoingAbbreviatedCarrierCode: result.itineraries[0].segments[0].carrierCode,
-        returnAbbreviatedCarrierCode: result.itineraries[1].segments[0].carrierCode
+        outgoingAbbreviatedCarrierCode:
+          result.itineraries[0].segments[0].carrierCode,
+        returnAbbreviatedCarrierCode:
+          result.itineraries[1].segments[0].carrierCode,
       };
       return filteredResult;
     });
@@ -365,15 +388,18 @@ function FlightForm({ displaySearchFeed, displayLoadingWheel }) {
           className="datePicker"
           onDatesChange={(data) => {
             setDates(data);
+            dispatch({ type: "dateChange", payload: data });
           }}
-          onFocusChange={(focusedInput) => setFocusedCalendar(focusedInput)}
+          onFocusChange={(focusedInput) =>
+            dispatch({ type: "focusChange", payload: focusedInput })
+          }
           startDate={startDate} // Date or null
           endDate={endDate} // Date or null
-          focusedInput={focusedCalendar} // START_DATE, END_DATE or null
+          focusedInput={state.focusedInput} // START_DATE, END_DATE or null
           style="border-width: 100px;"
         />
 
-        <StyledSubmit className="hi" type="submit" value="Search"/>
+        <StyledSubmit className="hi" type="submit" value="Search" />
       </Form>
     </Container>
   );
