@@ -90,9 +90,8 @@ const SuggestionList = ({ flights, hotels, getSavedItinerary }) => {
       </Header>
       <Subheader>
           <Select onChange={(e) => { console.log('clik'); getSavedItinerary(e) }} value={appContext.selectedTrip.trip_id}>
-            <option value={1}> Jorge's Itinerary </option>
-            <option value={2}> Maureen's Itinerary </option>
-            <option value={3}> Alex's Itinerary </option>
+            <option value={1}> All Itineraries </option>
+            <option value={2}> Harrison's Itinerary </option>
           </Select>
 
       </Subheader>

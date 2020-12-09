@@ -188,12 +188,13 @@ const Chat = () => {
             username: ''
           }
         }
-        last = messages[i];
+
         if (i === messages.length - 1 && currentGroup.messages.length > 0) {
           currentGroup.type = 'message';
           currentGroup.username = last.username;
           results.push(currentGroup);
         }
+        last = messages[i];
       } else {
         current.isFlight = true;
         results.push(current);
@@ -208,7 +209,7 @@ const Chat = () => {
       <ChatWindow>
         <ChatHeader>Chat!</ChatHeader>
         {(chatMessages) ? chatMessages.map((group, i) => {
-          if (group.type === 'flight') {
+          if (group.type !== 'message') {
             return <Suggestion data={group}/>
           } else if (group.type === 'message') {
             return <MessageGroup group={group} ></MessageGroup>

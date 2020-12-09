@@ -53,9 +53,7 @@ const FriendTrips = () => {
           <NavBar></NavBar>
           <Section>
             <Switch>
-              <Route path="/chat">
-                <Chat />
-              </Route>
+
               <Route exactly path="/itinerary">
                 <ItineraryBuilder />
               </Route>
@@ -66,8 +64,9 @@ const FriendTrips = () => {
                 <Hotels />
               </Route>
               <Route>
-                <Welcome></Welcome>
+                <Chat />
               </Route>
+
             </Switch>
           </Section>
         </Container>

@@ -41,15 +41,15 @@ const ClearSelections = styled.button`
   border: 1px solid black;
   border-radius: 5px;
 `;
-const Save = styled.button`
-  position: absolute;
-  left: 2%;
-  top: 2%;
-  margin: 0;
-  padding: 4px;
-  border: 1px solid black;
-  border-radius: 5px;
-`;
+// const Save = styled.button`
+//   position: absolute;
+//   left: 2%;
+//   top: 2%;
+//   margin: 0;
+//   padding: 4px;
+//   border: 1px solid black;
+//   border-radius: 5px;
+// `;
 
 const H3 = styled.h3`
   margin: 0;
@@ -79,7 +79,9 @@ const Itinerary = ({ itemsToDisplay, resetSelectedSuggestions }) => {
       <Header>
         <H3>Itinerary Builder</H3>
       </Header>
-      <Subheader><Button onClick={() => { console.log('click') }}>Save Itinerary</Button></Subheader>
+      <Subheader>
+        {/* <Button onClick={() => { console.log('click') }}>Save Itinerary</Button> */}
+      </Subheader>
       <Droppable droppableId={'itinerary'}>
         {(provided) => {
           return (
