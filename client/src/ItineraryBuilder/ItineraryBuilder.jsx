@@ -14,12 +14,15 @@ const Container = styled.div`
 `;
 
 const App = () => {
-
+  //a list of flight suggestions
   const [flights, setFlights] = useState([])
+  //a list of flight suggestions
   const [hotels, setHotels] = useState([])
-  const [selectedFlights, setSelectedFlights] = useState([]);
-  const [selectedHotels, setSelectedHotels] = useState([]);
+  //list of items to display
   const [displayedItems, setDisplayedItems] = useState([]);
+
+  // const [selectedFlights, setSelectedFlights] = useState([]);
+  // const [selectedHotels, setSelectedHotels] = useState([]);
 
   const getSavedFlightResults = async () => {
     await axios.get("http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1")
@@ -33,11 +36,11 @@ const App = () => {
         setFlights(savedArray)
       })
       .catch(console.log)
-   }
+  }
 
   const getSavedHotelResults = async () => {
     await axios.get("http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1")
-      .then(({data}) => {
+      .then(({ data }) => {
         let savedArray = [];
         console.log("data ", data)
         for (let keys in data) {
@@ -49,13 +52,16 @@ const App = () => {
       .catch(console.log)
   }
 
-   useEffect(() => {
+  useEffect(() => {
     getSavedFlightResults();
     getSavedHotelResults()
-   }, [])
+  }, [])
 
+  //when drag ends, this function will be run with a dragEvent (referencing the item that you dragged)
   const handleDragEnd = (dragEvent) => {
-    let { destination, source } = dragEvent
+    console.log('DRAG')
+    let { destination, source } = dragEvent; //destructure the important information
+    let itemWeDropped = null; //will contain the flight or suggestion we DnD'd
     if (!destination) {
       //item wasn't dropped on a droppable area
       return
@@ -64,49 +70,35 @@ const App = () => {
       //item didn't move
       return
     }
-    //use destination.index and source.index to decide ordering
-    if (source.droppableId === 'flightItems' && destination.droppableId === 'flights') {
-      let currentSelections = selectedFlights;
-      currentSelections.splice(destination.index, 0, flights[source.index])
-      currentSelections.push(flights[source.index])
-      setSelectedFlights(currentSelections);
 
-      let remainingFlightSuggestions = flights;
-      remainingFlightSuggestions.splice(source.index, 1);
-      setFlights(remainingFlightSuggestions);
-
-      let currentDisplayedItems = displayedItems;
-      currentDisplayedItems.splice(destination.index, 0, flights[source.index])
-      currentDisplayedItems.push(flights[source.index])
-      setSelectedFlights(currentDisplayedItems);
-    }
-
-    if (source.droppableId === 'hotelItems' && destination.droppableId === 'hotels') {
-      let currentSelections = selectedHotels;
-      currentSelections.splice(destination.index, 0, hotels[source.index])
-      currentSelections.push(hotels[source.index])
-      setSelectedHotels(currentSelections);
-
-      let remainingHotelSuggestions = hotels;
-      remainingHotelSuggestions.splice(source.index, 1);
-      setHotels(remainingHotelSuggestions);
-    }
-
-    if (source.droppableId === destination.droppableId && source.index !== destination.index) {
-      if (source.droppableId === 'hotels') {
-        let itemYouAreHolding = selectedHotels[source.index];
-        let hotelCopy = selectedHotels;
-        hotelCopy.splice(source.index, 1);
-        hotelCopy.splice(destination.index, 0, itemYouAreHolding);
-        setSelectedHotels(hotelCopy);
-      } else if (source.droppableId === 'flights') {
-        let itemYouAreHolding = selectedFlights[source.index];
-        let flightCopy = selectedFlights;
-        flightCopy.splice(source.index, 1);
-        flightCopy.splice(destination.index, 0, itemYouAreHolding);
-        setSelectedFlights(flightCopy);
+    if (destination.droppableId === 'itinerary') {
+      //remove the item you dragged from the list of suggestions...
+      if (source.droppableId === 'flightItems') {
+        let remainingFlightSuggestions = flights;
+        itemWeDropped = remainingFlightSuggestions.splice(source.index, 1);
+        setFlights(remainingFlightSuggestions);
       }
+      if (source.droppableId === 'hotelItems') {
+        let remainingHotelSuggestions = hotels;
+        itemWeDropped = remainingHotelSuggestions.splice(source.index, 1);
+        setHotels(remainingHotelSuggestions);
+      }
+      //...then add the item to the list of selected/displayed items
+      let currentDisplayedItems = displayedItems;
+      currentDisplayedItems.splice(destination.index, 0, itemWeDropped)
+      setDisplayedItems(currentDisplayedItems);
     }
+
+    //handle reordering
+    if (source.droppableId === destination.droppableId && source.index !== destination.index) {
+      let itemYouAreHolding = displayedItems[source.index];
+      let itemsToDisplay = displayedItems;
+      itemsToDisplay.splice(source.index, 1);
+      itemsToDisplay.splice(destination.index, 0, itemYouAreHolding);
+      setDisplayedItems(itemsToDisplay);
+    }
+
+
   }
 
   console.log(flights, "FLIGHTS")
@@ -114,8 +106,8 @@ const App = () => {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Container>
-        <Itinerary flights={selectedFlights} hotels={selectedHotels}/>
-        <SuggestionList flights={flights} hotels={hotels}/>
+        <Itinerary itemsToDisplay={displayedItems} />
+        <SuggestionList flights={flights} hotels={hotels} />
       </Container>
     </DragDropContext>
   )

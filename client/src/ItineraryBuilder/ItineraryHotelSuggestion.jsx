@@ -142,9 +142,9 @@ const DownvoteTotals = styled.span`
 const ItineraryHotelSuggestion = ({ data, index }) => {
 
   console.log(data, "data from itinerary suggestion");
-  console.log(data.suggestion_id, " data suggestion id hotel")
+  console.log(data.suggestion_id, " data suggestion id hotel", typeof data.suggestion_id)
   return (
-    <Draggable key={`draggable-${data.suggestion_id}`} index={index} draggableId={data.suggestion_id.toString()}>
+    <Draggable key={`draggable-${data.suggestion_id}`} index={index} draggableId={data.suggestion_id}>
       {(provided, snapshot) => {
         return (
           <Container
