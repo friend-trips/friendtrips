@@ -52,7 +52,7 @@ const ChatForm = styled.form`
   align-items: center;
 `;
 
-const TextArea = styled.textarea`
+const Input = styled.input`
   position: relative;
   width: 88%;
   height: 60%;
@@ -218,7 +218,7 @@ const Chat = () => {
         {(threadDisplay) ? <MessageThread main={thread} hideThread={hideThread} replyToMsg={replyToMsg} /> : null}
       </ChatWindow>
       <ChatForm onSubmit={sendMsg}>
-        <TextArea value={msg} onChange={(e) => { setMsg(e.target.value) }}></TextArea>
+        <Input value={msg} onChange={(e) => { setMsg(e.target.value) }}></Input>
         <Button type='submit'> &#8680; </Button>
       </ChatForm>
       <Info>

@@ -48,6 +48,8 @@ const H3 = styled.h3`
 `;
 
 const DropZone = styled.ul`
+  display: flex;
+  flex-direction: column;
   position: relative;
   min-height: 20%;
   width: 90%;

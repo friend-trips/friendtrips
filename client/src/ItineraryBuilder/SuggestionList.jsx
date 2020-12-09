@@ -82,6 +82,7 @@ const List = styled.ul`
 
 const SuggestionList = ({ flights, hotels, getSavedItinerary }) => {
   const appContext = useContext(ApplicationContext);
+  const [selectedItin, setSelectedItin] = useState("Jorge's Itinerary");
   return (
     <Container>
       <Header>
@@ -89,9 +90,9 @@ const SuggestionList = ({ flights, hotels, getSavedItinerary }) => {
       </Header>
       <Subheader>
           <Select onChange={(e) => { console.log('clik'); getSavedItinerary(e) }} value={appContext.selectedTrip.trip_id}>
-            <option value={1}> 1 </option>
-            <option value={2}> 2 </option>
-            <option value={3}> 3 </option>
+            <option value={1}> Jorge's Itinerary </option>
+            <option value={2}> Maureen's Itinerary </option>
+            <option value={3}> Alex's Itinerary </option>
           </Select>
 
       </Subheader>
