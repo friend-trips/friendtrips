@@ -75,7 +75,7 @@ const App = () => {
       //remove the item you dragged from the list of suggestions...
       if (source.droppableId === 'flightItems') {
         let remainingFlightSuggestions = flights;
-        itemWeDropped = remainingFlightSuggestions.splice(source.index, 1);
+        itemWeDropped = remainingFlightSuggestions.splice(source.index, 1)[0];
         setFlights(remainingFlightSuggestions);
       }
       if (source.droppableId === 'hotelItems') {
@@ -87,6 +87,7 @@ const App = () => {
       let currentDisplayedItems = displayedItems;
       currentDisplayedItems.splice(destination.index, 0, itemWeDropped)
       setDisplayedItems(currentDisplayedItems);
+      console.log(currentDisplayedItems);
     }
 
     //handle reordering
@@ -97,12 +98,8 @@ const App = () => {
       itemsToDisplay.splice(destination.index, 0, itemYouAreHolding);
       setDisplayedItems(itemsToDisplay);
     }
-
-
   }
 
-  console.log(flights, "FLIGHTS")
-  console.log(hotels, "HOTELS")
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Container>

@@ -197,7 +197,6 @@ const DownvoteTotals = styled.span`
 const ItineraryFlightSuggestion = ({ data, index, hotelData }) => {
 
   let { outgoing, returning, meta } = data;
-  console.log(data, "data from itinerary suggestion");
   return (
     <Draggable key={`draggable-${meta.suggestion_id}`} index={index} draggableId={meta.suggestion_id.toString()}>
       {(provided, snapshot) => {
