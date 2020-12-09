@@ -23,7 +23,12 @@ const Header = styled.header`
   border-bottom: .5px solid black;
   font-family: "cerapro-bold",sans-serif;
 `;
-
+const Loader = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 50%
+`;
 
 const SearchResults = (props) => {
   return (
@@ -31,6 +36,7 @@ const SearchResults = (props) => {
       <Header>
         Search Results
       </Header>
+      {props.isLoading ? <Loader><img src={`./assets/loadingwheel.gif`}></img></Loader> : null}
       {props.searchResults.length > 0
         ? props.searchResults.map((data, index) => (
           <Flight key={index} data={data} getNewSavedResult={props.getNewSavedResult}></Flight>
