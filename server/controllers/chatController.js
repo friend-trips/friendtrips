@@ -20,6 +20,7 @@ class ChatController {
           if (!this.messages[queriedMessages[i].message_id]) {
             let msgToReturn = queriedMessages[i];
             msgToReturn.comments = [];
+            msgToReturn.type = 'message';
             this.messages[queriedMessages[i].message_id] = msgToReturn
           }
         }
@@ -36,6 +37,7 @@ class ChatController {
         let comments = queryResult.data
         for (let i = 0; i <= comments.length - 1; i++) {
           if (!this.comments[comments[i].comment_id]) {
+            comments[i].type = 'comment';
             this.comments[comments[i].comment_id] = comments[i];
           }
         }
@@ -52,6 +54,8 @@ class ChatController {
         let flightList = result.data;
         for (let id in flightList) {
           if (!this.flights[id]) {
+            flightList[id].type = 'flight';
+            flightList[id].timestamp = flightList[id].meta.time_created;
             this.flights[id] = flightList[id];
           }
         }
@@ -62,9 +66,27 @@ class ChatController {
         console.log('error getting flights from database', err)
         return {};
       })
+    //get flights from db
+    let hotels = await axios.get(`https://morning-bayou-59969.herokuapp.com/hotels/?trip_id=${trip_id}`)
+      .then((result) => {
+        let hotelList = result.data;
+        for (let id in hotelList) {
+          if (!this.hotels[id]) {
+            hotelList[id].type = 'hotel';
+            hotelList[id].timestamp = hotelList[id].time_created
+            this.hotels[id] = hotelList[id];
+          }
+        }
+        console.log('hotelCount', Object.keys(this.hotels).length)
+        return this.hotels;
+      })
+      .catch((err) => {
+        console.log('error getting hotels from database', err)
+        return {};
+      })
     console.log('Merging Records..')
     this.mergeComments();
-    this.mergeFlights();
+    this.createFeed();
   };
 
   mergeComments() {
@@ -73,6 +95,27 @@ class ChatController {
       this.messages[currentComment.message_id].comments.push(currentComment);
     }
     return;
+  }
+
+  createFeed() {
+    let res = [Object.values(this.messages), Object.values(this.flights), Object.values(this.hotels)]
+      .flat()
+      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+    res.forEach((element) => {
+      if (this.feed[element.timestamp] !== undefined) {
+        var newDate = (Number(element.timestamp) + 1).toString();
+        while (this.feed[newDate] !== undefined) {
+          if (!this.feed[newDate]) {
+            this.feed[convertedNewDate] = element;
+          } else {
+            newDate = (Number(newDate) + 1).toString();
+          }
+        }
+      } else {
+        this.feed[element.timestamp] = element;
+      }
+    });
   }
 
   mergeFlights() {
