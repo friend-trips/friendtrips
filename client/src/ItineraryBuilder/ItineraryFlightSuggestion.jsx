@@ -194,7 +194,7 @@ const DownvoteTotals = styled.span`
 `;
 
 
-const ItineraryFlightSuggestion = ({ data, index, hotelData }) => {
+const ItineraryFlightSuggestion = ({ data, index }) => {
 
   let { outgoing, returning, meta } = data;
   return (

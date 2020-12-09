@@ -14,7 +14,7 @@ const HotelContainer = styled.div`
   grid-template-rows: 1fr 1fr;
   border: solid 1px;
   border-radius: 7px;
-  margin-bottom: 20px;
+  // margin-bottom: 20px;
   height: 75px;
   width: 97%;
   padding: 10px;
@@ -149,11 +149,7 @@ const ItineraryHotelSuggestion = ({ data, index }) => {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <HotelContainer
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-            >
+            <HotelContainer >
               <User>
                 Alex
               </User>
