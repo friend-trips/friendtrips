@@ -140,53 +140,65 @@ const DownvoteTotals = styled.span`
 `;
 
 const OneSuggestion = (props) => {
-  console.log('props ', props);
   const [upvotes, setUpvotes] = useState(0);
   const [downvotes, setDownvotes] = useState(0);
+  const [upvoteNames, setUpvoteNames] = useState([]);
+  const [downvoteNames, setDownvoteNames] = useState([]);
   useEffect(() => {
     if (props.data.upvote_names) {
-      setUpvotes(props.data.upvote_names.length)
+      setUpvotes(props.data.upvote_names.length);
+      setUpvoteNames(props.data.upvote_names);
     }
     if (props.data.downvote_names) {
-      setDownvotes(props.data.downvote_names.length)
+      setDownvotes(props.data.downvote_names.length);
+      setDownvoteNames(props.data.downvote_names);
     }
   }, [])
 
-  const upvote = function() {
-    console.log('props.data.user_id ', props.data.user_id)
-    axios({
-      method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
-      header: {'Access-Control-Allow-Origin': '*'},
-      data: {
-        "type": "+",
-        "user_id": props.data.user_id,
-        "suggestion_id": props.data.suggestion_id,
-        "trip_id": 1
-      }
-    })
-      .then(() => {
-        setUpvotes(upvotes + 1);
+  const upvote = function(data) {
+    if (upvoteNames.indexOf(data.username) === -1) {
+      setUpvoteNames(upvoteNames => [...upvoteNames, data.username]);
+      axios({
+        method: 'post',
+        url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+        header: {'Access-Control-Allow-Origin': '*'},
+        data: {
+          "type": "+",
+          "user_id": props.data.user_id,
+          "suggestion_id": props.data.suggestion_id,
+          "trip_id": 1
+        }
       })
-      .catch(console.log)
+        .then(() => {
+          setUpvotes(upvotes + 1);
+        })
+        .catch(console.log)
+    } else {
+      return;
+    }
   }
 
-  const downvote = function() {
-    axios({
-      method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
-      header: {'Access-Control-Allow-Origin': '*'},
-      data: {
-        "type": "-",
-        "user_id": props.data.user_id,
-        "suggestion_id": props.data.suggestion_id,
-        "trip_id": 1
-      }
-    })
-      .then(() => {
-        setDownvotes(downvotes + 1);
+  const downvote = function(data) {
+    if (downvoteNames.indexOf(data.username) === -1) {
+      setDownvoteNames(downvoteNames => [...downvoteNames, data.username]);
+      axios({
+        method: 'post',
+        url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+        header: {'Access-Control-Allow-Origin': '*'},
+        data: {
+          "type": "-",
+          "user_id": props.data.user_id,
+          "suggestion_id": props.data.suggestion_id,
+          "trip_id": 1
+        }
       })
-      .catch(console.log)
+        .then(() => {
+          setDownvotes(downvotes + 1);
+        })
+        .catch(console.log)
+    } else {
+      return;
+    }
   }
 
   return (
@@ -199,10 +211,10 @@ const OneSuggestion = (props) => {
       <Distance>{props.data.distance_from_city_center} miles from city center</Distance>
       <Price>
         <Amount>${props.data.price}</Amount>
-        <Upvote onClick={() => upvote()}>
+        <Upvote onClick={() => upvote(props.data)}>
           <UpArrow viewBox="0 0 18 18" role="presentation" ariaHidden="true" focusable="false"><path d="m13.7 16.29a1 1 0 1 1 -1.42 1.41l-8-8a1 1 0 0 1 0-1.41l8-8a1 1 0 1 1 1.42 1.41l-7.29 7.29z" fillRule="evenodd"></path></UpArrow>
         </Upvote>
-        <Downvote onClick={() => downvote()}>
+        <Downvote onClick={() => downvote(props.data)}>
           <DownArrow viewBox="0 0 18 18" role="presentation" ariaHidden="true" focusable="false"><path d="m13.7 16.29a1 1 0 1 1 -1.42 1.41l-8-8a1 1 0 0 1 0-1.41l8-8a1 1 0 1 1 1.42 1.41l-7.29 7.29z" fillRule="evenodd"></path></DownArrow>
         </Downvote>
         {upvotes > 0 ? <UpvoteTotals>{upvotes}</UpvoteTotals> : null}
