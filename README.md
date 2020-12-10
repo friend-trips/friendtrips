@@ -27,7 +27,7 @@ npm start
 ### Notes on running this application
 
 You will want to create a config folder (at the root) to hold all of your client secrets.  You will need to create an amadeus.config.js and an environment.config.js
-
+```
 - FriendTrips
  -  client
  -> configs
@@ -48,3 +48,4 @@ module.exports = {
   AUTH_ROUTE: 'https://morning-bayou-59969.herokuapp.com/auth/check_user',
   USER_ROUTE: 'https://morning-bayou-59969.herokuapp.com/users'
 }
+```
