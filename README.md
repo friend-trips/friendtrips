@@ -19,6 +19,7 @@ npm start
   username: Cameron
   password: pokemon
 ```
+If you're having issues logging in, please be sure to refer to the Notes on running this application section below.
 
 ![chatsImg](https://github.com/friend-trips/friendtrips/blob/main/public/assets/images/Screen%20Shot%202020-12-09%20at%2012.42.21%20PM.png)
 ![flightsImg](https://github.com/friend-trips/friendtrips/blob/main/public/assets/images/Screen%20Shot%202020-12-09%20at%2012.44.39%20PM.png)
