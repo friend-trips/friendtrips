@@ -26,7 +26,7 @@ npm start
 
 ### Notes on running this application
 
-You will want to create a config folder (at the root) to hold all of your client secrets.  You will need to create an amadeus.config.js and an environment.config.js
+You will want to create a config folder (at the root) to hold all of your client secrets.  You will need to create an amadeus.config.js and an environment.config.js file.
 ```
 - FriendTrips
  -  client
