@@ -14,7 +14,10 @@ Build your own itinerary using any of the suggestions that have been made by the
 npm install
 npm start
 
-//navigate to http://localhost:4000
+// navigate to http://localhost:4000
+// create your own sign in, or log in with one of our friend's accounts!
+  username: Cameron
+  password: pokemon
 ```
 
 ![chatsImg](https://github.com/friend-trips/friendtrips/blob/main/public/assets/images/Screen%20Shot%202020-12-09%20at%2012.42.21%20PM.png)
