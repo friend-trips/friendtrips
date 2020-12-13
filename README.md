@@ -24,29 +24,3 @@ If you're having issues logging in, please be sure to refer to the Notes on runn
 ![chatsImg](https://github.com/friend-trips/friendtrips/blob/main/public/assets/images/Screen%20Shot%202020-12-09%20at%2012.42.21%20PM.png)
 ![flightsImg](https://github.com/friend-trips/friendtrips/blob/main/public/assets/images/Screen%20Shot%202020-12-09%20at%2012.44.39%20PM.png)
 ![hotelsImg](https://github.com/friend-trips/friendtrips/blob/main/public/assets/images/Screen%20Shot%202020-12-09%20at%2012.45.45%20PM.png)
-
-### Notes on running this application
-
-You will want to create a config folder (at the root) to hold all of your client secrets.  You will need to create an amadeus.config.js and an environment.config.js file.
-```
-- FriendTrips
- -  client
- -> configs
-   -> amadeus.config.js
-   -> environment.config.js
- -  public
- -  server
- 
-//amadeus.config.js
-module.exports = {
-  clientId: 'fVXmfiyi0x08BRIRjPPigsfUZsTG7kf3',
-  clientSecret: 'oMQaNklAzUaCswoo'
-}
-
-//environment.config.js
-module.exports = {
-  SESS_SECRET: 'CaNtALoUpE',
-  AUTH_ROUTE: 'https://morning-bayou-59969.herokuapp.com/auth/check_user',
-  USER_ROUTE: 'https://morning-bayou-59969.herokuapp.com/users'
-}
-```
