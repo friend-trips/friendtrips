@@ -204,7 +204,7 @@ const OneSuggestion = (props) => {
   return (
     <Container>
       <User>
-        Alex
+        {props.data.username}
       </User>
       <HotelName>{props.data.hotel_name}</HotelName>
       {props.data.rating ? <Rating>{props.data.rating}/5</Rating> : null}

@@ -192,8 +192,8 @@ const DownvoteTotals = styled.span`
   right: 4px;
 `;
 
-const OneSuggestion = ({ data }) => {
-  console.log('This is the data for a single saved flight suggestion ', data);
+const OneSuggestion = ({ data, voteOnSuggestion }) => {
+  // console.log('This is the data for a single saved flight suggestion ', data);
   let {outgoing, returning, meta} = data;
 
   const [upvotes, setUpvotes] = useState(0);
@@ -211,47 +211,84 @@ const OneSuggestion = ({ data }) => {
     }
   }, [])
 
-  const upvote = function() {
+  const vote = (direction) => {
     if (upvoteNames.indexOf(meta.username) === -1) {
-      setUpvoteNames(upvoteNames => [...upvoteNames, meta.username]);
-      axios({
-        method: 'post',
-        url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
-        header: {'Access-Control-Allow-Origin': '*'},
-        data: {
-          "type": "+",
-          "user_id": meta.user_id,
-          "suggestion_id": meta.suggestion_id,
-          "trip_id": 1,
-        }
-      })
-        .then(() => {
-          setUpvotes(upvotes + 1);
-        })
-        .catch(console.log)
+
+      let vote = {
+        "type": direction,
+        "user_id": meta.user_id,
+        "suggestion_id": meta.suggestion_id,
+        "trip_id": 1,
+      }
+
+      voteOnSuggestion(vote);
+
+      if (direction === '+') {
+        setUpvoteNames(upvoteNames => [...upvoteNames, meta.username]);
+        setUpvotes(upvotes + 1);
+      } else if (direction === '-') {
+        setDownvoteNames(downvoteNames => [...downvoteNames, meta.username]);
+        setDownvotes(downvotes + 1);
+      }
+      // axios({
+      //   method: 'post',
+      //   url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+      //   header: {'Access-Control-Allow-Origin': '*'},
+      //   data: {
+      //     "type": "+",
+      //     "user_id": meta.user_id,
+      //     "suggestion_id": meta.suggestion_id,
+      //     "trip_id": 1,
+      //   }
+      // })
+      //   .then(() => {
+      //     setUpvotes(upvotes + 1);
+      //   })
+      //   .catch(console.log)
     }
   }
 
-  const downvote = function() {
-    if (downvoteNames.indexOf(meta.username) === -1) {
-      setDownvoteNames(downvoteNames => [...downvoteNames, meta.username]);
-      axios({
-        method: 'post',
-        url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
-        header: {'Access-Control-Allow-Origin': '*'},
-        data: {
-          "type": "-",
-          "user_id": meta.user_id,
-          "suggestion_id": meta.suggestion_id,
-          "trip_id": 1
-        }
-      })
-        .then(() => {
-          setDownvotes(downvotes + 1);
-        })
-        .catch(console.log)
-    }
-  }
+  // const upvote = function() {
+  //   if (upvoteNames.indexOf(meta.username) === -1) {
+  //     setUpvoteNames(upvoteNames => [...upvoteNames, meta.username]);
+  //     axios({
+  //       method: 'post',
+  //       url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+  //       header: {'Access-Control-Allow-Origin': '*'},
+  //       data: {
+  //         "type": "+",
+  //         "user_id": meta.user_id,
+  //         "suggestion_id": meta.suggestion_id,
+  //         "trip_id": 1,
+  //       }
+  //     })
+  //       .then(() => {
+  //         setUpvotes(upvotes + 1);
+  //       })
+  //       .catch(console.log)
+  //   }
+  // }
+
+  // const downvote = function() {
+  //   if (downvoteNames.indexOf(meta.username) === -1) {
+  //     setDownvoteNames(downvoteNames => [...downvoteNames, meta.username]);
+  //     axios({
+  //       method: 'post',
+  //       url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+  //       header: {'Access-Control-Allow-Origin': '*'},
+  //       data: {
+  //         "type": "-",
+  //         "user_id": meta.user_id,
+  //         "suggestion_id": meta.suggestion_id,
+  //         "trip_id": 1
+  //       }
+  //     })
+  //       .then(() => {
+  //         setDownvotes(downvotes + 1);
+  //       })
+  //       .catch(console.log)
+  //   }
+  // }
 
   return (
     <Container>
@@ -289,11 +326,11 @@ const OneSuggestion = ({ data }) => {
       <Price>
         <Amount>${meta.total_price}</Amount>
         <Seats>{meta.num_of_seats} Seats Left</Seats>
-        <Upvote onClick={() => upvote()}>
+        <Upvote onClick={() => vote('+')}>
           <UpArrow viewBox="0 0 18 18" role="presentation" ariaHidden="true" focusable="false"><path d="m13.7 16.29a1 1 0 1 1 -1.42 1.41l-8-8a1 1 0 0 1 0-1.41l8-8a1 1 0 1 1 1.42 1.41l-7.29 7.29z" fillRule="evenodd"></path></UpArrow>
         </Upvote>
 
-        <Downvote onClick={() => downvote()}>
+        <Downvote onClick={() => vote('-')}>
           <DownArrow viewBox="0 0 18 18" role="presentation" ariaHidden="true" focusable="false"><path d="m13.7 16.29a1 1 0 1 1 -1.42 1.41l-8-8a1 1 0 0 1 0-1.41l8-8a1 1 0 1 1 1.42 1.41l-7.29 7.29z" fillRule="evenodd"></path></DownArrow>
         </Downvote>
         {upvotes > 0 ? <UpvoteTotals>{upvotes}</UpvoteTotals> : null}

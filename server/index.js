@@ -42,7 +42,6 @@ app.get('/login', (req, res) => {
   res.redirect('/')
 })
 app.get('/signup', (req, res) => {
-  console.log(req.session, req.user);
   res.redirect('/')
 })
 app.get('/home', (req, res) => {

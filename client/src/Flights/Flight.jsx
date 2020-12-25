@@ -203,21 +203,8 @@ const Flights = ({ data, getNewSavedResult }) => {
       }
     }
 
-    console.log(flightData);
+    getNewSavedResult(flightData);
 
-    axios({
-      method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/flights',
-      data: flightData,
-      header: {'Access-Control-Allow-Origin': '*'}
-    })
-      .then((data) => {
-        console.log(data.data,"data from flight.jsx");
-        flightData.meta.suggestion_id = data.data.outgoing.suggestion_id
-        getNewSavedResult(flightData);
-
-      })
-      .catch(console.log)
   }
 
 

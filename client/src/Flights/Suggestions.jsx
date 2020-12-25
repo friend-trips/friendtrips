@@ -1,16 +1,19 @@
 import React from "react";
 import styled from "styled-components";
-import OneSuggestion from "./OneSuggestion.jsx";
+// import OneSuggestion from "./OneSuggestion.jsx";
+import OneSuggestion from "../Flights/containers/OneSuggestionContainer.js";
 // import ItinerarySuggestion from '../ItineraryBuilder/ItinerarySuggestion.jsx';
 
 const SuggestionsContainer = styled.div`
   height: 100%;
   overflow-y: scroll;
-  width: 34%;
+  overflow-x: hidden;
+  min-width: 34%;
   display: flex;
   flex-direction: column;
   align-items: center;
   border-left: 1px solid black;
+  resize: horizontal;
 `;
 const Header = styled.header`
   display: flex;

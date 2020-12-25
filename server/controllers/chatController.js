@@ -103,13 +103,13 @@ class ChatController {
 
     let res = [messages, flights, hotels]
     .flat()
-    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    .sort((a, b) => a.timestamp - b.timestamp);
 
     res.forEach((element) => {
-      console.log(element.type)
+      console.log(element.timestamp)
       if (this.feed[element.timestamp] !== undefined) {
         let newTime = (Number(element.timestamp) + 1).toString();
-        while (this.feed[newTime]) {
+        while (this.feed[newTime] !== undefined) {
           newTime = (Number(newTime) + 1).toString()
         }
         this.feed[newTime] = element;
@@ -117,7 +117,7 @@ class ChatController {
         this.feed[element.timestamp] = element;
       }
     });
-    // console.log(this.feed);
+    console.log(this.feed);
   }
 
   mergeFlights() {
@@ -181,6 +181,7 @@ class ChatController {
       this.comments[item.timestamp] = item;
       this.messages[item.message_id].comments.push(item);
       this.mergeComments();
+      this.createFeed();
       return;
     }
     this.feed[Date.now()] = item;

@@ -140,13 +140,13 @@ const Chat = () => {
     socket.emit('message', msg)
     setMsg('');
   }
-  const enterUsername = (letter) => {
-    let newMsg = msg + letter;
-    setUsername(newMsg);
-  }
+  // const enterUsername = (letter) => {
+  //   let newMsg = msg + letter;
+  //   setUsername(newMsg);
+  // }
   const showThread = (msg) => {
-    setThreadDisplay(true);
     setThread(msg)
+    setThreadDisplay(true);
   }
   const hideThread = () => {
     setThreadDisplay(false);
@@ -185,16 +185,16 @@ const Chat = () => {
           currentGroup = {
             isFlight: false,
             messages: [messages[i]],
-            username: ''
+            username: messages[i].username
           }
         }
-
+        last = messages[i];
         if (i === messages.length - 1 && currentGroup.messages.length > 0) {
           currentGroup.type = 'message';
           currentGroup.username = last.username;
           results.push(currentGroup);
         }
-        last = messages[i];
+
       } else {
         current.isFlight = true;
         results.push(current);

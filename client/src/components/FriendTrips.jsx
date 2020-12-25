@@ -5,7 +5,7 @@ import { ApplicationProvider, ApplicationContext } from '../components/providers
 import Page from './Page.jsx'
 import Chat from '../GroupChat/Chat.jsx';
 import ItineraryBuilder from '../ItineraryBuilder/ItineraryBuilder.jsx';
-import Flights from '../Flights/Flights.jsx';
+import Flights from '../Flights/containers/FlightsContainer.js';
 import Hotels from '../Hotels/Hotels.jsx';
 import Welcome from './Welcome.jsx';
 
