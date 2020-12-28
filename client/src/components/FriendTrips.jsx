@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { ApplicationProvider, ApplicationContext } from '../components/providers/ApplicationProvider.jsx';
 import Page from './Page.jsx'
-import Chat from '../GroupChat/Chat.jsx';
+import Chat from '../GroupChat/containers/chatContainer.js';
 import ItineraryBuilder from '../ItineraryBuilder/ItineraryBuilder.jsx';
 import Flights from '../Flights/containers/FlightsContainer.js';
 import Hotels from '../Hotels/Hotels.jsx';

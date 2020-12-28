@@ -89,6 +89,9 @@ io.use((socket, next) => {
 io.on('connection', (socket) => {
   countOfConnections++;
   io.emit('connectedUsers', countOfConnections)
+  socket.on('action', (action) => {
+    console.log('action received', action)
+  })
   socket.on('greeting', () => {
     // console.log('greeting', socket.id)
     // let newMsg = {

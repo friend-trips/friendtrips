@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 import styled from 'styled-components';
+import socket from '../lib/chatSocket.js'
 
 import { AuthContext } from '../components/providers/AuthenticationProvider.jsx'
 import MessageGroup from './MessageGroup.jsx'
@@ -76,24 +77,25 @@ const Info = styled.div`
 
 
 //set up socket outside of react component, we don't want to socket to reload/refresh connection every time the component refreshes
-const socket = io('http://localhost:4000', {
-  path: '/socket.io',
-  auth: {
-    token: ''
-  },
-  autoConnect: false
-});
+// const socket = io('http://localhost:4000', {
+//   path: '/socket.io',
+//   auth: {
+//     token: ''
+//   },
+//   autoConnect: false
+// });
 
-const Chat = () => {
+const Chat = ({chatFeed, thread, threadState, connectToChatServer, displayChatThread, sendChat, setChatFeed}) => {
   const [connectedUserCount, setConnectedUserCount] = useState(0);
   const [msg, setMsg] = useState('');
-  const [chatMessages, setChatMessages] = useState([]);
-  const [threadDisplay, setThreadDisplay] = useState(false)
-  const [thread, setThread] = useState(null)
+  // const [chatMessages, setChatMessages] = useState([]);
+  // const [threadDisplay, setThreadDisplay] = useState(false)
+  // const [thread, setThread] = useState(null)
 
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
+    // connectToChatServer(socket);
     //set username as 'token' in auth socket auth object
     socket.auth.user_id = authContext.user;
     socket.auth.username = authContext.username;
@@ -103,32 +105,33 @@ const Chat = () => {
     //set up event listeners on the socket
     socket.on('connect', () => {
       socket.emit('greeting');
+      // connectToChatServer(socket);
     })
     socket.on('connectedUsers', (newconnectedUserCount) => {
       setConnectedUserCount(newconnectedUserCount);
     })
     socket.on('updatedMessages', (newMsgs) => {
       console.log('new messages received');
-      setChatMessages(groupMessages(Object.values(newMsgs)));
+      setChatFeed(groupMessages(Object.values(newMsgs)));
     })
 
     //clean up socket connection when the component unmounts
     return () => {
-      socket.disconnect();
+      // socket.disconnect();
     }
   }, [])
 
   useEffect(() => {
-    if (threadDisplay) {
+    if (threadState) {
       updateThread();
     } else {
       scrollToBottom();
     }
-  }, [chatMessages])
+  }, [chatFeed])
 
   const updateThread = () => {
-    if (threadDisplay) {
-      setThread(chatMessages[thread.message_id])
+    if (threadState) {
+      setThread(chatFeed[thread.message_id])
     }
   }
   const writeMsg = (message) => {
@@ -137,7 +140,7 @@ const Chat = () => {
   }
   const sendMsg = (e) => {
     e.preventDefault();
-    socket.emit('message', msg)
+    sendChat(msg)
     setMsg('');
   }
   // const enterUsername = (letter) => {
@@ -208,7 +211,7 @@ const Chat = () => {
     <Container>
       <ChatWindow>
         <ChatHeader>Chat!</ChatHeader>
-        {(chatMessages) ? chatMessages.map((group, i) => {
+        {(chatFeed) ? chatFeed.map((group, i) => {
           if (group.type !== 'message') {
             return <Suggestion data={group}/>
           } else if (group.type === 'message') {
@@ -216,7 +219,7 @@ const Chat = () => {
           }
         }) : <h1>Loading...</h1>}
         <div ref={messagesEndRef} />
-        {(threadDisplay) ? <MessageThread main={thread} hideThread={hideThread} replyToMsg={replyToMsg} /> : null}
+        {/* {(threadState) ? <MessageThread main={thread} hideThread={hideThread} replyToMsg={replyToMsg} /> : null} */}
       </ChatWindow>
       <ChatForm onSubmit={sendMsg}>
         <Input value={msg} onChange={(e) => { setMsg(e.target.value) }}></Input>

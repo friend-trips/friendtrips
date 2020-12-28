@@ -106,7 +106,7 @@ class ChatController {
     .sort((a, b) => a.timestamp - b.timestamp);
 
     res.forEach((element) => {
-      console.log(element.timestamp)
+      // console.log(element.timestamp)
       if (this.feed[element.timestamp] !== undefined) {
         let newTime = (Number(element.timestamp) + 1).toString();
         while (this.feed[newTime] !== undefined) {
@@ -117,7 +117,7 @@ class ChatController {
         this.feed[element.timestamp] = element;
       }
     });
-    console.log(this.feed);
+    console.log('...records merged');
   }
 
   mergeFlights() {
