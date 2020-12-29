@@ -6,10 +6,10 @@ import chatReducer from '../GroupChat/reducers/chatReducer.js'
 import createSocketIoMiddleware from 'redux-socket.io';
 // import io from 'socket.io-client';
 import socket from '../lib/chatSocket.js'
-let socketIoMiddleware = createSocketIoMiddleware(socket, "/chat");
+let socketIoMiddleware = createSocketIoMiddleware(socket, '/socket.io');
 
 
-var rootReducer = combineReducers({flight: flightReducer, chat: chatReducer});
+// var rootReducer = combineReducers({flight: flightReducer, chat: chatReducer});
 
 const initialState = {
   isLoading: false,
@@ -20,7 +20,6 @@ const initialState = {
   showThread: false,
   messageInThread: null
 }
-const store = createStore(rootReducer, initialState, applyMiddleware(thunk, socketIoMiddleware));
-// const store = applyMiddleware(thunk, socketIoMiddleware)(createStore)(rootReducer,initialState);
+const store = createStore(chatReducer, initialState, applyMiddleware(socketIoMiddleware, thunk));
 
 export default store;

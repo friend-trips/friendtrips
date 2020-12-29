@@ -17,47 +17,35 @@ const toggleThreadDisplay = (dispState) => ({
   type: 'TOGGLE_THREAD_DISPLAY',
   showThread: dispState
 })
-const sendGreeting = () => ({
-  type: 'message',
-  data: 'some text for test message'
-})
 
-const sendChat = (msg) => ({
-  type: 'chat/newChat',
-  message: msg
-})
+// const sendChat = (msg) => ({
+//   type: 'chat/newChat',
+//   message: msg
+// })
 
 //Thunks that do async stuff THEN update state (by calling above funcs)
-const connectToChatServer = (socket) => {
-  console.log('connecting', socket)
-  return (dispatch) => {
-    // socket.connect();
-    dispatch(sendGreeting())
-    socket.on('connect', () => {
-      socket.emit('greeting');
-      dispatch(sendGreeting())
-    })
-    socket.on('connectedUsers', (newCount) => {
-      dispatch(setConnectedUserCount(newCount));
-    })
-    socket.on('updatedMessages', (newMsgs) => {
-      console.log('new messages received');
-      dispatch(setChatFeed(groupMessages(Object.values(newMsgs))));
-    })
-  }
-}
-
-// const sendChat = (chatMsg) => {
+// const sendChat = (msg) => {
+//   console.log('sendchat', msg)
 //   return (dispatch) => {
-//     dispatch(socket.emit('message', chatMsg));
+//     dispatch({
+//       type: 'chat/newChat',
+//       data: msg,
+//       message: msg
+//     });
 //   }
 // }
-
-const displayChatThread = (chatMsg) => {
-  return (dispatch, getState) => {
-    dispatch(setThreadMessage(chatMsg));
-    dispatch(toggleThreadDisplay(true));
+const updateThread = (chatMsg) => {
+  return (dispatch) => {
+    console.log(chatMsg)
+    if (chatMsg) {
+      dispatch(setThreadMessage(chatMsg));
+      // dispatch(toggleThreadDisplay(true));
+    } else {
+      dispatch(setThreadMessage(null));
+      // dispatch(toggleThreadDisplay(false))
+    }
   }
 }
 
-export {setChatFeed, setConnectedUserCount, setThreadMessage, toggleThreadDisplay, connectToChatServer, sendChat, displayChatThread}
+
+export { setChatFeed, setConnectedUserCount, setThreadMessage, toggleThreadDisplay, updateThread }

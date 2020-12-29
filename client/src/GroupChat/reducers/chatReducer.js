@@ -19,10 +19,6 @@ var chatReducer = (state = initialState, action) => {
     case 'SET_CHAT_FEED':
       console.log('SET_CHAT_FEED', action.chatFeed, action.chatFeed.length)
       return Object.assign({}, state, { chatFeed: action.chatFeed });
-    case 'chat/newChat':
-      console.log('message received in chatReducer with action.type', action.type)
-      console.log('message: ', action.message);
-      return state;
     default:
       return state;
   }

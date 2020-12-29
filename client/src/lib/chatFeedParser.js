@@ -1,4 +1,5 @@
 const groupMessages = (messages) => {
+  console.log('last 5 messages', messages.slice(messages.length - 5))
   if (!messages) return null;
   let results = [];
   let currentGroup = {
