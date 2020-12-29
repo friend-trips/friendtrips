@@ -10,8 +10,8 @@ const mapDispatchToProps = (dispatch) => {
 };
 const mapStateToProps = (state) => {
   return {
-    thread: state.messageInThread,
-    chatFeed: state.chatFeed
+    thread: state.chat.messageInThread,
+    chatFeed: state.chat.chatFeed
   }
 }
 

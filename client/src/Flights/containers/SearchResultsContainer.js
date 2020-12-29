@@ -10,8 +10,8 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   return {
-    isLoading: state.isLoading,
-    searchResults: state.searchResults
+    isLoading: state.flights.isLoading,
+    searchResults: state.flights.searchResults
   };
 };
 

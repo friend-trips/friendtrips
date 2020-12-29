@@ -1,11 +1,11 @@
 const initialState = {
   connectedUserCount: 0,
   chatFeed: [],
-  showThread: false,
   messageInThread: null
 }
 
 var chatReducer = (state = initialState, action) => {
+  console.log('CHATREDUCERACTION,', action)
   switch (action.type) {
     case 'UPDATE_USER_COUNT':
       console.log('UPDATE_USER_COUNT')

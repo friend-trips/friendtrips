@@ -80,7 +80,7 @@ const Chat = ({chatFeed, thread, setChatFeed, updateThread}) => {
   const [msg, setMsg] = useState('');
 
   const authContext = useContext(AuthContext);
-
+  console.log('CHATLOADED', chatFeed, thread)
   useEffect(() => {
     //set username as 'token' in auth socket auth object
     socket.auth.user_id = authContext.user;

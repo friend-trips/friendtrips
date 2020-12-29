@@ -3,7 +3,7 @@ import Suggestions from '../Suggestions.jsx';
 
 const mapStateToProps = (state) => {
   return {
-    savedResults: state.savedResults
+    savedResults: state.flights.savedResults
   };
 };
 
