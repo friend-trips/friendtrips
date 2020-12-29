@@ -1,5 +1,4 @@
 const groupMessages = (messages) => {
-  console.log('last 5 messages', messages.slice(messages.length - 5))
   if (!messages) return null;
   let results = [];
   let currentGroup = {
@@ -35,8 +34,6 @@ const groupMessages = (messages) => {
       results.push(current);
     }
   }
-  console.log('we turned', messages.length, 'messages')
-  console.log('into', results.length, 'groups');
   return results;
 }
 export default groupMessages;

@@ -1,10 +1,10 @@
-import React, {useContext, useState, useEffect, useMemo} from 'react';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 import PrivateRoute from './wrappers/PrivateRoute.jsx';
 import axios from 'axios';
-require('babel-polyfill')
+// require('babel-polyfill')
 import styled from 'styled-components';
 
-import {AuthProvider, AuthContext} from './providers/AuthenticationProvider.jsx'
+import { AuthProvider, AuthContext } from './providers/AuthenticationProvider.jsx'
 import Login from '../AuthFlow/Login.jsx';
 import SignUp from '../AuthFlow/Signup.jsx';
 import FriendTrips from './FriendTrips.jsx';
@@ -29,69 +29,69 @@ const Application = styled.div`
 `;
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const [username, setUsername] = useState('')
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [user, setUser] = useState(null);
+  // const [username, setUsername] = useState('')
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const authContext = useMemo(() => ({
-    signIn: async (attemptedLogin) => {
-      await axios({
-        method: 'post',
-        url: '/auth/login',
-        data: attemptedLogin
-      })
-        .then((response) => {
-          console.log('USER LOGGED IN', response.data);
-          console.log('login response', response.data)
-          setUsername(response.data.username)
-          setUser(response.data.user_id)
-        })
-        .catch((err) => {
-          console.log('USER WAS UNABLE TO LOG IN', err)
-        })
-    },
-    signOut: async () => {
-      await axios.get('/auth/logout')
-      setUser(null);
-    },
-    checkStatus: async () => {
-      return await axios.get('/auth/check')
-        .then((result) => {
-          console.log('You have been authenticated', result);
-          setUser(result.data.user_id);
-          setUsername(result.data.username);
-          return result.data;
-        })
-        .catch(() => {
-          console.log('You have not been authenticated');
-        })
-    },
-    user: user,
-    username: username
-  }));
+  // const authContext = useMemo(() => ({
+  //   signIn: async (attemptedLogin) => {
+  //     await axios({
+  //       method: 'post',
+  //       url: '/auth/login',
+  //       data: attemptedLogin
+  //     })
+  //       .then((response) => {
+  //         console.log('USER LOGGED IN', response.data);
+  //         console.log('login response', response.data)
+  //         setUsername(response.data.username)
+  //         setUser(response.data.user_id)
+  //       })
+  //       .catch((err) => {
+  //         console.log('USER WAS UNABLE TO LOG IN', err)
+  //       })
+  //   },
+  //   signOut: async () => {
+  //     await axios.get('/auth/logout')
+  //     setUser(null);
+  //   },
+  //   checkStatus: async () => {
+  //     return await axios.get('/auth/check')
+  //       .then((result) => {
+  //         console.log('You have been authenticated', result);
+  //         setUser(result.data.user_id);
+  //         setUsername(result.data.username);
+  //         return result.data;
+  //       })
+  //       .catch(() => {
+  //         console.log('You have not been authenticated');
+  //       })
+  //   },
+  //   user: user,
+  //   username: username
+  // }));
 
-  useEffect(async () => {
-    const user = await authContext.checkStatus();
-  }, [])
+  const authContext = useContext(AuthContext)
+  // useEffect(() => {
+  //   const user = authContext.checkStatus();
+  // }, [])
+
   return (
-    <AuthContext.Provider value={authContext}>
 
-      <Router style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      <Router style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Application>
           <Switch>
             <Route exact path="/">
-              {user ? <Redirect to="/home"/> : <Redirect to="/login"/>}
+              {authContext.user ? <Redirect to="/home" /> : <Redirect to="/login" />}
             </Route>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp} />
             <PrivateRoute path="/home">
-              <FriendTrips/>
+              <FriendTrips />
             </PrivateRoute>
           </Switch>
         </Application>
       </Router>
 
-    </AuthContext.Provider>
   );
 };
 

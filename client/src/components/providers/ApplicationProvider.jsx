@@ -7,9 +7,9 @@ const ApplicationProvider = (props) => {
   const [tripList, setTripList] = useState([]);
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [loading, setLoading] = useState(true);
-  const getTrips = async () => {
+  const getTrips = () => {
     setLoading(true);
-    await axios.get('https://morning-bayou-59969.herokuapp.com/trips')
+    axios.get('https://morning-bayou-59969.herokuapp.com/trips')
       .then((result) => {
         const trips = result.data;
         console.log(trips);

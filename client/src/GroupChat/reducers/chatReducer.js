@@ -16,7 +16,7 @@ var chatReducer = (state = initialState, action) => {
       console.log('TOGGLE_THREAD_DISPLAY')
       return Object.assign({}, state, { showThread: action.showThread });
     case 'SET_CHAT_FEED':
-      console.log('SET_CHAT_FEED', action.chatFeed, action.chatFeed.length)
+      console.log('SET_CHAT_FEED')
       return Object.assign({}, state, { chatFeed: action.chatFeed });
     default:
       return state;
