@@ -3,10 +3,6 @@ import thunk from 'redux-thunk';
 import flightReducer from '../Flights/reducers/flightReducer.js';
 import chatReducer from '../GroupChat/reducers/chatReducer.js'
 
-import createSocketIoMiddleware from 'redux-socket.io';
-
-import socket from '../lib/chatSocket.js'
-
 var rootReducer = combineReducers({
   flights: flightReducer,
   chat: chatReducer,
