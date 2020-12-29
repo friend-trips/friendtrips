@@ -5,7 +5,6 @@ const initialState = {
 }
 
 var videoListReducer = (state = initialState, action) => {
-  console.log('FLIGHTREDUCERACTION,', action)
   switch (action.type) {
     case 'SET_LOADING_FLIGHTS':
       console.log('SET LOADING')
