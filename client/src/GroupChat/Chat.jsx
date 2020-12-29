@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import socket from '../lib/chatSocket.js'
+import groupMessages from '../lib/chatFeedParser.js'
 
 import { AuthContext } from '../components/providers/AuthenticationProvider.jsx'
+
 import MessageGroup from './MessageGroup.jsx'
 import MessageThread from './MessageThread.jsx'
 import Suggestion from './Suggestion.jsx'
 
-import groupMessages from '../lib/chatFeedParser.js'
 
 const Container = styled.div`
   height: 99%;

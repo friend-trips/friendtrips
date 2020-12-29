@@ -1,9 +1,7 @@
-//Yes, this file is actually this empty.  Most of the setup for this AuthContext was done in App.jsx.  Migrating those functions here is technical debt.
-
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-const AuthContext = React.createContext();
 
+const AuthContext = React.createContext();
 
 const AuthProvider = (props) => {
   const [user, setUser] = useState(null);
@@ -18,7 +16,6 @@ const AuthProvider = (props) => {
       })
         .then((response) => {
           console.log('USER LOGGED IN', response.data);
-          console.log('login response', response.data)
           setUsername(response.data.username)
           setUser(response.data.user_id)
         })

@@ -1,6 +1,7 @@
 import React from "react";
-import Flight from "./Flight.jsx";
 import styled from "styled-components";
+
+import Flight from "./Flight.jsx";
 
 const ResultsContainer = styled.div`
   padding-top: 5px;

@@ -4,9 +4,11 @@ import axios from 'axios'
 const ApplicationContext = React.createContext();
 
 const ApplicationProvider = (props) => {
+
   const [tripList, setTripList] = useState([]);
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const getTrips = () => {
     setLoading(true);
     axios.get('https://morning-bayou-59969.herokuapp.com/trips')
@@ -25,7 +27,6 @@ const ApplicationProvider = (props) => {
         console.log('couldnt get trips from server', err)
       })
   }
-
 
   useEffect(() => {
     getTrips()

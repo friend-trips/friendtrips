@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
+import { connectToChatServer, sendChat, updateThread, setChatFeed } from '../actions/chatActions.js'
 import Chat from '../Chat.jsx';
-import {connectToChatServer, sendChat, updateThread, setChatFeed} from '../actions/chatActions.js'
 
 const mapDispatchToProps = (dispatch) => {
   return {
