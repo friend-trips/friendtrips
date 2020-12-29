@@ -58,10 +58,12 @@ app.get("/user", (req, res) => {
 //   next();
 // })
 const http = require('http').createServer(app);
+// const io = require('socket.io')();
+// io.attach(http)
+
 const io = require('socket.io')(http, {
   path: '/socket.io'
 });
-
 
 
 let countOfConnections = 0;
@@ -89,9 +91,7 @@ io.use((socket, next) => {
 io.on('connection', (socket) => {
   countOfConnections++;
   io.emit('connectedUsers', countOfConnections)
-  socket.on('action', (action) => {
-    console.log('action received', action)
-  })
+
   socket.on('greeting', () => {
     // console.log('greeting', socket.id)
     // let newMsg = {
@@ -103,7 +103,8 @@ io.on('connection', (socket) => {
     // };
     let feed = myMessageController.feed;
     // feed[Date.now()] = newMsg;
-    io.emit('updatedMessages', feed)
+    socket.emit('updatedMessages', feed)
+    // io.emit('updatedMessages', feed)
   })
 
   socket.on('disconnect', () => {
@@ -119,7 +120,7 @@ io.on('connection', (socket) => {
     //   }
       let feed = myMessageController.feed;
       // feed[Date.now()] = newMsg;
-      io.emit('updatedMessages', feed);
+      // io.emit('updatedMessages', feed);
       socket.disconnect();
     // }
   });
@@ -130,7 +131,7 @@ io.on('connection', (socket) => {
       trip_id: 1,
       message: text
     }
-    console.log(newMsg);
+    // console.log(newMsg);
     axios.post('https://morning-bayou-59969.herokuapp.com/messages', newMsg)
       .then((result) => {
         console.log('successful message post to DB', result.data);
@@ -166,6 +167,7 @@ io.on('connection', (socket) => {
       })
     io.emit('updatedMessages', myMessageController.feed);
   })
+  // console.log(socket)
 });
 
 http.listen(4000, () => {

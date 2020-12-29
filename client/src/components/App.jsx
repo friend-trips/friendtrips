@@ -34,31 +34,28 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const authContext = useMemo(() => ({
-    signIn: (attemptedLogin) => {
-      axios({
+    signIn: async (attemptedLogin) => {
+      await axios({
         method: 'post',
         url: '/auth/login',
         data: attemptedLogin
       })
         .then((response) => {
           console.log('USER LOGGED IN', response.data);
-          if (typeof document.cookie.slice(document.cookie.indexOf('=') + 1) === 'string') {
-            setUser(Number(document.cookie.slice(document.cookie.indexOf('=') + 1)))
-          } else {
-            setUser(document.cookie.slice(document.cookie.indexOf('=') + 1));
-          }
-          setUsername(response.data)
+          console.log('login response', response.data)
+          setUsername(response.data.username)
+          setUser(response.data.user_id)
         })
         .catch((err) => {
           console.log('USER WAS UNABLE TO LOG IN', err)
         })
     },
-    signOut: () => {
-      axios.get('/auth/logout')
+    signOut: async () => {
+      await axios.get('/auth/logout')
       setUser(null);
     },
-    checkStatus: () => {
-      return axios.get('/auth/check')
+    checkStatus: async () => {
+      return await axios.get('/auth/check')
         .then((result) => {
           console.log('You have been authenticated', result);
           setUser(result.data.user_id);

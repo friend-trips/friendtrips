@@ -76,9 +76,10 @@ router.post('/login', (req, res, next) => {
     if (!user) res.status(500).send("No User Exists");
     else {
       req.logIn(user, (err) => {
-        console.log('logged in a user: ', user)
+        // console.log('logged in a user: ', user)
         if (err) throw err;
-        res.cookie('user_id', user.user_id).status(200).send(user.username);
+        // res.cookie('user_id', user.user_id).status(200).send(user.username);
+        res.status(200).send({username: user.username, user_id: user.user_id});
       });
     }
   })(req, res, next);

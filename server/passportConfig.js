@@ -6,7 +6,7 @@ const ENV = require('../configs/environment.config.js')
 module.exports = function (passport) {
   passport.use(
     new localStrategy((username, password, done) => {
-      console.log('begin verification', username, password)
+      // console.log('begin verification', username, password)
       //grab matching user record from the database
       axios({
         method: 'get',
@@ -51,7 +51,7 @@ module.exports = function (passport) {
     console.log('DESERIALIZE')
     axios.get(`${ENV.USER_ROUTE + '/' + id}`)
       .then((req) => {
-        console.log('DS', req.data)
+        // console.log('DS', req.data)
         const userInformation = {
           username: req.data[0].username,
           user_id: req.data[0].user_id
