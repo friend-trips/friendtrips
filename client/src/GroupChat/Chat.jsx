@@ -40,7 +40,8 @@ const ChatHeader = styled.header`
   left: 0;
   right: 0;
   position: absolute;
-  height: 8%;
+  // height: 8%;
+  height: 60px;
   border-bottom: .5px solid black;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
@@ -86,7 +87,6 @@ const Info = styled.div`
 const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
   const [connectedUserCount, setConnectedUserCount] = useState(0);
   const [msg, setMsg] = useState('');
-  const [viewingEndOfChat, setViewingEndOfChat] = useState(false);
 
   const authContext = useContext(AuthContext);
   useEffect(() => {
@@ -106,12 +106,8 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
     socket.on('updatedMessages', (newMsgs) => {
       console.log('new messages received', newMsgs.length);
       setChatFeed(groupMessages(newMsgs));
-      // scrollToBottom();
     })
     scrollToBottom();
-    socket.on('newCommentReceived', (newMsgs, newComment) => {
-      // handleComment(newMsgs, newComment);
-    })
     //clean up socket connection when the component unmounts
     return () => {
       socket.disconnect();
@@ -122,7 +118,7 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
     socket.emit('comment', mainMessage, comment)
   }
   const updateThreadComments = () => {
-    for (let i = 0; i <= chatFeed.length - 1; i++) {
+    for (let i = chatFeed.length - 1; i >= 0; i--) {
       if (chatFeed[i].type === 'message') {
         for (let j = 0; j <= chatFeed[i].messages.length - 1; j++) {
           if (thread.message_id === chatFeed[i].messages[j].message_id) {
@@ -157,14 +153,13 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
   const messagesEndRef = useRef(null)
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-    setViewingEndOfChat(true);
   }
 
   return (
     <Container>
       <ChatFrame>
         <ChatHeader>Chat!</ChatHeader>
-        <ChatWindow onWheel={() => {if (viewingEndOfChat) {setViewingEndOfChat(false)}}} >
+        <ChatWindow >
           {(chatFeed) ? chatFeed.map((group, i) => {
             if (group.type !== 'message') {
               return <Suggestion data={group} />

@@ -5,12 +5,17 @@ const Container = styled.aside`
   position: fixed;
   display: flex;
   flex-direction: column;
-  top: 8.5%;
-  bottom: 14%;
+  // bottom: 0%;
+  // left: 75%;
+  top: 1%;
   right: 1%;
+  bottom: 2%;
+  z-index: 2;
   width: 25%;
   border-left: 1px solid black;
-  background-color: yellow;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  background-color: white;
 `;
 
 const Header = styled.header`
@@ -18,6 +23,7 @@ const Header = styled.header`
   display: flex;
   width: 100%;
   height: 60px;
+  // height: 8%;
   border-bottom: .5px solid black;
 `;
 const H3 = styled.h3`
@@ -37,58 +43,58 @@ const Message = styled.div`
 
 const CommentThread = styled.ul`
   list-style: none;
+  max-height: 80%;
+  overflow-y: scroll;
 `;
 const CommentForm = styled.form`
+  position: relative;
   padding: 2%;
-  border: .5px solid black;
+  border-top: .5px solid black;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
 `;
 const Input = styled.input`
   width: 80%;
+  flex: 1;
 `;
 const Submit = styled.button`
-  width: 20%;
+  flex: 1;
 `;
 
 const MessageThread = ({ main, hideThread, replyToMsg }) => {
   const [reply, setReply] = useState('');
-  const [loading, setLoading] = useState(false);
-
   const sendReply = (e) => {
     e.preventDefault();
-    console.log('SENDREPLY', main, reply)
-    setLoading(true);
     replyToMsg(main, reply);
     setReply('');
   };
-
-    return (
-      <Container>
-        <Header>
-          <H3>Thread</H3>
-          <Close onClick={() => {hideThread()}}>
-            X
+  return (
+    <Container>
+      <Header>
+        <H3>Thread</H3>
+        <Close onClick={() => { hideThread() }}>
+          X
         </Close>
-        </Header>
-        <Message>
-          <p>{main.user_id + ': ' + main.message}</p>
-        </Message>
-        <CommentThread>
-          {(main.comments) ?
-            main.comments.map((comment) => (
-              <li>
-                <b>{comment.user_id + ': '}</b>{comment.comment}
-              </li>
-            )) : null}
-        </CommentThread>
+      </Header>
+      <Message>
+        <p>{main.username + ': ' + main.message}</p>
+      </Message>
+      <CommentThread>
+        {(main.comments) ?
+          main.comments.map((comment) => (
+            <li>
+              <b>{comment.username + ': '}</b>{comment.comment}
+            </li>
+          )) : null}
+      </CommentThread>
 
-        <CommentForm onSubmit={(e) => {sendReply(e)}}>
-          <Input value={reply} onChange={(e) => { setReply(e.target.value) }}></Input>
-          <button type='submit'>&#8680;</button>
-        </CommentForm>
-      </Container>
-    )
-  // }
-
+      <CommentForm onSubmit={(e) => { sendReply(e) }}>
+        <Input value={reply} onChange={(e) => { setReply(e.target.value) }}></Input>
+        <button type='submit'>&#8680;</button>
+      </CommentForm>
+    </Container>
+  )
 };
 
 export default MessageThread;
