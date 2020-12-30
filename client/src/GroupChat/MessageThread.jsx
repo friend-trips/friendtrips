@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 const Container = styled.aside`
-  position: absolute;
+  position: fixed;
   display: flex;
   flex-direction: column;
-  top: 0;
-  right: 0;
-  height: 90%;
+  top: 8.5%;
+  bottom: 14%;
+  right: 1%;
   width: 25%;
   border-left: 1px solid black;
   background-color: yellow;
@@ -38,7 +38,6 @@ const Message = styled.div`
 const CommentThread = styled.ul`
   list-style: none;
 `;
-
 const CommentForm = styled.form`
   padding: 2%;
   border: .5px solid black;
@@ -51,7 +50,6 @@ const Submit = styled.button`
 `;
 
 const MessageThread = ({ main, hideThread, replyToMsg }) => {
-
   const [reply, setReply] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -62,14 +60,11 @@ const MessageThread = ({ main, hideThread, replyToMsg }) => {
     setReply('');
   };
 
-  if (loading) {
-    return (<div>Loading...</div>)
-  } else {
     return (
       <Container>
         <Header>
           <H3>Thread</H3>
-          <Close onClick={hideThread}>
+          <Close onClick={() => {hideThread()}}>
             X
         </Close>
         </Header>
@@ -91,7 +86,7 @@ const MessageThread = ({ main, hideThread, replyToMsg }) => {
         </CommentForm>
       </Container>
     )
-  }
+  // }
 
 };
 

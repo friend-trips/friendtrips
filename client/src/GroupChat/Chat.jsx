@@ -16,6 +16,13 @@ const Container = styled.div`
   position: relative;
 `;
 
+const ChatFrame = styled.div`
+  position: relative;
+  height: 99%;
+  display: flex;
+  flex-direction: column;
+`;
+
 const ChatWindow = styled.div`
   position: relative;
   height: 90%;
@@ -29,10 +36,10 @@ const ChatHeader = styled.header`
   z-index: 1;
   margin: 0;
   padding-left: 2%;
-  top: 1%;
-  left: 22.7%;
-  right: 1%;
-  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
   height: 8%;
   border-bottom: .5px solid black;
   border-top-left-radius: 15px;
@@ -76,12 +83,11 @@ const Info = styled.div`
   margin-left: 1%;
 `;
 
-const Chat = ({chatFeed, thread, setChatFeed, updateThread}) => {
+const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
   const [connectedUserCount, setConnectedUserCount] = useState(0);
   const [msg, setMsg] = useState('');
 
   const authContext = useContext(AuthContext);
-  console.log('CHATLOADED', chatFeed, thread)
   useEffect(() => {
     //set username as 'token' in auth socket auth object
     socket.auth.user_id = authContext.user;
@@ -89,7 +95,7 @@ const Chat = ({chatFeed, thread, setChatFeed, updateThread}) => {
     console.log('mounting chat user', authContext.user, authContext.username)
     //actually connect to socket server
     socket.connect();
-    //set up event listeners on the socket
+    //set up event listeners on the socket to run dispatch-linked actions
     socket.on('connect', () => {
       socket.emit('greeting');
     })
@@ -97,11 +103,8 @@ const Chat = ({chatFeed, thread, setChatFeed, updateThread}) => {
       setConnectedUserCount(newconnectedUserCount);
     })
     socket.on('updatedMessages', (newMsgs) => {
-      console.log('new messages received');
+      console.log('new messages received', newMsgs);
       setChatFeed(groupMessages(Object.values(newMsgs)));
-    })
-    socket.on('action', (someAction) => {
-      console.log('socketACTION,', someAction)
     })
 
     //clean up socket connection when the component unmounts
@@ -110,12 +113,29 @@ const Chat = ({chatFeed, thread, setChatFeed, updateThread}) => {
     }
   }, [])
 
+  const replyToMsg = (mainMessage, comment) => {
+    socket.emit('comment', mainMessage, comment)
+  }
+  const updateThreadedComment = () => {
+    console.log('updateThreadedComment', thread.comments)
+  }
   useEffect(() => {
-    // if (threadState) {
-      // updateThread();
-    // } else {
+    if (thread) {
+      for (let i = 0; i <= chatFeed.length - 1; i++) {
+        if (chatFeed[i].type === 'message') {
+          for (let j = 0; j <= chatFeed[i].messages.length - 1; j++) {
+            if (thread.message_id === chatFeed[i].messages[j].message_id) {
+              console.log('FOUND IT!', chatFeed[i].messages[j].message_id)
+              updateThread(chatFeed[i].messages[j])
+              return;
+            }
+          }
+        }
+      }
+      // updateThreadedComment();
+    } else {
       scrollToBottom();
-    // }
+    }
   }, [chatFeed])
 
   const writeMsg = (message) => {
@@ -124,7 +144,6 @@ const Chat = ({chatFeed, thread, setChatFeed, updateThread}) => {
   }
   const sendMsg = (e) => {
     e.preventDefault();
-    // sendChat(msg)
     socket.emit('message', msg);
     setMsg('');
   }
@@ -135,28 +154,29 @@ const Chat = ({chatFeed, thread, setChatFeed, updateThread}) => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
   }
 
-
   return (
     <Container>
-      <ChatWindow>
+      <ChatFrame>
         <ChatHeader>Chat!</ChatHeader>
-        {(chatFeed) ? chatFeed.map((group, i) => {
-          if (group.type !== 'message') {
-            return <Suggestion data={group}/>
-          } else if (group.type === 'message') {
-            return <MessageGroup group={group} showThread={updateThread}></MessageGroup>
-          }
-        }) : <h1>Loading...</h1>}
-        <div ref={messagesEndRef} />
-        {(thread) ? <MessageThread main={thread} /> : null}
-      </ChatWindow>
-      <ChatForm onSubmit={sendMsg}>
-        <Input value={msg} onChange={(e) => { setMsg(e.target.value) }}></Input>
-        <Button type='submit'> &#8680; </Button>
-      </ChatForm>
-      <Info>
-        Connected users: {connectedUserCount}
-      </Info>
+        <ChatWindow>
+          {(chatFeed) ? chatFeed.map((group, i) => {
+            if (group.type !== 'message') {
+              return <Suggestion data={group} />
+            } else if (group.type === 'message') {
+              return <MessageGroup group={group} showThread={updateThread}></MessageGroup>
+            }
+          }) : <h1>Loading...</h1>}
+          <div ref={messagesEndRef} />
+          {(thread !== null) ? <MessageThread main={thread} hideThread={updateThread} replyToMsg={replyToMsg} /> : null}
+        </ChatWindow>
+        <ChatForm onSubmit={sendMsg}>
+          <Input value={msg} onChange={(e) => { setMsg(e.target.value) }}></Input>
+          <Button type='submit'> &#8680; </Button>
+        </ChatForm>
+        <Info>
+          Connected users: {connectedUserCount}
+        </Info>
+      </ChatFrame>
     </Container>
   );
 };

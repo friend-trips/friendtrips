@@ -67,22 +67,22 @@ class ChatController {
       })
     //get flights from db
     let hotels = await axios.get(`https://morning-bayou-59969.herokuapp.com/hotels/?trip_id=${trip_id}`)
-    .then((result) => {
-      let hotelList = result.data;
-      for (let id in hotelList) {
-        if (!this.hotels[id]) {
-          hotelList[id].type = 'hotel'
-          hotelList[id].timestamp = hotelList[id].time_created;
-          this.hotels[id] = hotelList[id];
+      .then((result) => {
+        let hotelList = result.data;
+        for (let id in hotelList) {
+          if (!this.hotels[id]) {
+            hotelList[id].type = 'hotel'
+            hotelList[id].timestamp = hotelList[id].time_created;
+            this.hotels[id] = hotelList[id];
+          }
         }
-      }
-      console.log('hotelCount', Object.keys(this.hotels).length)
-      return this.hotels;
-    })
-    .catch((err) => {
-      console.log('error getting flights from database', err)
-      return {};
-    })
+        console.log('hotelCount', Object.keys(this.hotels).length)
+        return this.hotels;
+      })
+      .catch((err) => {
+        console.log('error getting flights from database', err)
+        return {};
+      })
     console.log('Merging Records..')
     this.mergeComments();
     this.createFeed();
@@ -91,7 +91,9 @@ class ChatController {
   mergeComments() {
     for (let id in this.comments) {
       let currentComment = this.comments[id];
-      this.messages[currentComment.message_id].comments.push(currentComment);
+      if (!this.messages[currentComment.message_id].comments.includes(currentComment)) {
+        this.messages[currentComment.message_id].comments.push(currentComment);
+      }
     }
     return;
   }
@@ -102,8 +104,8 @@ class ChatController {
     let messages = Object.values(this.messages).sort((a, b) => a.timestamp - b.timestamp)
 
     let res = [messages, flights, hotels]
-    .flat()
-    .sort((a, b) => a.timestamp - b.timestamp);
+      .flat()
+      .sort((a, b) => a.timestamp - b.timestamp);
 
     res.forEach((element) => {
       // console.log(element.timestamp)
@@ -178,9 +180,11 @@ class ChatController {
       this.flights[item.meta.suggestion_id] = item;
       item.type = 'flight';
     } else if (type === 'comment') {
+      console.log(this.comments[item.timestamp])
       this.comments[item.timestamp] = item;
-      this.messages[item.message_id].comments.push(item);
+      // this.messages[item.message_id].comments.push(item);
       this.mergeComments();
+      console.log(this.comments[item.timestamp])
       this.createFeed();
       return;
     }
