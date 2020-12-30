@@ -28,7 +28,7 @@ const Messages = styled.div`
   width: 90%;
 `;
 
-const MessageGroup = ({ data }) => {
+const Suggestion = ({ data }) => {
   return (
     <ChatBlock>
       <ChatBlockHeader>
@@ -48,4 +48,4 @@ const MessageGroup = ({ data }) => {
   );
 };
 
-export default MessageGroup;
+export default Suggestion;

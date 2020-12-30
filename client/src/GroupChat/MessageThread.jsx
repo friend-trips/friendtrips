@@ -55,6 +55,7 @@ const MessageThread = ({ main, hideThread, replyToMsg }) => {
 
   const sendReply = (e) => {
     e.preventDefault();
+    console.log('SENDREPLY', main, reply)
     setLoading(true);
     replyToMsg(main, reply);
     setReply('');
@@ -80,7 +81,7 @@ const MessageThread = ({ main, hideThread, replyToMsg }) => {
             )) : null}
         </CommentThread>
 
-        <CommentForm onSubmit={sendReply}>
+        <CommentForm onSubmit={(e) => {sendReply(e)}}>
           <Input value={reply} onChange={(e) => { setReply(e.target.value) }}></Input>
           <button type='submit'>&#8680;</button>
         </CommentForm>

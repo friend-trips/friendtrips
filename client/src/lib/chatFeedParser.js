@@ -2,7 +2,6 @@ const groupMessages = (messages) => {
   if (!messages) return null;
   let results = [];
   let currentGroup = {
-    isFlight: false,
     messages: [],
     username: ''
   };
@@ -17,7 +16,6 @@ const groupMessages = (messages) => {
         currentGroup.type = 'message';
         results.push(currentGroup);
         currentGroup = {
-          isFlight: false,
           messages: [messages[i]],
           username: messages[i].username
         }
@@ -30,7 +28,10 @@ const groupMessages = (messages) => {
       }
 
     } else {
-      current.isFlight = true;
+      if (current.meta) {
+        current.type = 'flight'
+      }
+      // current.isFlight = true;
       results.push(current);
     }
   }

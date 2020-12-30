@@ -135,9 +135,10 @@ io.on('connection', (socket) => {
     axios.post('https://morning-bayou-59969.herokuapp.com/messages', newMsg)
       .then((result) => {
         console.log('successful message post to DB', result.data);
-        newMsg.id = Number(result.data.message_id);
+        newMsg.message_id = Number(result.data.message_id);
         newMsg.username = socket.handshake.auth.username;
         newMsg.type = 'message';
+        newMsg.comments = [];
         myMessageController.addToFeed(newMsg, 'message');
 
         // messages = chatController.mergeFlights(messages, flights);
@@ -160,10 +161,10 @@ io.on('connection', (socket) => {
     axios.post('https://morning-bayou-59969.herokuapp.com/comments', newComment)
       .then((result) => {
         console.log('successful comment post to DB', result.data);
-        newComment.message_id = result.data.message_id;
-        result.data.username = socket.handshake.auth.username,
+        result.data.username = socket.handshake.auth.username;
         myMessageController.addToFeed(result.data, 'comment');
         io.emit('updatedMessages', myMessageController.feed);
+        // io.emit('newCommentReceived', myMessageController.feed, result.data)
       })
       .catch((err) => {
         console.log('error in post to DB', err)

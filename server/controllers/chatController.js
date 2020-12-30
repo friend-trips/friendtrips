@@ -7,7 +7,7 @@ class ChatController {
     this.comments = {};
     this.flights = {};
     this.hotels = {};
-    this.feed = {};
+    this.feed = [];
   }
 
   async initialize(trip_id) {
@@ -99,26 +99,30 @@ class ChatController {
   }
 
   createFeed() {
-    let flights = Object.values(this.flights).sort((a, b) => a.meta.time_created - b.meta.time_created)
-    let hotels = Object.values(this.hotels).sort((a, b) => a.time_created - b.time_created)
-    let messages = Object.values(this.messages).sort((a, b) => a.timestamp - b.timestamp)
+    // let flights = Object.values(this.flights).sort((a, b) => a.meta.time_created - b.meta.time_created)
+    // let hotels = Object.values(this.hotels).sort((a, b) => a.time_created - b.time_created)
+    // let messages = Object.values(this.messages).sort((a, b) => a.timestamp - b.timestamp)
 
-    let res = [messages, flights, hotels]
-      .flat()
+    let flights = Object.values(this.flights)
+    let hotels = Object.values(this.hotels)
+    let messages = Object.values(this.messages)
+
+    let res = [...messages, ...flights, ...hotels]
+      // .flat()
       .sort((a, b) => a.timestamp - b.timestamp);
-
-    res.forEach((element) => {
-      // console.log(element.timestamp)
-      if (this.feed[element.timestamp] !== undefined) {
-        let newTime = (Number(element.timestamp) + 1).toString();
-        while (this.feed[newTime] !== undefined) {
-          newTime = (Number(newTime) + 1).toString()
-        }
-        this.feed[newTime] = element;
-      } else {
-        this.feed[element.timestamp] = element;
-      }
-    });
+    this.feed = res;
+    // res.forEach((element) => {
+    //   // console.log(element.timestamp)
+    //   if (this.feed[element.timestamp] !== undefined) {
+    //     let newTime = (Number(element.timestamp) + 1).toString();
+    //     while (this.feed[newTime] !== undefined) {
+    //       newTime = (Number(newTime) + 1).toString()
+    //     }
+    //     this.feed[newTime] = element;
+    //   } else {
+    //     this.feed[element.timestamp] = element;
+    //   }
+    // });
     console.log('...records merged');
   }
 
@@ -180,15 +184,11 @@ class ChatController {
       this.flights[item.meta.suggestion_id] = item;
       item.type = 'flight';
     } else if (type === 'comment') {
-      console.log(this.comments[item.timestamp])
       this.comments[item.timestamp] = item;
-      // this.messages[item.message_id].comments.push(item);
       this.mergeComments();
-      console.log(this.comments[item.timestamp])
-      this.createFeed();
       return;
     }
-    this.feed[Date.now()] = item;
+    this.feed.push(item);
   }
 
 }
