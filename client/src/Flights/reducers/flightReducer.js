@@ -4,7 +4,7 @@ const initialState = {
   savedResults: []
 }
 
-var videoListReducer = (state = initialState, action) => {
+var flightReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_LOADING_FLIGHTS':
       console.log('SET LOADING')
@@ -20,4 +20,4 @@ var videoListReducer = (state = initialState, action) => {
   }
 };
 
-export default videoListReducer;
+export default flightReducer;

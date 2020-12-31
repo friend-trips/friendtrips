@@ -26,18 +26,14 @@ app.use(session({
 }))
 
 app.use('*', (req, res, next) => {
-  console.log(req.session);
-  console.log(req.user);
-  console.log(req.isAuthenticated())
   if (!req.isAuthenticated() && req.session.passport) {
+    //if there is a passport session we can re-auth the user using the existing token
     console.log('reauthenticate this user')
-    // console.log('check cookies on unauthenticated request', req);
   }
   next();
 })
 
 app.use('/auth', authRoute);
-//----------------------------------------- END OF ROUTES---------------------------------------------------
 app.get('/login', (req, res) => {
   res.redirect('/')
 })
@@ -52,15 +48,7 @@ app.get("/user", (req, res) => {
 });
 
 
-/* Socket Auth Flow */
-// app.use((req, res, next) => {
-//   res.io = io;
-//   next();
-// })
 const http = require('http').createServer(app);
-// const io = require('socket.io')();
-// io.attach(http)
-
 const io = require('socket.io')(http, {
   path: '/socket.io'
 });
@@ -131,7 +119,6 @@ io.on('connection', (socket) => {
       trip_id: 1,
       message: text
     }
-    // console.log(newMsg);
     axios.post('https://morning-bayou-59969.herokuapp.com/messages', newMsg)
       .then((result) => {
         console.log('successful message post to DB', result.data);
@@ -140,9 +127,6 @@ io.on('connection', (socket) => {
         newMsg.type = 'message';
         newMsg.comments = [];
         myMessageController.addToFeed(newMsg, 'message');
-
-        // messages = chatController.mergeFlights(messages, flights);
-        // messages.push(newMsg);
         io.emit('updatedMessages', myMessageController.feed);
       })
       .catch((err) => {
@@ -164,14 +148,12 @@ io.on('connection', (socket) => {
         result.data.username = socket.handshake.auth.username;
         myMessageController.addToFeed(result.data, 'comment');
         io.emit('updatedMessages', myMessageController.feed);
-        // io.emit('newCommentReceived', myMessageController.feed, result.data)
       })
       .catch((err) => {
         console.log('error in post to DB', err)
       })
 
   })
-  // console.log(socket)
 });
 
 http.listen(4000, () => {
