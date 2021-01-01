@@ -13,9 +13,10 @@ const Container = styled.div`
   border-bottom: 1px solid black;
   min-width: 100%;
   min-height: 30%;
+  max-height: 80%;
   position: relative;
-  flex: 1;
-  transition: min-height 0.2s ease-out;
+  transition: max-height 0.2s ease-out;
+  overflow: hidden;
 `;
 
 const Card = styled.div`
@@ -24,13 +25,12 @@ const Card = styled.div`
   flex-direction: row;
   border-bottom: 1px solid black;
   min-width: 100%;
-  height: 100%;
+  transition: height 0.2s ease-out;
   flex: 1;
 `;
 
 const ExpandedSection = styled.section`
   position: relative;
-  bottom: 0;
   height: 0px;
   overflow: hidden;
   transition: height 0.2s ease-out;
@@ -236,14 +236,17 @@ export default function HotelCard({
     return perk.replace("_", " ").toLowerCase();
   });
   let expandedCard = {
-    height: isExpanded ? '300px' : '0%'
+    flex: isExpanded ? 0 : 1
   }
-  let expandedTop = {
+  let expandedSection = {
+    height: isExpanded ? '70%' : '0%'
+  }
+  let expandedContainer = {
     minHeight: isExpanded ? '80%' : '30%'
   }
   return (
-    <Container style={expandedTop}>
-      <Card onClick={() => { setExpanded(!isExpanded) }}>
+    <Container style={expandedContainer}>
+      <Card onClick={() => { setExpanded(!isExpanded) }} style={expandedCard}>
         <HotelImageWrapper>
           <HotelImage
             src={`./assets/images/hotel_img${Math.floor(Math.random() * 8) + 1
@@ -322,7 +325,7 @@ export default function HotelCard({
           </Price>
         </PricePane>
       </Card>
-      <ExpandedSection style={expandedCard} onClick={() => { setExpanded(!isExpanded) }} >
+      <ExpandedSection style={expandedSection} onClick={() => { setExpanded(!isExpanded) }} >
         <Expansion bookingQuery={bookingQuery} hotel={HotelData} isExpanded={isExpanded}></Expansion>
       </ExpandedSection>
     </Container>
