@@ -42,7 +42,6 @@ app.get('/login', (req, res) => {
   res.redirect('/')
 })
 app.get('/signup', (req, res) => {
-  console.log(req.session, req.user);
   res.redirect('/')
 })
 app.get('/home', (req, res) => {
@@ -59,10 +58,12 @@ app.get("/user", (req, res) => {
 //   next();
 // })
 const http = require('http').createServer(app);
+// const io = require('socket.io')();
+// io.attach(http)
+
 const io = require('socket.io')(http, {
   path: '/socket.io'
 });
-
 
 
 let countOfConnections = 0;
@@ -90,6 +91,7 @@ io.use((socket, next) => {
 io.on('connection', (socket) => {
   countOfConnections++;
   io.emit('connectedUsers', countOfConnections)
+
   socket.on('greeting', () => {
     // console.log('greeting', socket.id)
     // let newMsg = {
@@ -101,7 +103,8 @@ io.on('connection', (socket) => {
     // };
     let feed = myMessageController.feed;
     // feed[Date.now()] = newMsg;
-    io.emit('updatedMessages', feed)
+    socket.emit('updatedMessages', feed)
+    // io.emit('updatedMessages', feed)
   })
 
   socket.on('disconnect', () => {
@@ -117,7 +120,7 @@ io.on('connection', (socket) => {
     //   }
       let feed = myMessageController.feed;
       // feed[Date.now()] = newMsg;
-      io.emit('updatedMessages', feed);
+      // io.emit('updatedMessages', feed);
       socket.disconnect();
     // }
   });
@@ -128,13 +131,14 @@ io.on('connection', (socket) => {
       trip_id: 1,
       message: text
     }
-    console.log(newMsg);
+    // console.log(newMsg);
     axios.post('https://morning-bayou-59969.herokuapp.com/messages', newMsg)
       .then((result) => {
         console.log('successful message post to DB', result.data);
-        newMsg.id = Number(result.data.message_id);
+        newMsg.message_id = Number(result.data.message_id);
         newMsg.username = socket.handshake.auth.username;
         newMsg.type = 'message';
+        newMsg.comments = [];
         myMessageController.addToFeed(newMsg, 'message');
 
         // messages = chatController.mergeFlights(messages, flights);
@@ -149,6 +153,7 @@ io.on('connection', (socket) => {
   socket.on('comment', (message, comment) => {
     console.log('Message', message.message_id ,'received a comment: "', comment, '"');
     let newComment = {
+      trip_id: 1,
       message_id: message.message_id,
       user_id: Number(socket.handshake.auth.user_id),
       comment: comment
@@ -156,14 +161,17 @@ io.on('connection', (socket) => {
     axios.post('https://morning-bayou-59969.herokuapp.com/comments', newComment)
       .then((result) => {
         console.log('successful comment post to DB', result.data);
-        newComment.id = result.data.message_id;
-        myMessageController.addToFeed(newComment, 'comment');
+        result.data.username = socket.handshake.auth.username;
+        myMessageController.addToFeed(result.data, 'comment');
+        io.emit('updatedMessages', myMessageController.feed);
+        // io.emit('newCommentReceived', myMessageController.feed, result.data)
       })
       .catch((err) => {
         console.log('error in post to DB', err)
       })
-    io.emit('updatedMessages', myMessageController.feed);
+
   })
+  // console.log(socket)
 });
 
 http.listen(4000, () => {

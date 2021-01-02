@@ -164,7 +164,7 @@ export default function HotelCard({
       adults: adults,
       hotel_name: HotelData.name,
       hotel_address: HotelData.address,
-      city_code: cityCode,
+      city_code: HotelData.cityCode,
       rating: HotelData.rating ? HotelData.rating : 5,
       amenities: HotelData.amenities,
       price: HotelData.Price,

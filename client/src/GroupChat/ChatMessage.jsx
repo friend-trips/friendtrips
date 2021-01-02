@@ -49,7 +49,7 @@ const ChatMessage = ({ message, handleClick }) => {
   // let style = { backgroundColor: (highlight) ? 'lightblue' : 'transparent' };
   // let deetStyl = { backgroundColor: (highlight) ? 'lightgreen' : 'transparent' };
   return (
-    <Container>
+    <Container onClick={()=>{handleClick(message)}}>
       <ChatBody
         onMouseOver={toggleHighlight}
         onMouseLeave={()=>setHighlight(false)}

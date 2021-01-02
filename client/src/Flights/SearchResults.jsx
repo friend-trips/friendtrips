@@ -1,6 +1,7 @@
 import React from "react";
-import Flight from "./Flight.jsx";
 import styled from "styled-components";
+
+import Flight from "./Flight.jsx";
 
 const ResultsContainer = styled.div`
   padding-top: 5px;
@@ -39,7 +40,7 @@ const SearchResults = (props) => {
       {props.isLoading ? <Loader><img src={`./assets/loadingwheel.gif`}></img></Loader> : null}
       {props.searchResults.length > 0
         ? props.searchResults.map((data, index) => (
-          <Flight key={index} data={data} getNewSavedResult={props.getNewSavedResult}></Flight>
+          <Flight key={index} data={data} getNewSavedResult={props.saveSearchResult}></Flight>
         ))
         : null}
     </ResultsContainer>
