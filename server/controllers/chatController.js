@@ -7,7 +7,7 @@ class ChatController {
     this.comments = {};
     this.flights = {};
     this.hotels = {};
-    this.feed = [];
+    this.feed = {};
   }
 
   async initialize(trip_id) {
@@ -67,22 +67,22 @@ class ChatController {
       })
     //get flights from db
     let hotels = await axios.get(`https://morning-bayou-59969.herokuapp.com/hotels/?trip_id=${trip_id}`)
-      .then((result) => {
-        let hotelList = result.data;
-        for (let id in hotelList) {
-          if (!this.hotels[id]) {
-            hotelList[id].type = 'hotel'
-            hotelList[id].timestamp = hotelList[id].time_created;
-            this.hotels[id] = hotelList[id];
-          }
+    .then((result) => {
+      let hotelList = result.data;
+      for (let id in hotelList) {
+        if (!this.hotels[id]) {
+          hotelList[id].type = 'hotel'
+          hotelList[id].timestamp = hotelList[id].time_created;
+          this.hotels[id] = hotelList[id];
         }
-        console.log('hotelCount', Object.keys(this.hotels).length)
-        return this.hotels;
-      })
-      .catch((err) => {
-        console.log('error getting flights from database', err)
-        return {};
-      })
+      }
+      console.log('hotelCount', Object.keys(this.hotels).length)
+      return this.hotels;
+    })
+    .catch((err) => {
+      console.log('error getting flights from database', err)
+      return {};
+    })
     console.log('Merging Records..')
     this.mergeComments();
     this.createFeed();
@@ -91,39 +91,33 @@ class ChatController {
   mergeComments() {
     for (let id in this.comments) {
       let currentComment = this.comments[id];
-      if (!this.messages[currentComment.message_id].comments.includes(currentComment)) {
-        this.messages[currentComment.message_id].comments.push(currentComment);
-      }
+      this.messages[currentComment.message_id].comments.push(currentComment);
     }
     return;
   }
 
   createFeed() {
-    // let flights = Object.values(this.flights).sort((a, b) => a.meta.time_created - b.meta.time_created)
-    // let hotels = Object.values(this.hotels).sort((a, b) => a.time_created - b.time_created)
-    // let messages = Object.values(this.messages).sort((a, b) => a.timestamp - b.timestamp)
+    let flights = Object.values(this.flights).sort((a, b) => a.meta.time_created - b.meta.time_created)
+    let hotels = Object.values(this.hotels).sort((a, b) => a.time_created - b.time_created)
+    let messages = Object.values(this.messages).sort((a, b) => a.timestamp - b.timestamp)
 
-    let flights = Object.values(this.flights)
-    let hotels = Object.values(this.hotels)
-    let messages = Object.values(this.messages)
+    let res = [messages, flights, hotels]
+    .flat()
+    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-    let res = [...messages, ...flights, ...hotels]
-      // .flat()
-      .sort((a, b) => a.timestamp - b.timestamp);
-    this.feed = res;
-    // res.forEach((element) => {
-    //   // console.log(element.timestamp)
-    //   if (this.feed[element.timestamp] !== undefined) {
-    //     let newTime = (Number(element.timestamp) + 1).toString();
-    //     while (this.feed[newTime] !== undefined) {
-    //       newTime = (Number(newTime) + 1).toString()
-    //     }
-    //     this.feed[newTime] = element;
-    //   } else {
-    //     this.feed[element.timestamp] = element;
-    //   }
-    // });
-    console.log('...records merged');
+    res.forEach((element) => {
+      console.log(element.type)
+      if (this.feed[element.timestamp] !== undefined) {
+        let newTime = (Number(element.timestamp) + 1).toString();
+        while (this.feed[newTime]) {
+          newTime = (Number(newTime) + 1).toString()
+        }
+        this.feed[newTime] = element;
+      } else {
+        this.feed[element.timestamp] = element;
+      }
+    });
+    // console.log(this.feed);
   }
 
   mergeFlights() {
@@ -185,10 +179,11 @@ class ChatController {
       item.type = 'flight';
     } else if (type === 'comment') {
       this.comments[item.timestamp] = item;
+      this.messages[item.message_id].comments.push(item);
       this.mergeComments();
       return;
     }
-    this.feed.push(item);
+    this.feed[Date.now()] = item;
   }
 
 }

@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
+import io from 'socket.io-client';
 import styled from 'styled-components';
-import socket from '../lib/chatSocket.js'
-import groupMessages from '../lib/chatFeedParser.js'
 
 import { AuthContext } from '../components/providers/AuthenticationProvider.jsx'
-
 import MessageGroup from './MessageGroup.jsx'
 import MessageThread from './MessageThread.jsx'
 import Suggestion from './Suggestion.jsx'
@@ -14,13 +12,6 @@ const Container = styled.div`
   height: 99%;
   width: 100%;
   position: relative;
-`;
-
-const ChatFrame = styled.div`
-  position: relative;
-  height: 99%;
-  display: flex;
-  flex-direction: column;
 `;
 
 const ChatWindow = styled.div`
@@ -36,12 +27,11 @@ const ChatHeader = styled.header`
   z-index: 1;
   margin: 0;
   padding-left: 2%;
-  top: 0;
-  left: 0;
-  right: 0;
-  position: absolute;
-  // height: 8%;
-  height: 60px;
+  top: 1%;
+  left: 22.7%;
+  right: 1%;
+  position: fixed;
+  height: 8%;
   border-bottom: .5px solid black;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
@@ -84,19 +74,33 @@ const Info = styled.div`
   margin-left: 1%;
 `;
 
-const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
+
+//set up socket outside of react component, we don't want to socket to reload/refresh connection every time the component refreshes
+const socket = io('http://localhost:4000', {
+  path: '/socket.io',
+  auth: {
+    token: ''
+  },
+  autoConnect: false
+});
+
+const Chat = () => {
   const [connectedUserCount, setConnectedUserCount] = useState(0);
   const [msg, setMsg] = useState('');
+  const [chatMessages, setChatMessages] = useState([]);
+  const [threadDisplay, setThreadDisplay] = useState(false)
+  const [thread, setThread] = useState(null)
 
   const authContext = useContext(AuthContext);
+
   useEffect(() => {
     //set username as 'token' in auth socket auth object
     socket.auth.user_id = authContext.user;
     socket.auth.username = authContext.username;
-    console.log('mounting chat user', authContext.user, authContext.username)
+    console.log('mounting chat user', authContext.user)
     //actually connect to socket server
     socket.connect();
-    //set up event listeners on the socket to run dispatch-linked actions
+    //set up event listeners on the socket
     socket.on('connect', () => {
       socket.emit('greeting');
     })
@@ -104,49 +108,54 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
       setConnectedUserCount(newconnectedUserCount);
     })
     socket.on('updatedMessages', (newMsgs) => {
-      console.log('new messages received', newMsgs.length);
-      setChatFeed(groupMessages(newMsgs));
+      console.log('new messages received');
+      setChatMessages(groupMessages(Object.values(newMsgs)));
     })
-    scrollToBottom();
+
     //clean up socket connection when the component unmounts
     return () => {
       socket.disconnect();
     }
   }, [])
 
-  const replyToMsg = (mainMessage, comment) => {
-    socket.emit('comment', mainMessage, comment)
-  }
-  const updateThreadComments = () => {
-    for (let i = chatFeed.length - 1; i >= 0; i--) {
-      if (chatFeed[i].type === 'message') {
-        for (let j = 0; j <= chatFeed[i].messages.length - 1; j++) {
-          if (thread.message_id === chatFeed[i].messages[j].message_id) {
-            updateThread(chatFeed[i].messages[j])
-            return;
-          }
-        }
-      }
-    }
-  }
   useEffect(() => {
-    if (thread) {
-      updateThreadComments();
+    if (threadDisplay) {
+      updateThread();
     } else {
-      // if (!viewingEndOfChat) {
-        scrollToBottom();
-      // }
+      scrollToBottom();
     }
-  }, [chatFeed])
+  }, [chatMessages])
 
+  const updateThread = () => {
+    if (threadDisplay) {
+      setThread(chatMessages[thread.message_id])
+    }
+  }
   const writeMsg = (message) => {
     let newMsg = msg + message;
     setMsg(newMsg);
   }
   const sendMsg = (e) => {
     e.preventDefault();
-    socket.emit('message', msg);
+    socket.emit('message', msg)
     setMsg('');
+  }
+  const enterUsername = (letter) => {
+    let newMsg = msg + letter;
+    setUsername(newMsg);
+  }
+  const showThread = (msg) => {
+    setThreadDisplay(true);
+    setThread(msg)
+  }
+  const hideThread = () => {
+    setThreadDisplay(false);
+    setThread(null);
+  }
+  const replyToMsg = (msg, comment) => {
+    console.log(msg, comment);
+    //TODO: get trip_id from context
+    socket.emit('comment', msg, comment);
   }
 
   //use react ref to keep track of the 'bottom' of the chat list
@@ -155,29 +164,67 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
   }
 
+  const groupMessages = (messages) => {
+    if (!messages) return null;
+    let results = [];
+    let currentGroup = {
+      isFlight: false,
+      messages: [],
+      username: ''
+    };
+    let last = messages[0];
+    for (let i = 0; i <= messages.length - 1; i++) {
+      let current = messages[i];
+      if (messages[i].type === 'message') {
+        if (messages[i].username === last.username) {
+          currentGroup.messages.push(messages[i]);
+        } else {
+          currentGroup.username = last.username;
+          currentGroup.type = 'message';
+          results.push(currentGroup);
+          currentGroup = {
+            isFlight: false,
+            messages: [messages[i]],
+            username: ''
+          }
+        }
+
+        if (i === messages.length - 1 && currentGroup.messages.length > 0) {
+          currentGroup.type = 'message';
+          currentGroup.username = last.username;
+          results.push(currentGroup);
+        }
+        last = messages[i];
+      } else {
+        current.isFlight = true;
+        results.push(current);
+      }
+    }
+    console.log('we turned', messages.length, 'messages')
+    console.log('into', results.length, 'groups');
+    return results;
+  }
   return (
     <Container>
-      <ChatFrame>
+      <ChatWindow>
         <ChatHeader>Chat!</ChatHeader>
-        <ChatWindow >
-          {(chatFeed) ? chatFeed.map((group, i) => {
-            if (group.type !== 'message') {
-              return <Suggestion data={group} />
-            } else if (group.type === 'message') {
-              return <MessageGroup group={group} showThread={updateThread}></MessageGroup>
-            }
-          }) : <h1>Loading...</h1>}
-          <div ref={messagesEndRef} />
-          {(thread !== null) ? <MessageThread main={thread} hideThread={updateThread} replyToMsg={replyToMsg} /> : null}
-        </ChatWindow>
-        <ChatForm onSubmit={sendMsg}>
-          <Input value={msg} onChange={(e) => { setMsg(e.target.value) }}></Input>
-          <Button type='submit'> &#8680; </Button>
-        </ChatForm>
-        <Info>
-          Connected users: {connectedUserCount}
-        </Info>
-      </ChatFrame>
+        {(chatMessages) ? chatMessages.map((group, i) => {
+          if (group.type !== 'message') {
+            return <Suggestion data={group}/>
+          } else if (group.type === 'message') {
+            return <MessageGroup group={group} ></MessageGroup>
+          }
+        }) : <h1>Loading...</h1>}
+        <div ref={messagesEndRef} />
+        {(threadDisplay) ? <MessageThread main={thread} hideThread={hideThread} replyToMsg={replyToMsg} /> : null}
+      </ChatWindow>
+      <ChatForm onSubmit={sendMsg}>
+        <Input value={msg} onChange={(e) => { setMsg(e.target.value) }}></Input>
+        <Button type='submit'> &#8680; </Button>
+      </ChatForm>
+      <Info>
+        Connected users: {connectedUserCount}
+      </Info>
     </Container>
   );
 };

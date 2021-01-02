@@ -7,13 +7,21 @@ import {
 
 const PrivateRoute = ({ children, ...rest }) => {
   let auth = useContext(AuthContext);
-  const renderChildComponents = ({ location }) => {
-          return auth.user ? children : <Redirect to={{ pathname: "/login", state: { from: location } }}/>
-    }
   return (
     <Route
       {...rest}
-      render={renderChildComponents}
+      render={({ location }) =>
+        auth.user ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location }
+            }}
+          />
+        )
+      }
     />
   );
 }
