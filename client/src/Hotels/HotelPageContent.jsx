@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import HotelSearchResults from "./HotelSearchResults";
-import HotelSuggestions from "./HotelSuggestions";
+import HotelSearchResults from "./containers/HotelSearchResultsContainer.js";
+import HotelSuggestions from "./containers/HotelSuggestionsContainer.js";
 
 const ResultsContainer = styled.div`
   position: relative;
@@ -15,8 +15,8 @@ const ResultsContainer = styled.div`
 export default function HotelPageContent(props) {
   return (
     <ResultsContainer>
-      <HotelSearchResults searchResults={props.searchResults} isLoading={props.isLoading} searchQuery={props.searchQuery} />
-      <HotelSuggestions savedResults={props.savedResults}/>
+      <HotelSearchResults searchQuery={props.searchQuery} />
+      <HotelSuggestions />
     </ResultsContainer>
   );
 }

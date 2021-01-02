@@ -4,7 +4,7 @@ import { AuthContext } from "../components/providers/AuthenticationProvider.jsx"
 import { ApplicationContext } from "../components/providers/ApplicationProvider.jsx";
 import axios from "axios";
 
-import Expansion from './HotelCardExpansion.jsx';
+import Expansion from './containers/HotelCardExpansionContainer.js';
 
 const Container = styled.div`
   display: flex;
@@ -164,10 +164,7 @@ const Suggest = styled.div`
 
 const ratingStrings = ["none", "Poor", "Fair", "Good", "Great", "Excellent"];
 
-export default function HotelCard({
-  HotelData,
-  searchQuery
-}) {
+export default function HotelCard({ HotelData, searchQuery }) {
   const [isExpanded, setExpanded] = useState(false);
 
   let amenities = HotelData.amenities ? HotelData.amenities : [];

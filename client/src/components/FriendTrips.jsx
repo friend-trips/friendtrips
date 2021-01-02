@@ -7,10 +7,10 @@ import { ApplicationProvider } from '../components/providers/ApplicationProvider
 
 import Flights from '../Flights/containers/FlightsContainer.js';
 import Chat from '../GroupChat/containers/chatContainer.js';
+import Hotels from '../Hotels/containers/HotelsContainer.js';
 //TODO: import containerized version of components -- after they have been connected() to the redux store
 import NavBar from './NavBar.jsx';
 import ItineraryBuilder from '../ItineraryBuilder/ItineraryBuilder.jsx';
-import Hotels from '../Hotels/Hotels.jsx';
 
 const Container = styled.div`
   display: flex;

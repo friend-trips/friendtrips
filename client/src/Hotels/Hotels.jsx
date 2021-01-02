@@ -22,55 +22,23 @@ var amadeus = new Amadeus({
 });
 
 
-const Hotels = () => {
-  const [searchResults, setSearchResults] = useState([]);
-  const [savedResults, setSavedResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+const Hotels = ({getSavedHotels, searchForHotels}) => {
   const [searchQuery, setSearchQuery] = useState({});
 
   useEffect(() => {
-    getSavedResults();
+    getSavedHotels();
   }, [])
 
-  const searchForHotels = (query) => {
+  const search = (query) => {
     setSearchQuery(query);
-    setLoading(true);
-    amadeus.shopping.hotelOffers
-      .get({
-        cityCode: query.cityCode,
-        checkInDate: query.checkInDate,
-        checkOutDate: query.checkOutDate,
-        radius: "15",
-        radiusUnit: "MILE",
-        includeClosed: "true",
-        currency: "USD",
-      })
-      .then((response) => {
-        setSearchResults(filterData(response.data));
-        setLoading(false);
-      })
-      .catch((response) => {
-        console.log(response);
-      });
-  }
-
-  const getSavedResults = () => {
-    axios
-      .get("http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1")
-      .then(({ data }) => {
-        setSavedResults(Object.values(data))
-      })
-      .catch(console.log);
+    searchForHotels(query);
   }
 
   return (
     <Wrapper>
-      <SearchBar searchForHotels={searchForHotels}/>
+      <SearchBar searchForHotels={search}/>
       <HotelPageContent
-        searchResults={searchResults}
-        savedResults={savedResults}
         searchQuery={searchQuery}
-        isLoading={loading}
       />
     </Wrapper>
   );

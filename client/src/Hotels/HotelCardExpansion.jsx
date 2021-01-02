@@ -85,7 +85,7 @@ const Suggest = styled.div`
   cursor: pointer;
 `;
 
-const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded }) => {
+const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded, saveSearchResult }) => {
   const [loading, setLoading] = useState(false);
   const [roomOffers, setRoomOffers] = useState([]);
   const [numOfDays, setNumOfDays] = useState(0);
@@ -104,20 +104,18 @@ const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded }) => {
     bookingQuery.currency = 'USD';
     setLoading(true);
     if (isExpanded) {
-      // amadeus.shopping.hotelOffersByHotel.get({ hotelId: hotel.hotelId })
-      amadeus.shopping.hotelOffersByHotel.get(bookingQuery)
-        .then((result) => {
-          console.log('result', result.data)
-          if (result.data) {
-            console.log('found', result.data.offers.length, 'results')
-            setRoomOffers(result.data.offers);
-          }
+      amadeus.shopping.hotelOffersByHotel
+      .get(bookingQuery)
+      .then((result) => {
+        if (result.data) {
+          console.log('found', result.data.offers.length, 'results')
+          setRoomOffers(result.data.offers);
           setLoading(false);
-        })
-        .catch((err) => {
-          console.log('error finding room offers', err)
-          setLoading(false);
-        })
+        }
+      })
+      .catch((err) => {
+        console.log('error finding room offers', err)
+      })
     }
   }, [isExpanded]);
 
@@ -163,17 +161,7 @@ const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded }) => {
       number_of_beds: (offer.room.typeEstimated.beds) ? offer.room.typeEstimated.beds : 0
     };
 
-    axios({
-      method: "post",
-      url: "http://morning-bayou-59969.herokuapp.com/hotels",
-      data: hotelData,
-      header: { "Access-Control-Allow-Origin": "*" },
-    })
-      .then((data) => {
-        console.log("Data from HotelCard.jsx ", data);
-        //getNewSavedResult(data.data.rows[0]);
-      })
-      .catch(console.log);
+    saveSearchResult(hotelData);
   };
   return (
     <Container>
