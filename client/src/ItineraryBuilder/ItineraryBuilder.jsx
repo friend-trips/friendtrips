@@ -34,8 +34,8 @@ const App = () => {
   // const [selectedFlights, setSelectedFlights] = useState([]);
   // const [selectedHotels, setSelectedHotels] = useState([]);
 
-  const getSavedFlightResults = () => {
-    axios.get(`http://morning-bayou-59969.herokuapp.com/flights/?trip_id=${appContext.selectedTrip.trip_id}`)
+  const getSavedFlightResults = async () => {
+    await axios.get(`http://morning-bayou-59969.herokuapp.com/flights/?trip_id=${appContext.selectedTrip.trip_id}`)
       .then((data) => {
         console.log(data)
         let savedArray = [];
@@ -48,8 +48,8 @@ const App = () => {
       .catch(console.log)
   }
 
-  const getSavedHotelResults = () => {
-    axios.get(`http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=${appContext.selectedTrip.trip_id}`)
+  const getSavedHotelResults = async () => {
+    await axios.get(`http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=${appContext.selectedTrip.trip_id}`)
       .then(({ data }) => {
         let savedArray = [];
         for (let keys in data) {
@@ -61,10 +61,10 @@ const App = () => {
       .catch(console.log)
   }
 
-  const getSavedItinerary = (e) => {
+  const getSavedItinerary = async (e) => {
     console.log('searchedFor', e.target.value)
     e.preventDefault();
-    axios.get(`http://morning-bayou-59969.herokuapp.com/api/itinerary/?itinerary_id=${e.target.value}&trip_id=${appContext.selectedTrip.trip_id}`)
+    await axios.get(`http://morning-bayou-59969.herokuapp.com/api/itinerary/?itinerary_id=${e.target.value}&trip_id=${appContext.selectedTrip.trip_id}`)
       .then(({ data }) => {
         let { flights, hotels } = data;
         let itineraryToDisplay = flights.concat(hotels);

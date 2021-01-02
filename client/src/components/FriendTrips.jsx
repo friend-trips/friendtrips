@@ -1,16 +1,25 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
-import { HashRouter as Router, Switch, Route } from 'react-router-dom';
-
-import { ApplicationProvider } from '../components/providers/ApplicationProvider.jsx';
-
-import Flights from '../Flights/containers/FlightsContainer.js';
-import Chat from '../GroupChat/containers/chatContainer.js';
-//TODO: import containerized version of components -- after they have been connected() to the redux store
-import NavBar from './NavBar.jsx';
+import axios from 'axios';
+import { ApplicationProvider, ApplicationContext } from '../components/providers/ApplicationProvider.jsx';
+import Page from './Page.jsx'
+import Chat from '../GroupChat/Chat.jsx';
 import ItineraryBuilder from '../ItineraryBuilder/ItineraryBuilder.jsx';
+import Flights from '../Flights/Flights.jsx';
 import Hotels from '../Hotels/Hotels.jsx';
+import Welcome from './Welcome.jsx';
+
+import {
+  HashRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+  useHistory,
+  useLocation
+} from 'react-router-dom';
+
+import NavBar from './NavBar.jsx';
 
 const Container = styled.div`
   display: flex;
@@ -35,6 +44,8 @@ const Section = styled.section`
 `;
 
 const FriendTrips = () => {
+
+
   return (
     <ApplicationProvider>
       <Router>
@@ -42,6 +53,7 @@ const FriendTrips = () => {
           <NavBar></NavBar>
           <Section>
             <Switch>
+
               <Route exactly path="/itinerary">
                 <ItineraryBuilder />
               </Route>
@@ -54,6 +66,7 @@ const FriendTrips = () => {
               <Route>
                 <Chat />
               </Route>
+
             </Switch>
           </Section>
         </Container>

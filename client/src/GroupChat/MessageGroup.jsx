@@ -27,6 +27,7 @@ const Messages = styled.div`
 `;
 
 const MessageGroup = ({ group, showThread }) => {
+  console.log(group)
   return (
     <ChatBlock>
       <ChatBlockHeader>
