@@ -10,7 +10,7 @@ import Chat from '../GroupChat/containers/chatContainer.js';
 import Hotels from '../Hotels/containers/HotelsContainer.js';
 //TODO: import containerized version of components -- after they have been connected() to the redux store
 import NavBar from './NavBar.jsx';
-import ItineraryBuilder from '../ItineraryBuilder/ItineraryBuilder.jsx';
+import ItineraryBuilder from '../ItineraryBuilder/containers/ItineraryBuilderContainer.js';
 
 const Container = styled.div`
   display: flex;

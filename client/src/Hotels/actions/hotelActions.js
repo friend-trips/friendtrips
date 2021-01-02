@@ -32,11 +32,14 @@ const searchForHotels = (hotelQuery) => {
       });
   }
 }
-const getSavedHotels = () => {
+const getSavedHotels = (cb) => {
   return (dispatch) => {
     axios.get(`http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1`)
       .then((result) => {
         dispatch(setSavedHotels(Object.values(result.data)));
+        if (cb) {
+          cb(Object.values(result.data));
+        }
       })
       .catch(console.log)
   }
