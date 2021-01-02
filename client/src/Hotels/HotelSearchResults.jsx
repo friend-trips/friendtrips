@@ -46,7 +46,7 @@ export default function SearchResults(props) {
       {/* <FeedContainer> */}
         {props.searchResults
           ? props.searchResults.map((data, index) => {
-              return (<HotelCard key={index} HotelData={data} cityCode={props.cityCode} checkInDate={props.checkInDate} checkOutDate={props.checkOutDate} roomQuantity={props.roomQuantity} adults={props.adults} getNewSavedResult={props.getNewSavedResult}/>)
+              return (<HotelCard key={index} HotelData={data} searchQuery={props.searchQuery} />)
             })
           : null}
       {/* </FeedContainer> */}

@@ -15,8 +15,7 @@ const ResultsContainer = styled.div`
 export default function HotelPageContent(props) {
   return (
     <ResultsContainer>
-      <HotelSearchResults searchResults={props.searchResults} cityCode={props.cityCode} checkInDate={props.checkInDate} checkOutDate={props.checkOutDate} roomQuantity={props.roomQuantity} adults={props.adults}
-      getNewSavedResult={props.getNewSavedResult} isLoading={props.isLoading} />
+      <HotelSearchResults searchResults={props.searchResults} isLoading={props.isLoading} searchQuery={props.searchQuery} />
       <HotelSuggestions savedResults={props.savedResults}/>
     </ResultsContainer>
   );
