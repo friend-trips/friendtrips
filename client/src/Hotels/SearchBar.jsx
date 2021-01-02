@@ -175,15 +175,15 @@ export default function SearchBar(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    props.displayLoadingWheel();
+    // props.displayLoadingWheel();
     let startingDate = moment(checkInDate).format("YYYY-MM-DD");
     let endingDate = moment(checkOutDate).format("YYYY-MM-DD");
     props.searchForHotels(
-      cityCode,
-      startingDate,
-      endingDate,
-      roomQuantity,
-      adults
+      {cityCode: cityCode,
+      checkInDate: startingDate,
+      checkOutDate: endingDate,
+      roomQuantity: roomQuantity,
+      adults: adults}
     );
   };
 

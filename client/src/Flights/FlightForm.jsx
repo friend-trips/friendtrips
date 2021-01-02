@@ -144,7 +144,7 @@ function reducer(state, action) {
   }
 }
 
-function FlightForm({ displaySearchFeed, displayLoadingWheel, searchForFlights }) {
+function FlightForm({ searchForFlights }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [startDate, setStartDate] = useState("");

@@ -12,11 +12,14 @@ import FriendTrips from './FriendTrips.jsx';
 
 const Application = styled.div`
   position: absolute;
-  height: 100%;
-  width: 100%;
+  // height: 100%;
+  // width: 100%;
   top: 0;
   left: 0;
+  bottom: 0;
+  right: 0;
   background-color: ##0F4C81;
+  overflow: hidden;
 `;
 
 const App = () => {
