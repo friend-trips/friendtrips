@@ -108,7 +108,7 @@ const CityCodeSearch = ({ setDestination }) => {
   }
 
   const handleKeyPress = (event) => {
-    if (!inputFocused) {
+    if (!inputFocused && event.key !== 'Tab') {
       setInputFocused(true);
     }
     //check for reserved keys
