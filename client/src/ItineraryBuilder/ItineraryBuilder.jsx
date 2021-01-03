@@ -23,7 +23,7 @@ const Section = styled.section`
 `;
 
 const ItineraryBuilder = ({ flightSuggestions, hotelSuggestions, getSavedFlights, getSavedHotels }) => {
-  console.log(flightSuggestions.length, hotelSuggestions.length)
+
   //a list of flight suggestions
   const [flights, setFlights] = useState(flightSuggestions)
   //a list of flight suggestions
