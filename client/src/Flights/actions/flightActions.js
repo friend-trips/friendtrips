@@ -35,11 +35,14 @@ const searchForFlights = (flightQuery) => {
       });
   }
 }
-const getSavedFlights = () => {
+const getSavedFlights = (cb) => {
   return (dispatch) => {
     axios.get(`http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1`)
       .then((result) => {
         dispatch(setSavedFlights(Object.values(result.data)));
+        if (cb) {
+          cb(Object.values(result.data))
+        }
       })
       .catch(console.log)
   }

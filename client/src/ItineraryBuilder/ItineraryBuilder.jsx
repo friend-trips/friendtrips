@@ -22,44 +22,16 @@ const Section = styled.section`
   width: 100%;
 `;
 
-const App = () => {
+const ItineraryBuilder = ({ flightSuggestions, hotelSuggestions, getSavedFlights, getSavedHotels }) => {
+
   //a list of flight suggestions
-  const [flights, setFlights] = useState([])
+  const [flights, setFlights] = useState(flightSuggestions)
   //a list of flight suggestions
-  const [hotels, setHotels] = useState([])
+  const [hotels, setHotels] = useState(hotelSuggestions)
   //list of items to display
   const [displayedItems, setDisplayedItems] = useState([]);
 
   const appContext = useContext(ApplicationContext)
-  // const [selectedFlights, setSelectedFlights] = useState([]);
-  // const [selectedHotels, setSelectedHotels] = useState([]);
-
-  const getSavedFlightResults = () => {
-    axios.get(`http://morning-bayou-59969.herokuapp.com/flights/?trip_id=${appContext.selectedTrip.trip_id}`)
-      .then((data) => {
-        console.log(data)
-        let savedArray = [];
-        for (let keys in data.data) {
-          savedArray.push(data.data[keys])
-        }
-        console.log(savedArray, "flights saved array")
-        setFlights(savedArray)
-      })
-      .catch(console.log)
-  }
-
-  const getSavedHotelResults = () => {
-    axios.get(`http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=${appContext.selectedTrip.trip_id}`)
-      .then(({ data }) => {
-        let savedArray = [];
-        for (let keys in data) {
-          savedArray.push(data[keys])
-        }
-        console.log(savedArray, "hotels saved array")
-        setHotels(savedArray)
-      })
-      .catch(console.log)
-  }
 
   const getSavedItinerary = (e) => {
     console.log('searchedFor', e.target.value)
@@ -74,8 +46,16 @@ const App = () => {
   }
 
   useEffect(() => {
-    getSavedFlightResults();
-    getSavedHotelResults()
+    if (flightSuggestions.length === 0) {
+      getSavedFlights((flights) => {
+        setFlights(flights)
+      });
+    }
+    if (hotelSuggestions.length === 0) {
+      getSavedHotels((hotels) => {
+        setHotels(hotels)
+      })
+    }
   }, [])
 
   //when drag ends, this function will be run with a dragEvent (referencing the item that you dragged)
@@ -99,7 +79,7 @@ const App = () => {
         itemWeDropped = remainingFlightSuggestions.splice(source.index, 1)[0];
         setFlights(remainingFlightSuggestions);
       }
-      if (source.droppableId === 'hotelItems')  {
+      if (source.droppableId === 'hotelItems') {
         let remainingHotelSuggestions = hotels;
         itemWeDropped = remainingHotelSuggestions.splice(source.index, 1)[0];
         setHotels(remainingHotelSuggestions);
@@ -143,7 +123,7 @@ const App = () => {
         <Section>
           {/* <button onClick={()=>{console.log('click')}}>Save Itinerary</button> */}
           <Itinerary itemsToDisplay={displayedItems} resetSelectedSuggestions={resetSelectedSuggestions} />
-          <SuggestionList flights={flights} hotels={hotels} getSavedItinerary={getSavedItinerary}/>
+          <SuggestionList flights={flights} hotels={hotels} getSavedItinerary={getSavedItinerary} />
         </Section>
       </DragDropContext>
     </Container>
@@ -151,4 +131,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default ItineraryBuilder;

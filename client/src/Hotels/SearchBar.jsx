@@ -3,6 +3,8 @@ import { DateRangeInput } from "@datepicker-react/styled";
 import styled from "styled-components";
 import moment from "moment";
 
+import CityCodeSearch from '../components/CityCodeSearch.jsx';
+
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
@@ -88,13 +90,19 @@ const BottomRow = styled.div`
   display: flex;
   position: relative;
   height: 50%;
+  width: 80%;
 `;
 
 const StyledForm = styled.form`
   display: flex;
+  justify-content: center;
+  flex: 1;
   z-index: 2;
 `;
-
+const CityInput = styled.div`
+  margin-right: 3%;
+  width: 20%;
+`;
 const StyledInput = styled.input`
   height: 44px;
   font-family: Montserrat, sans-serif;
@@ -110,14 +118,14 @@ const StyledSubmit = styled.input`
   border: none;
   background-color: #f7498e;
   color: #fff;
-  height: 44px;
+  height: 45px;
   width: 75px;
   border-radius: 5px;
   font-family: "cerapro-bold", sans-serif;
   font-weight: 700;
   letter-spacing: 1px;
-  margin-left: 1em;
-  margin-top: 0.05em;
+  margin-left: 3%;
+  // margin-top: 0.05em;
 `;
 
 const roomNumChoices = [2, 3, 4, 5, 6];
@@ -159,7 +167,7 @@ export default function SearchBar(props) {
   const handleChange = (field, event) => {
     switch (field) {
       case "cityCode":
-        return setCityCode(event.target.value);
+        return setCityCode(event);
       case "checkInDate":
         return setCheckInDate(event.target.value);
       case "checkOutDate":
@@ -175,15 +183,14 @@ export default function SearchBar(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    props.displayLoadingWheel();
     let startingDate = moment(checkInDate).format("YYYY-MM-DD");
     let endingDate = moment(checkOutDate).format("YYYY-MM-DD");
     props.searchForHotels(
-      cityCode,
-      startingDate,
-      endingDate,
-      roomQuantity,
-      adults
+      {cityCode: cityCode,
+      checkInDate: startingDate,
+      checkOutDate: endingDate,
+      roomQuantity: roomQuantity,
+      adults: adults}
     );
   };
 
@@ -228,8 +235,8 @@ export default function SearchBar(props) {
         </TopRow>
         <BottomRow>
           <StyledForm onSubmit={handleSubmit}>
-            <label>
-              <StyledInput
+            <CityInput>
+              {/* <StyledInput
                 name="cityCode"
                 type="text"
                 value={cityCode}
@@ -237,9 +244,12 @@ export default function SearchBar(props) {
                   handleChange("cityCode", e);
                 }}
                 placeholder={"Destination"}
-              />
-            </label>
+              /> */}
+              <CityCodeSearch setDestination={(city) => {
+                console.log('setDest', city); handleChange("cityCode", city)}}/>
+            </CityInput>
             <DateRangeInput
+              style={{width: '65%'}}
               className="datePicker"
               onDatesChange={(data) => {
                 setDates(data);
