@@ -9,6 +9,8 @@ import MessageGroup from './MessageGroup.jsx'
 import MessageThread from './MessageThread.jsx'
 import Suggestion from './Suggestion.jsx'
 
+import useSocket from '../components/hooks/useSocket.js'
+
 
 const Container = styled.div`
   height: 99%;
@@ -89,29 +91,30 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
   const [msg, setMsg] = useState('');
 
   const authContext = useContext(AuthContext);
+  const emitChange = useSocket(authContext.user, authContext.username)
   useEffect(() => {
     //set username as 'token' in auth socket auth object
-    socket.auth.user_id = authContext.user;
-    socket.auth.username = authContext.username;
-    console.log('mounting chat user', authContext.user, authContext.username)
-    //actually connect to socket server
-    socket.connect();
-    //set up event listeners on the socket to run dispatch-linked actions
-    socket.on('connect', () => {
-      socket.emit('greeting');
-    })
-    socket.on('connectedUsers', (newconnectedUserCount) => {
-      setConnectedUserCount(newconnectedUserCount);
-    })
-    socket.on('updatedMessages', (newMsgs) => {
-      console.log('new messages received', newMsgs.length);
-      setChatFeed(groupMessages(newMsgs));
-    })
+    // socket.auth.user_id = authContext.user;
+    // socket.auth.username = authContext.username;
+    // console.log('mounting chat user', authContext.user, authContext.username)
+    // //actually connect to socket server
+    // socket.connect();
+    // //set up event listeners on the socket to run dispatch-linked actions
+    // socket.on('connect', () => {
+    //   socket.emit('greeting');
+    // })
+    // socket.on('connectedUsers', (newconnectedUserCount) => {
+    //   setConnectedUserCount(newconnectedUserCount);
+    // })
+    // socket.on('updatedMessages', (newMsgs) => {
+    //   console.log('new messages received', newMsgs.length);
+    //   setChatFeed(groupMessages(newMsgs));
+    // })
     scrollToBottom();
     //clean up socket connection when the component unmounts
-    return () => {
-      socket.disconnect();
-    }
+    // return () => {
+    //   socket.disconnect();
+    // }
   }, [])
 
   const replyToMsg = (mainMessage, comment) => {
@@ -145,7 +148,7 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
   }
   const sendMsg = (e) => {
     e.preventDefault();
-    socket.emit('message', msg);
+    emitChange('message', msg);
     setMsg('');
   }
 

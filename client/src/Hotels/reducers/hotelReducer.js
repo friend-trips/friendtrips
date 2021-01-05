@@ -15,6 +15,9 @@ var hotelReducer = (state = initialState, action) => {
     case 'SET_SAVED_HOTELS':
       console.log('SET SAVED HOTELS')
       return Object.assign({}, state, { savedResults: action.savedResults });
+      case 'ADD_SAVED_HOTEL':
+      console.log('ADD SAVED HOTEL', state)
+      return Object.assign({}, state, { savedResults: [...state.savedResults, action.hotel] });
     default:
       return state;
   }

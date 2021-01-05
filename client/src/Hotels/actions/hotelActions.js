@@ -15,6 +15,10 @@ const setSavedHotels = (savedHotels) => ({
   type: 'SET_SAVED_HOTELS',
   savedResults: savedHotels
 })
+const addSavedHotel = (hotel) => ({
+  type: 'ADD_SAVED_HOTEL',
+  hotel: hotel
+})
 
 //Thunks that do async stuff THEN update state (by calling above funcs)
 const searchForHotels = (hotelQuery) => {
@@ -53,8 +57,9 @@ const saveSearchResult = (hotel) => {
       data: hotel,
       header: { 'Access-Control-Allow-Origin': '*' }
     })
-      .then((data) => {
-        dispatch(getSavedHotels())
+      .then((response) => {
+        console.log('hotel save search result', response.data.rows[0])
+        dispatch(addSavedHotel(response.data.rows[0]))
       })
       .catch(console.log)
   }
@@ -77,4 +82,4 @@ const voteOnSuggestion = (vote) => {
 
 
 
-export { setLoading, searchForHotels, setSearchResults, setSavedHotels, saveSearchResult, getSavedHotels, voteOnSuggestion };
+export { setLoading, searchForHotels, setSearchResults, setSavedHotels, addSavedHotel, saveSearchResult, getSavedHotels, voteOnSuggestion };

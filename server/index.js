@@ -154,6 +154,21 @@ io.on('connection', (socket) => {
       })
 
   })
+
+  socket.on('addHotel', (hotel) => {
+    axios({
+      method: 'post',
+      url: 'http://morning-bayou-59969.herokuapp.com/hotels',
+      data: hotel,
+      header: { 'Access-Control-Allow-Origin': '*' }
+    })
+      .then((response) => {
+        console.log('hotel from the client sent by the socket and saved in the database', response.data.rows[0])
+        io.emit('updatedHotels', response.data.rows[0])
+        //dispatch(addSavedHotel(response.data.rows[0]))
+      })
+      .catch(console.log)
+  })
 });
 
 http.listen(4000, () => {
