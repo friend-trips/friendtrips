@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from 'axios';
+import Modal from './Modal.jsx';
 
 // this is the container for the div experiment
 const Container = styled.div`
@@ -200,6 +201,8 @@ const OneSuggestion = ({ data }) => {
   const [downvotes, setDownvotes] = useState(0);
   const [upvoteNames, setUpvoteNames] = useState([]);
   const [downvoteNames, setDownvoteNames] = useState([]);
+  const [modal, setModal] = useState(false);
+
   useEffect(() => {
     if (meta.upvote_names) {
       setUpvotes(meta.upvote_names.length);
@@ -208,6 +211,10 @@ const OneSuggestion = ({ data }) => {
     if (meta.downvote_names) {
       setDownvotes(meta.downvote_names.length);
       setDownvoteNames(meta.downvote_names);
+    }
+    if (modal) {
+      // <Modal shouldRender={modal}/>
+      console.log("modal lifted")
     }
   }, [])
 
@@ -253,53 +260,60 @@ const OneSuggestion = ({ data }) => {
     }
   }
 
-  return (
-    <Container>
-      <User>
-        {meta.username}
-      </User>
-      <Departing>
-        <DateAndCarrier>
-          <Date>{outgoing.departure_date}</Date>
-          <CarrierCode>{outgoing.abbreviated_carrier_code}</CarrierCode>
-        </DateAndCarrier>
-        <Time>
-          {outgoing.departure_time} - {outgoing.arrival_time}
-        </Time>
-        <DurationAndAirports>
-          <Airport>
-            {outgoing.departure_airport} - {outgoing.arrival_airport}
-          </Airport>
-        </DurationAndAirports>
-      </Departing>
-      <Returning>
-        <DateAndCarrier>
-          <Date>{returning.departure_date}</Date>
-          <CarrierCode>{returning.abbreviated_carrier_code}</CarrierCode>
-        </DateAndCarrier>
-        <Time>
-          {returning.departure_time} - {returning.arrival_time}
-        </Time>
-        <DurationAndAirports>
-          <Airport>
-            {returning.departure_airport} - {returning.arrival_airport}
-          </Airport>
-        </DurationAndAirports>
-      </Returning>
-      <Price>
-        <Amount>${meta.total_price}</Amount>
-        <Seats>{meta.num_of_seats} Seats Left</Seats>
-        <Upvote onClick={() => upvote()}>
-          <UpArrow viewBox="0 0 18 18" role="presentation" ariaHidden="true" focusable="false"><path d="m13.7 16.29a1 1 0 1 1 -1.42 1.41l-8-8a1 1 0 0 1 0-1.41l8-8a1 1 0 1 1 1.42 1.41l-7.29 7.29z" fillRule="evenodd"></path></UpArrow>
-        </Upvote>
+  const modalClick = () => {
+    setModal(!modal)
+  }
 
-        <Downvote onClick={() => downvote()}>
-          <DownArrow viewBox="0 0 18 18" role="presentation" ariaHidden="true" focusable="false"><path d="m13.7 16.29a1 1 0 1 1 -1.42 1.41l-8-8a1 1 0 0 1 0-1.41l8-8a1 1 0 1 1 1.42 1.41l-7.29 7.29z" fillRule="evenodd"></path></DownArrow>
-        </Downvote>
-        {upvotes > 0 ? <UpvoteTotals>{upvotes}</UpvoteTotals> : null}
-        {downvotes > 0 ? <DownvoteTotals>{downvotes}</DownvoteTotals> : null}
-      </Price>
-    </Container>
+  return (
+    <div>
+      <Modal shouldRender={modal} modalClick={modalClick}/>
+      <Container onClick={modalClick}>
+        <User>
+          {meta.username}
+        </User>
+        <Departing>
+          <DateAndCarrier>
+            <Date>{outgoing.departure_date}</Date>
+            <CarrierCode>{outgoing.abbreviated_carrier_code}</CarrierCode>
+          </DateAndCarrier>
+          <Time>
+            {outgoing.departure_time} - {outgoing.arrival_time}
+          </Time>
+          <DurationAndAirports>
+            <Airport>
+              {outgoing.departure_airport} - {outgoing.arrival_airport}
+            </Airport>
+          </DurationAndAirports>
+        </Departing>
+        <Returning>
+          <DateAndCarrier>
+            <Date>{returning.departure_date}</Date>
+            <CarrierCode>{returning.abbreviated_carrier_code}</CarrierCode>
+          </DateAndCarrier>
+          <Time>
+            {returning.departure_time} - {returning.arrival_time}
+          </Time>
+          <DurationAndAirports>
+            <Airport>
+              {returning.departure_airport} - {returning.arrival_airport}
+            </Airport>
+          </DurationAndAirports>
+        </Returning>
+        <Price>
+          <Amount>${meta.total_price}</Amount>
+          <Seats>{meta.num_of_seats} Seats Left</Seats>
+          <Upvote onClick={() => upvote()}>
+            <UpArrow viewBox="0 0 18 18" role="presentation" ariaHidden="true" focusable="false"><path d="m13.7 16.29a1 1 0 1 1 -1.42 1.41l-8-8a1 1 0 0 1 0-1.41l8-8a1 1 0 1 1 1.42 1.41l-7.29 7.29z" fillRule="evenodd"></path></UpArrow>
+          </Upvote>
+
+          <Downvote onClick={() => downvote()}>
+            <DownArrow viewBox="0 0 18 18" role="presentation" ariaHidden="true" focusable="false"><path d="m13.7 16.29a1 1 0 1 1 -1.42 1.41l-8-8a1 1 0 0 1 0-1.41l8-8a1 1 0 1 1 1.42 1.41l-7.29 7.29z" fillRule="evenodd"></path></DownArrow>
+          </Downvote>
+          {upvotes > 0 ? <UpvoteTotals>{upvotes}</UpvoteTotals> : null}
+          {downvotes > 0 ? <DownvoteTotals>{downvotes}</DownvoteTotals> : null}
+        </Price>
+      </Container>
+    </div>
 
   );
 };
