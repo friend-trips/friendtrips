@@ -94,7 +94,7 @@ const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded, saveSearchResult 
   const appContext = useContext(ApplicationContext);
   const authContext = useContext(AuthContext);
 
-  const emitChange = useSocket(authContext.user, authContext.username);
+  // const emitChange = useSocket(authContext.user, authContext.username);
 
   useEffect(() => {
     let timeBetweenDate = new Date(bookingQuery.checkOutDate).getTime() - new Date(bookingQuery.checkInDate).getTime();
@@ -165,7 +165,7 @@ const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded, saveSearchResult 
       number_of_beds: (offer.room.typeEstimated.beds) ? offer.room.typeEstimated.beds : 0
     };
 
-    emitChange('addHotel', hotelData);
+    appContext.emitChange('addHotel', hotelData);
 
     //saveSearchResult(hotelData);
   };

@@ -4,6 +4,7 @@ import socket from '../lib/chatSocket.js'
 import groupMessages from '../lib/chatFeedParser.js'
 
 import { AuthContext } from '../components/providers/AuthenticationProvider.jsx'
+import { ApplicationContext } from '../components/providers/ApplicationProvider.jsx'
 
 import MessageGroup from './MessageGroup.jsx'
 import MessageThread from './MessageThread.jsx'
@@ -91,7 +92,8 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
   const [msg, setMsg] = useState('');
 
   const authContext = useContext(AuthContext);
-  const emitChange = useSocket(authContext.user, authContext.username)
+  const appContext = useContext(ApplicationContext);
+  // const emitChange = useSocket(authContext.user, authContext.username)
   useEffect(() => {
     //set username as 'token' in auth socket auth object
     // socket.auth.user_id = authContext.user;
@@ -148,7 +150,7 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
   }
   const sendMsg = (e) => {
     e.preventDefault();
-    emitChange('message', msg);
+    appContext.emitChange('message', msg);
     setMsg('');
   }
 

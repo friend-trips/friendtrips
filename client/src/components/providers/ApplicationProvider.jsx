@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios'
+import {AuthContext} from './AuthenticationProvider.jsx';
+import useSocket from '../hooks/useSocket.js'
+
 
 const ApplicationContext = React.createContext();
 
@@ -8,6 +11,10 @@ const ApplicationProvider = (props) => {
   const [tripList, setTripList] = useState([]);
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const authContext = useContext(AuthContext);
+
+  const emitChange = useSocket(authContext.user, authContext.username);
 
   const getTrips = () => {
     setLoading(true);
@@ -33,7 +40,7 @@ const ApplicationProvider = (props) => {
   }, [])
 
   return (
-    <ApplicationContext.Provider value={{ tripList, selectedTrip, loading, setSelectedTrip, getTrips }}>
+    <ApplicationContext.Provider value={{ tripList, selectedTrip, loading, setSelectedTrip, getTrips, emitChange }}>
       {props.children}
     </ApplicationContext.Provider>
   )
