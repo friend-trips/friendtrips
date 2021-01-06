@@ -61,7 +61,7 @@ const saveSearchResult = (flight) => {
       header: { 'Access-Control-Allow-Origin': '*' }
     })
       .then((data) => {
-        dispatch(getSavedFlights())
+        dispatch(addSavedFlights())
       })
       .catch(console.log)
   }

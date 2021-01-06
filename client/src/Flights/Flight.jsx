@@ -3,6 +3,8 @@ import styled from "styled-components";
 import axios from 'axios';
 import {AuthContext} from '../components/providers/AuthenticationProvider.jsx';
 import {ApplicationContext} from '../components/providers/ApplicationProvider.jsx';
+import Heart from '../components/Heart.jsx'
+import Share from '../components/Share.jsx'
 
 
 // this is the container for the div experiment
@@ -156,13 +158,13 @@ const Suggest = styled.button`
   right: 0;
 `;
 
-const Flights = ({ data, getNewSavedResult }) => {
+const Flights = ({ data, getNewSavedResult, selectedTrip }) => {
   const authContext = useContext(AuthContext);
   const appContext = useContext(ApplicationContext);
   const save = function(isSuggested) {
     const flightData = {
       "meta": {
-        "trip_id": appContext.selectedTrip.trip_id,
+        "trip_id": selectedTrip.trip_id,
         "user_id": authContext.user,
         "adults": 1,
         "nonstop": "true",
@@ -203,8 +205,8 @@ const Flights = ({ data, getNewSavedResult }) => {
       }
     }
 
-    getNewSavedResult(flightData);
-
+    // getNewSavedResult(flightData);
+    appContext.emitChange('addFlight', flightData);
   }
 
 
@@ -244,10 +246,10 @@ const Flights = ({ data, getNewSavedResult }) => {
         <Amount>${data.totalPrice}</Amount>
           <Seats>{data.bookableSeats} Seats Left</Seats>
         <Save onClick={() => save(false)}>
-          <svg aria-hidden="true" role="presentation" focusable="false" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" className="sc-fzqzlV sc-fzqLLg kCMTKY"><path d="m16 28c7-4.733 14-10 14-17 0-1.792-.683-3.583-2.05-4.95-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05l-2.051 2.051-2.05-2.051c-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05-1.367 1.367-2.051 3.158-2.051 4.95 0 7 7 12.267 14 17z"></path></svg>
+          <Heart></Heart>
         </Save>
         <Suggest onClick={() => save(true)}>
-          <svg aria-hidden="true" role="presentation" focusable="false" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" className="sc-fzqzlV gMJRj"><g vectorEffect="non-scaling-stroke" transform="translate(0,0)scale(1,1)" fill="none" fillRule="evenodd" stroke="#000" strokeWidth="2"><path d="m27 18v9c0 1.1045695-.8954305 2-2 2h-18c-1.1045695 0-2-.8954305-2-2v-9"></path><path d="m4.5 14.5h23z" transform="matrix(0 1 -1 0 30.5 -1.5)"></path><path d="m6 13 9.2928932-9.29289322c.3905243-.39052429 1.0236893-.39052429 1.4142136 0l9.2928932 9.29289322"></path></g></svg>
+          <Share></Share>
         </Suggest>
       </Price>
     </Container>

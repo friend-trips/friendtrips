@@ -11,7 +11,6 @@ const ENV = require('../configs/environment.config.js');
 const session = require('express-session');
 
 const authRoute = require('./routes/auth.js');
-// const chatRoute = require('./routes/chat.js');
 
 app.use(morgan('dev'));
 app.use(express.static('public'));
@@ -55,27 +54,23 @@ const io = require('socket.io')(http, {
 
 
 let countOfConnections = 0;
-let messages = [];
-let flights = [];
-let hotels = [];
 let MessageController = require('./controllers/chatController.js');
 
 let myMessageController = new MessageController();
 myMessageController.initialize(1)
-  .then((res)=>{
+  .then((res) => {
     console.log('Message Controller Initialized')
   })
-  .catch((err)=>{
+  .catch((err) => {
     console.log('Error Initializing Controller', err)
   })
 
 
-// let comments = [];
-//on 'connection', io returns an object representing the client's socket
 io.use((socket, next) => {
   console.log('Connected socket.client ', socket.client.id, ' with authtoken ', socket.handshake.auth);
   next();
 })
+//on 'connection', io returns an object representing the client's socket
 io.on('connection', (socket) => {
   countOfConnections++;
   io.emit('connectedUsers', countOfConnections)
@@ -106,10 +101,10 @@ io.on('connection', (socket) => {
     //     trip_id: 1,
     //     message: 'has left the room'
     //   }
-      let feed = myMessageController.feed;
-      // feed[Date.now()] = newMsg;
-      // io.emit('updatedMessages', feed);
-      socket.disconnect();
+    let feed = myMessageController.feed;
+    // feed[Date.now()] = newMsg;
+    // io.emit('updatedMessages', feed);
+    socket.disconnect();
     // }
   });
 
@@ -135,7 +130,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('comment', (comment) => {
-    console.log('Message', comment.message_id ,'received a comment: "', comment.comment, '"');
+    console.log('Message', comment.message_id, 'received a comment: "', comment.comment, '"');
     let newComment = {
       trip_id: 1,
       message_id: comment.message_id,
@@ -173,7 +168,30 @@ io.on('connection', (socket) => {
       })
       .catch(console.log)
   })
+
+  socket.on('addFlight', (flight) => {
+    axios({
+      method: 'post',
+      url: 'http://morning-bayou-59969.herokuapp.com/flights',
+      data: flight,
+      header: { 'Access-Control-Allow-Origin': '*' }
+    })
+      .then((response) => {
+        console.log('flight from the client sent by the socket and saved in the database', response.data)
+        let newFlight = response.data;
+        newFlight.type = 'flight';
+        newFlight.timestamp = newFlight.meta.time_created;
+        newFlight.username = socket.handshake.auth.username;
+        myMessageController.addToFeed(newFlight, 'flight')
+        io.emit('updatedFlights', response.data)
+        io.emit('updatedMessages', myMessageController.feed)
+      })
+      .catch(console.log)
+  });
+
 });
+
+
 
 http.listen(4000, () => {
   console.log('listening at http://localhost:4000');
