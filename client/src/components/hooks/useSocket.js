@@ -18,6 +18,7 @@ const useSocket = (user_id, username) => {
     socket.on('connectedUsers', (newconnectedUserCount) => {
       dispatch(setConnectedUserCount(newconnectedUserCount));
     })
+    //listen for updates from the server and dispatch actions accordingly
     socket.on('updatedMessages', (newMsgs) => {
       console.log('new messages received', newMsgs.length);
       dispatch(setChatFeed(groupMessages(newMsgs)));
