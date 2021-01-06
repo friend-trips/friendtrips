@@ -7,9 +7,7 @@ import groupMessages from '../../lib/chatFeedParser.js'
 import socket from '../../lib/chatSocket.js'
 
 const useSocket = (user_id, username) => {
-
   const dispatch = useDispatch();
-
   useEffect(() => {
     socket.auth.user_id = user_id;
     socket.auth.username = username;
@@ -38,12 +36,15 @@ const useSocket = (user_id, username) => {
     }
   }, [])
 
+  /*
+  emitChange parameters:
+    type: a string describing the change to send to the server (either 'addHotel', 'addFlight', 'message', or 'comment')
+    data: an object containing the data you wish to send to the server
+    [callback]: an optional function which can be run on the server (requires your own setup in the server)
+  */
   const emitChange = (type, data, cb) => {
     console.log('emitChange', type, data)
-    socket.emit(type, data);
-    if (cb) {
-      cb();
-    }
+    socket.emit(type, data, cb);
   }
 
   return emitChange;
