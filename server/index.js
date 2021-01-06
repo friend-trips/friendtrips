@@ -52,7 +52,7 @@ const io = require('socket.io')(http, {
   path: '/socket.io'
 });
 
-
+//TODO: move this messageController stuff elsewhere and create a POST route (or socket event or something) to re-initialize the chatController with a new trip_id
 let countOfConnections = 0;
 let MessageController = require('./controllers/chatController.js');
 
@@ -76,17 +76,19 @@ io.on('connection', (socket) => {
   io.emit('connectedUsers', countOfConnections)
 
   socket.on('greeting', () => {
-    // console.log('greeting', socket.id)
-    // let newMsg = {
-    //   user_id: Number(socket.handshake.auth.user_id),
-    //   username: socket.handshake.auth.username,
-    //   trip_id: 1,
-    //   type: 'message',
-    //   message: 'joined the room'
-    // };
-    let feed = myMessageController.feed;
+    console.log('greeting', socket.id)
+    let newMsg = {
+      user_id: Number(socket.handshake.auth.user_id),
+      username: socket.handshake.auth.username,
+      trip_id: 1,
+      type: 'info',
+      message: 'joined the room'
+    };
+    // let feed = myMessageController.feed;
     // feed[Date.now()] = newMsg;
-    socket.emit('updatedMessages', feed)
+    // socket.emit('updatedMessages', feed)
+    myMessageController.addToFeed(newMsg, 'message');
+    io.emit('updatedMessages', myMessageController.feed);
     // io.emit('updatedMessages', feed)
   })
 
@@ -94,20 +96,22 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
     countOfConnections--;
     io.emit('connectedUsers', countOfConnections);
-    // if (socket.handshake.auth.username) {
-    //   let newMsg = {
-    //     user_id: Number(socket.handshake.auth.user_id),
-    //     username: socket.handshake.auth.username,
-    //     trip_id: 1,
-    //     message: 'has left the room'
-    //   }
-    let feed = myMessageController.feed;
+    let newMsg = {
+      user_id: Number(socket.handshake.auth.user_id),
+      username: socket.handshake.auth.username,
+      trip_id: 1,
+      type: 'info',
+      message: 'has left the room'
+    }
+    // let feed = myMessageController.feed;
     // feed[Date.now()] = newMsg;
-    // io.emit('updatedMessages', feed);
     socket.disconnect();
+    myMessageController.addToFeed(newMsg, 'message');
+    io.emit('updatedMessages', myMessageController.feed);
     // }
   });
 
+  //TODO: break out these AXIOS requests into controllers for each item -- return a promise so that we can emit our changes to the db back to the client from this file.
   socket.on('message', (text) => {
     let newMsg = {
       user_id: Number(socket.handshake.auth.user_id),

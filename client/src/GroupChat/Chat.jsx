@@ -8,6 +8,7 @@ import { ApplicationContext } from '../components/providers/ApplicationProvider.
 import MessageGroup from './MessageGroup.jsx'
 import MessageThread from './MessageThread.jsx'
 import Suggestion from './Suggestion.jsx'
+import ServerMessage from './ServerMessage.jsx'
 
 import useSocket from '../components/hooks/useSocket.js'
 
@@ -140,10 +141,12 @@ const Chat = ({connectedUserCount, chatFeed, thread, setChatFeed, updateThread }
         <ChatHeader>Chat!</ChatHeader>
         <ChatWindow >
           {(chatFeed) ? chatFeed.map((group, i) => {
-            if (group.type !== 'message') {
+            if (group.type !== 'message' && group.type !== 'info') {
               return <Suggestion data={group} />
             } else if (group.type === 'message') {
               return <MessageGroup group={group} showThread={updateThread}></MessageGroup>
+            } else if (group.type === 'info') {
+              return <ServerMessage message={group}/>
             }
           }) : <h1>Loading...</h1>}
           <div ref={messagesEndRef} />
