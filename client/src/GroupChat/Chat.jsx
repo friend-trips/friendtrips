@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
-import socket from '../lib/chatSocket.js'
 import groupMessages from '../lib/chatFeedParser.js'
 
 import { AuthContext } from '../components/providers/AuthenticationProvider.jsx'
@@ -87,40 +86,17 @@ const Info = styled.div`
   margin-left: 1%;
 `;
 
-const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
-  const [connectedUserCount, setConnectedUserCount] = useState(0);
+const Chat = ({connectedUserCount, chatFeed, thread, setChatFeed, updateThread }) => {
   const [msg, setMsg] = useState('');
 
-  const authContext = useContext(AuthContext);
   const appContext = useContext(ApplicationContext);
-  // const emitChange = useSocket(authContext.user, authContext.username)
+
   useEffect(() => {
-    //set username as 'token' in auth socket auth object
-    // socket.auth.user_id = authContext.user;
-    // socket.auth.username = authContext.username;
-    // console.log('mounting chat user', authContext.user, authContext.username)
-    // //actually connect to socket server
-    // socket.connect();
-    // //set up event listeners on the socket to run dispatch-linked actions
-    // socket.on('connect', () => {
-    //   socket.emit('greeting');
-    // })
-    // socket.on('connectedUsers', (newconnectedUserCount) => {
-    //   setConnectedUserCount(newconnectedUserCount);
-    // })
-    // socket.on('updatedMessages', (newMsgs) => {
-    //   console.log('new messages received', newMsgs.length);
-    //   setChatFeed(groupMessages(newMsgs));
-    // })
     scrollToBottom();
-    //clean up socket connection when the component unmounts
-    // return () => {
-    //   socket.disconnect();
-    // }
   }, [])
 
-  const replyToMsg = (mainMessage, comment) => {
-    socket.emit('comment', mainMessage, comment)
+  const replyToMsg = (comment) => {
+    appContext.emitChange('comment', comment)
   }
   const updateThreadComments = () => {
     for (let i = chatFeed.length - 1; i >= 0; i--) {
@@ -138,9 +114,7 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
     if (thread) {
       updateThreadComments();
     } else {
-      // if (!viewingEndOfChat) {
-        scrollToBottom();
-      // }
+      scrollToBottom();
     }
   }, [chatFeed])
 

@@ -1,6 +1,6 @@
 import {useEffect} from 'react'
 import {useDispatch} from 'react-redux'
-import {setChatFeed} from '../../GroupChat/actions/chatActions.js'
+import {setChatFeed, setConnectedUserCount} from '../../GroupChat/actions/chatActions.js'
 import {addSavedHotel} from '../../Hotels/actions/hotelActions.js'
 import {addSavedFlight} from '../../Flights/actions/flightActions.js'
 import groupMessages from '../../lib/chatFeedParser.js'
@@ -16,14 +16,12 @@ const useSocket = (user_id, username) => {
     // console.log('mounting chat user', authContext.user, authContext.username)
     //actually connect to socket server
     socket.connect();
-    //set up event listeners on the socket to run dispatch-linked actions
     socket.on('connect', () => {
-      //get all the stuff
       socket.emit('greeting');
     })
-    // socket.on('connectedUsers', (newconnectedUserCount) => {
-    //   setConnectedUserCount(newconnectedUserCount);
-    // })
+    socket.on('connectedUsers', (newconnectedUserCount) => {
+      dispatch(setConnectedUserCount(newconnectedUserCount));
+    })
     socket.on('updatedMessages', (newMsgs) => {
       console.log('new messages received', newMsgs.length);
       dispatch(setChatFeed(groupMessages(newMsgs)));
@@ -37,9 +35,9 @@ const useSocket = (user_id, username) => {
       dispatch(addSavedHotel(hotel));
     })
     //clean up socket connection when the component unmounts
-    // return () => {
-    //   socket.disconnect();
-    // }
+    return () => {
+      socket.disconnect();
+    }
   }, [])
 
   const emitChange = (type, data, cb) => {

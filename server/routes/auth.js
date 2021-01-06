@@ -85,24 +85,13 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 router.get('/logout', function(req, res){
-  cookie = req.cookies;
-  for (var prop in cookie) {
-      if (!cookie.hasOwnProperty(prop)) {
-          continue;
-      }
-      res.cookie(prop, '', {expires: new Date(0)});
-      // console.log('PRE LOGOUT', req.session)
-      //logOut removes the user from our passport session
-      req.logOut();
-      // console.log('POST LOGOUT / PRE DESTROY', req.session)
-      // req.session.destroy((err) => {
-      //   if (err) {
-      //     console.log('well we tried but we could not destroy the session');
-      //   } else {
-      //     console.log('IT HAS BEEN DONE!', req.session);
-      //   }
-      // });
-  }
+  req.session.destroy((err) => {
+    if (err) {
+      console.log('well we tried but we could not destroy the session');
+    } else {
+      console.log('IT HAS BEEN DONE!', req.session);
+    }
+  });
   res.redirect('/');
 });
 module.exports = router;

@@ -27,6 +27,7 @@ const AuthProvider = (props) => {
   const signOut = () => {
       axios.get('/auth/logout')
       setUser(null);
+      setUsername('');
   }
 
   const checkStatus = () => {

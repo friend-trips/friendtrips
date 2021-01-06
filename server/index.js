@@ -134,13 +134,13 @@ io.on('connection', (socket) => {
       })
   })
 
-  socket.on('comment', (message, comment) => {
-    console.log('Message', message.message_id ,'received a comment: "', comment, '"');
+  socket.on('comment', (comment) => {
+    console.log('Message', comment.message_id ,'received a comment: "', comment.comment, '"');
     let newComment = {
       trip_id: 1,
-      message_id: message.message_id,
+      message_id: comment.message_id,
       user_id: Number(socket.handshake.auth.user_id),
-      comment: comment
+      comment: comment.comment
     }
     axios.post('https://morning-bayou-59969.herokuapp.com/comments', newComment)
       .then((result) => {
@@ -152,7 +152,6 @@ io.on('connection', (socket) => {
       .catch((err) => {
         console.log('error in post to DB', err)
       })
-
   })
 
   socket.on('addHotel', (hotel) => {
@@ -164,8 +163,13 @@ io.on('connection', (socket) => {
     })
       .then((response) => {
         console.log('hotel from the client sent by the socket and saved in the database', response.data.rows[0])
+        let newHotel = response.data.rows[0];
+        newHotel.type = 'hotel';
+        newHotel.timestamp = newHotel.time_created;
+        newHotel.username = socket.handshake.auth.username;
+        myMessageController.addToFeed(newHotel, 'hotel')
         io.emit('updatedHotels', response.data.rows[0])
-        //dispatch(addSavedHotel(response.data.rows[0]))
+        io.emit('updatedMessages', myMessageController.feed)
       })
       .catch(console.log)
   })

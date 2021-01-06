@@ -8,8 +8,6 @@ import App from './Hotels.jsx';
 import Heart from '../components/Heart.jsx'
 import Share from '../components/Share.jsx'
 
-import useSocket from '../components/hooks/useSocket.js'
-
 const Container = styled.div`
   position: relative;
   display: flex;
@@ -93,8 +91,6 @@ const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded, saveSearchResult 
   const [numOfDays, setNumOfDays] = useState(0);
   const appContext = useContext(ApplicationContext);
   const authContext = useContext(AuthContext);
-
-  // const emitChange = useSocket(authContext.user, authContext.username);
 
   useEffect(() => {
     let timeBetweenDate = new Date(bookingQuery.checkOutDate).getTime() - new Date(bookingQuery.checkInDate).getTime();
