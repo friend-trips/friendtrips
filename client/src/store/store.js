@@ -1,18 +1,26 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
+import friendTripsReducer from '../FriendTrips/reducers/FriendTripsReducer.js'
 import hotelReducer from '../Hotels/reducers/hotelReducer.js'
 import flightReducer from '../Flights/reducers/flightReducer.js';
 import chatReducer from '../GroupChat/reducers/chatReducer.js'
 
 
 const rootReducer = combineReducers({
+  app: friendTripsReducer,
   flights: flightReducer,
   hotels: hotelReducer,
   chat: chatReducer,
 });
 
 const preloadedState = {
+  app: {
+    isLoading: false,
+    selectedTrip: null,
+    tripList: [],
+    connectedUsers: []
+  },
   flights: {
     isLoading: false,
     searchResults: [],

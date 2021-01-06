@@ -22,7 +22,7 @@ const Section = styled.section`
   width: 100%;
 `;
 
-const ItineraryBuilder = ({ flightSuggestions, hotelSuggestions, getSavedFlights, getSavedHotels }) => {
+const ItineraryBuilder = ({ flightSuggestions, hotelSuggestions, getSavedFlights, getSavedHotels, selectedTrip }) => {
 
   //a list of flight suggestions
   const [flights, setFlights] = useState(flightSuggestions)
@@ -36,8 +36,9 @@ const ItineraryBuilder = ({ flightSuggestions, hotelSuggestions, getSavedFlights
   const getSavedItinerary = (e) => {
     console.log('searchedFor', e.target.value)
     e.preventDefault();
-    axios.get(`http://morning-bayou-59969.herokuapp.com/api/itinerary/?itinerary_id=${e.target.value}&trip_id=${appContext.selectedTrip.trip_id}`)
+    axios.get(`http://morning-bayou-59969.herokuapp.com/api/itinerary/?itinerary_id=${e.target.value}&trip_id=${selectedTrip.trip_id}`)
       .then(({ data }) => {
+        console.log('got saved itin', data)
         let { flights, hotels } = data;
         let itineraryToDisplay = flights.concat(hotels);
         setDisplayedItems(itineraryToDisplay);
@@ -123,7 +124,7 @@ const ItineraryBuilder = ({ flightSuggestions, hotelSuggestions, getSavedFlights
         <Section>
           {/* <button onClick={()=>{console.log('click')}}>Save Itinerary</button> */}
           <Itinerary itemsToDisplay={displayedItems} resetSelectedSuggestions={resetSelectedSuggestions} />
-          <SuggestionList flights={flights} hotels={hotels} getSavedItinerary={getSavedItinerary} />
+          <SuggestionList selectedTrip={selectedTrip} flights={flights} hotels={hotels} getSavedItinerary={getSavedItinerary} />
         </Section>
       </DragDropContext>
     </Container>

@@ -13,8 +13,6 @@ const useSocket = (user_id, username) => {
   useEffect(() => {
     socket.auth.user_id = user_id;
     socket.auth.username = username;
-    // console.log('mounting chat user', authContext.user, authContext.username)
-    //actually connect to socket server
     socket.connect();
     socket.on('connect', () => {
       socket.emit('greeting');
@@ -41,6 +39,7 @@ const useSocket = (user_id, username) => {
   }, [])
 
   const emitChange = (type, data, cb) => {
+    console.log('emitChange', type, data)
     socket.emit(type, data);
     if (cb) {
       cb();

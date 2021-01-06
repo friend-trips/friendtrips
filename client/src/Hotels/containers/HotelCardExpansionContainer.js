@@ -8,7 +8,13 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
+const mapStateToProps = (state) => {
+  return {
+    selectedTrip: state.app.selectedTrip
+  }
+}
 
-var HotelCardExpansionContainer = connect(null, mapDispatchToProps)(HotelCardExpansion);
+
+var HotelCardExpansionContainer = connect(mapStateToProps, mapDispatchToProps)(HotelCardExpansion);
 
 export default HotelCardExpansionContainer;
