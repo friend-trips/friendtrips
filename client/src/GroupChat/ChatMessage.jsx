@@ -56,7 +56,7 @@ const ChatMessage = ({ message, handleClick }) => {
       >
         <Message>{message.message}</Message>
       </ChatBody>
-      {highlight ? <HoverDetails > {moment(Date(message.timestamp)).startOf('day').fromNow()}</HoverDetails> : null}
+      {highlight ? <HoverDetails > {moment(message.timestamp, "x").startOf('day').fromNow()}</HoverDetails> : null}
     </Container>
   );
 };
