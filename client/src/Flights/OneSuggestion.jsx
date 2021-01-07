@@ -266,7 +266,7 @@ const OneSuggestion = ({ data }) => {
 
   return (
     <div>
-      <Modal shouldRender={modal} modalClick={modalClick}/>
+      <Modal shouldRender={modal} modalClick={modalClick} data={data} upvotes={upvotes} downvotes={downvotes}/>
       <Container onClick={modalClick}>
         <User>
           {meta.username}
