@@ -50,13 +50,26 @@ const UL = styled.ul`
   height: 80%;
 `
 const LI = styled.li`
+  position: relative;
   height: 10%;
+  width: 88%;
   margin: 1%;
+  padding-left: 5%;
+  padding-right: 5%;
   border: 1px solid black;
   display: flex;
   align-items: center;
-  justify-content: center;
   background-color: #f9f9f9;
+
+  &: i {
+    width: 10%;
+    align-self: flex-end;
+  }
+`;
+
+const Label = styled.label`
+  width: 85%;
+  margin-left: 5%;
 `
 const Button = styled.button`
   height: 40%;
@@ -80,15 +93,13 @@ const Footer = styled.footer`
 const NavBar = () => {
   const authContext = useContext(AuthContext);
   const appContext = useContext(ApplicationContext);
-  const linkStyle = {
-
-  }
+  const linkStyle = { display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-around', textDecoration: 'none' }
   return (
     <Container>
       <Header>
         <H3>Welcome back{(authContext.username) ? ', ' + authContext.username : null}!</H3>
         <Select>
-          {appContext.tripList.map((trip, i)=>{
+          {appContext.tripList.map((trip, i) => {
             return (
               <option key={`trip-${i}`} value={trip.id}>{trip.name}</option>
             )
@@ -99,16 +110,28 @@ const NavBar = () => {
       <NavigationLinks>
         <UL >
           <LI>
-            <Link to="/chat">Chat</Link>
+            <Link style={linkStyle} to="/chat">
+              <i class="fas fa-comments"></i>
+              <Label>Chat</Label>
+            </Link>
           </LI>
           <LI>
-            <Link to="/flights">Flights</Link>
+            <Link style={linkStyle} to="/flights">
+              <i class="fas fa-plane-departure"></i>
+              <Label>Flights</Label>
+            </Link>
           </LI>
           <LI>
-            <Link to="/hotels">Hotels</Link>
+            <Link style={linkStyle} to="/hotels">
+                <i class="fas fa-hotel"></i>
+                <Label>Hotels</Label>
+            </Link>
           </LI>
           <LI>
-            <Link to="/itinerary">Itinerary Builder</Link>
+            <Link style={linkStyle} to="/itinerary">
+              <i class="fas fa-clipboard-list"></i>
+              <Label>Itinerary Builder</Label>
+            </Link>
           </LI>
         </UL>
       </NavigationLinks>
