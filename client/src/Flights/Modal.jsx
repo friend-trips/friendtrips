@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
+import FlightCard from "./FlightCard.jsx";
 
 const ModalBox = styled.div`
   display: flex;
@@ -79,7 +80,7 @@ const Modal = ({shouldRender, modalClick, data, upvotes, downvotes}) => {
               Detail
             </Header>
             <DetailInfo>
-              {/* {data.meta.username} */}
+              <FlightCard data={data}/>
             </DetailInfo>
 
           </Detail>
