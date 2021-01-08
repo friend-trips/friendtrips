@@ -108,6 +108,9 @@ const NavBar = ({tripList, getTripList, getTripData,selectedTrip, isLoading}) =>
             <Link to="/hotels">Hotels</Link>
           </LI>
           <LI>
+            <Link to="/pois">Points of Interest</Link>
+          </LI>
+          <LI>
             <Link to="/itinerary">Itinerary Builder</Link>
           </LI>
         </UL>

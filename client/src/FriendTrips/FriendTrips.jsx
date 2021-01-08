@@ -9,9 +9,9 @@ import Flights from '../Flights/containers/FlightsContainer.js';
 import Chat from '../GroupChat/containers/chatContainer.js';
 import Hotels from '../Hotels/containers/HotelsContainer.js';
 import ItineraryBuilder from '../ItineraryBuilder/containers/ItineraryBuilderContainer.js';
+import PointsOfInterest from '../PointsOfInterest/containers/MapContainer.js'
 //TODO: import containerized version of components -- after they have been connected() to the redux store
 import NavBar from '../components/containers/NavBarContainer.js';
-
 
 const Container = styled.div`
   display: flex;
@@ -51,6 +51,9 @@ const FriendTrips = () => {
               </Route>
               <Route exactly path="/hotels">
                 <Hotels />
+              </Route>
+              <Route exactly path="/pois">
+                <PointsOfInterest />
               </Route>
               <Route>
                 <Chat />
