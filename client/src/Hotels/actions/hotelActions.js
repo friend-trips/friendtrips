@@ -23,11 +23,11 @@ const searchForHotels = (hotelQuery) => {
     dispatch(setLoading(true));
     amadeus.shopping.hotelOffers
       .get(hotelQuery)
-      .then(function (response) {
+      .then((response) => {
         dispatch(setSearchResults(parser(response.data)));
         dispatch(setLoading(false));
       })
-      .catch(function (response) {
+      .catch((response) => {
         console.log('ERROR IN SERVER', response);
       });
   }

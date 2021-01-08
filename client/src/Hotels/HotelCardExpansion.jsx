@@ -21,7 +21,7 @@ const OfferList = styled.ul`
   padding: 0;
   margin: 0;
   overflow-y: scroll;
-  max-height: 300px;
+  max-height: 100%;
 `;
 const Offer = styled.li`
   border: 1px solid green;
@@ -172,7 +172,7 @@ const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded, saveSearchResult 
               <Offer>
                 <CenterSection>
                   <p>{roomOffer.id}</p>
-                  <p>Room Type: {roomOffer.room.typeEstimated.category.split('_')[0].toLowerCase()}</p>
+                  <p>Room Type: {roomOffer.room.typeEstimated.category ? roomOffer.room.typeEstimated.category.split('_')[0].toLowerCase() : null}</p>
                   {roomOffer.room.typeEstimated.bedType ? <p>Bed Type: {roomOffer.room.typeEstimated.bedType.toLowerCase()}</p> : null}
                   {roomOffer.room.typeEstimated.beds ? <p># of Beds: {roomOffer.room.typeEstimated.beds}</p> : null}
                 </CenterSection>
