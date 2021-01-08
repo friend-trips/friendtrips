@@ -4,8 +4,8 @@ import axios from 'axios';
 const AuthContext = React.createContext();
 
 const AuthProvider = (props) => {
-  const [user, setUser] = useState(null);
-  const [username, setUsername] = useState('')
+  const [user, setUser] = useState(7);
+  const [username, setUsername] = useState('Fred')
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const signIn = (attemptedLogin) => {
