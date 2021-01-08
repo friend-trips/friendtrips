@@ -11,7 +11,8 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     isLoading: state.flights.isLoading,
-    searchResults: state.flights.searchResults
+    searchResults: state.flights.searchResults,
+    selectedTrip: state.app.selectedTrip
   };
 };
 

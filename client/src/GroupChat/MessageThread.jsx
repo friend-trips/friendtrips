@@ -66,7 +66,11 @@ const MessageThread = ({ main, hideThread, replyToMsg }) => {
   const [reply, setReply] = useState('');
   const sendReply = (e) => {
     e.preventDefault();
-    replyToMsg(main, reply);
+    let comment = {
+      message_id: main.message_id,
+      comment: reply
+    }
+    replyToMsg(comment);
     setReply('');
   };
   return (

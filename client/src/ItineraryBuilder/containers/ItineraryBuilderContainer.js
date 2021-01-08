@@ -6,7 +6,8 @@ import {getSavedFlights} from '../../Flights/actions/flightActions.js'
 const mapStateToProps = (state) => {
   return {
     hotelSuggestions: state.hotels.savedResults,
-    flightSuggestions: state.flights.savedResults
+    flightSuggestions: state.flights.savedResults,
+    selectedTrip: state.app.selectedTrip,
   };
 };
 

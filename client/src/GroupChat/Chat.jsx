@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
-import socket from '../lib/chatSocket.js'
 import groupMessages from '../lib/chatFeedParser.js'
 
 import { AuthContext } from '../components/providers/AuthenticationProvider.jsx'
+import { ApplicationContext } from '../components/providers/ApplicationProvider.jsx'
 
 import MessageGroup from './MessageGroup.jsx'
 import MessageThread from './MessageThread.jsx'
 import Suggestion from './Suggestion.jsx'
+import ServerMessage from './ServerMessage.jsx'
+
+import useSocket from '../components/hooks/useSocket.js'
 
 
 const Container = styled.div`
@@ -84,38 +87,17 @@ const Info = styled.div`
   margin-left: 1%;
 `;
 
-const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
-  const [connectedUserCount, setConnectedUserCount] = useState(0);
+const Chat = ({connectedUserCount, chatFeed, thread, setChatFeed, updateThread }) => {
   const [msg, setMsg] = useState('');
 
-  const authContext = useContext(AuthContext);
+  const appContext = useContext(ApplicationContext);
+
   useEffect(() => {
-    //set username as 'token' in auth socket auth object
-    socket.auth.user_id = authContext.user;
-    socket.auth.username = authContext.username;
-    console.log('mounting chat user', authContext.user, authContext.username)
-    //actually connect to socket server
-    socket.connect();
-    //set up event listeners on the socket to run dispatch-linked actions
-    socket.on('connect', () => {
-      socket.emit('greeting');
-    })
-    socket.on('connectedUsers', (newconnectedUserCount) => {
-      setConnectedUserCount(newconnectedUserCount);
-    })
-    socket.on('updatedMessages', (newMsgs) => {
-      console.log('new messages received', newMsgs.length);
-      setChatFeed(groupMessages(newMsgs));
-    })
     scrollToBottom();
-    //clean up socket connection when the component unmounts
-    return () => {
-      socket.disconnect();
-    }
   }, [])
 
-  const replyToMsg = (mainMessage, comment) => {
-    socket.emit('comment', mainMessage, comment)
+  const replyToMsg = (comment) => {
+    appContext.emitChange('comment', comment)
   }
   const updateThreadComments = () => {
     for (let i = chatFeed.length - 1; i >= 0; i--) {
@@ -133,9 +115,7 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
     if (thread) {
       updateThreadComments();
     } else {
-      // if (!viewingEndOfChat) {
-        scrollToBottom();
-      // }
+      scrollToBottom();
     }
   }, [chatFeed])
 
@@ -145,7 +125,7 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
   }
   const sendMsg = (e) => {
     e.preventDefault();
-    socket.emit('message', msg);
+    appContext.emitChange('message', msg);
     setMsg('');
   }
 
@@ -161,10 +141,12 @@ const Chat = ({ chatFeed, thread, setChatFeed, updateThread }) => {
         <ChatHeader>Chat!</ChatHeader>
         <ChatWindow >
           {(chatFeed) ? chatFeed.map((group, i) => {
-            if (group.type !== 'message') {
+            if (group.type !== 'message' && group.type !== 'info') {
               return <Suggestion data={group} />
             } else if (group.type === 'message') {
               return <MessageGroup group={group} showThread={updateThread}></MessageGroup>
+            } else if (group.type === 'info') {
+              return <ServerMessage message={group}/>
             }
           }) : <h1>Loading...</h1>}
           <div ref={messagesEndRef} />

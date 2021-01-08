@@ -15,6 +15,9 @@ var flightReducer = (state = initialState, action) => {
     case 'SET_SAVED_FLIGHTS':
       console.log('SET SAVED FLIGHTS')
       return Object.assign({}, state, { savedResults: action.savedResults });
+    case 'Add_SAVED_FLIGHT':
+      console.log('Add SAVED FLIGHT')
+      return Object.assign({}, state, { savedResults: [...state.savedResults, action.flight] });
     default:
       return state;
   }

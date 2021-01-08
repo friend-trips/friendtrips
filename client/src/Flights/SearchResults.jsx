@@ -40,7 +40,7 @@ const SearchResults = (props) => {
       {props.isLoading ? <Loader><img src={`./assets/loadingwheel.gif`}></img></Loader> : null}
       {props.searchResults.length > 0
         ? props.searchResults.map((data, index) => (
-          <Flight key={index} data={data} getNewSavedResult={props.saveSearchResult}></Flight>
+          <Flight key={index} data={data} getNewSavedResult={props.saveSearchResult} selectedTrip={props.selectedTrip}></Flight>
         ))
         : null}
     </ResultsContainer>

@@ -31,7 +31,6 @@ const groupMessages = (messages) => {
       if (current.meta) {
         current.type = 'flight'
       }
-      // current.isFlight = true;
       results.push(current);
     }
   }

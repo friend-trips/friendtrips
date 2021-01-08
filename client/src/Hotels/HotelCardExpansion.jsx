@@ -85,7 +85,7 @@ const Suggest = styled.div`
   cursor: pointer;
 `;
 
-const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded, saveSearchResult }) => {
+const HotelCardExpansion = ({selectedTrip,  bookingQuery, hotel, isExpanded, saveSearchResult }) => {
   const [loading, setLoading] = useState(false);
   const [roomOffers, setRoomOffers] = useState([]);
   const [numOfDays, setNumOfDays] = useState(0);
@@ -122,7 +122,7 @@ const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded, saveSearchResult 
 
   const save = function (offer, isSuggested) {
     const hotelData = {
-      trip_id: appContext.selectedTrip.trip_id,
+      trip_id: selectedTrip.trip_id,
       user_id: authContext.user,
       check_in_date: bookingQuery.checkInDate,
       check_out_date: bookingQuery.checkOutDate,
@@ -161,7 +161,8 @@ const HotelCardExpansion = ({ bookingQuery, hotel, isExpanded, saveSearchResult 
       number_of_beds: (offer.room.typeEstimated.beds) ? offer.room.typeEstimated.beds : 0
     };
 
-    saveSearchResult(hotelData);
+    appContext.emitChange('addHotel', hotelData);
+    //saveSearchResult(hotelData);
   };
   return (
     <Container>

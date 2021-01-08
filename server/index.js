@@ -11,7 +11,6 @@ const ENV = require('../configs/environment.config.js');
 const session = require('express-session');
 
 const authRoute = require('./routes/auth.js');
-// const chatRoute = require('./routes/chat.js');
 
 app.use(morgan('dev'));
 app.use(express.static('public'));
@@ -53,45 +52,43 @@ const io = require('socket.io')(http, {
   path: '/socket.io'
 });
 
-
+//TODO: move this messageController stuff elsewhere and create a POST route (or socket event or something) to re-initialize the chatController with a new trip_id
 let countOfConnections = 0;
-let messages = [];
-let flights = [];
-let hotels = [];
 let MessageController = require('./controllers/chatController.js');
 
 let myMessageController = new MessageController();
 myMessageController.initialize(1)
-  .then((res)=>{
+  .then((res) => {
     console.log('Message Controller Initialized')
   })
-  .catch((err)=>{
+  .catch((err) => {
     console.log('Error Initializing Controller', err)
   })
 
 
-// let comments = [];
-//on 'connection', io returns an object representing the client's socket
 io.use((socket, next) => {
   console.log('Connected socket.client ', socket.client.id, ' with authtoken ', socket.handshake.auth);
   next();
 })
+//on 'connection', io returns an object representing the client's socket
 io.on('connection', (socket) => {
   countOfConnections++;
   io.emit('connectedUsers', countOfConnections)
 
   socket.on('greeting', () => {
-    // console.log('greeting', socket.id)
-    // let newMsg = {
-    //   user_id: Number(socket.handshake.auth.user_id),
-    //   username: socket.handshake.auth.username,
-    //   trip_id: 1,
-    //   type: 'message',
-    //   message: 'joined the room'
-    // };
-    let feed = myMessageController.feed;
+    console.log('greeting', socket.id)
+    let newMsg = {
+      user_id: Number(socket.handshake.auth.user_id),
+      username: socket.handshake.auth.username,
+      trip_id: 1,
+      type: 'info',
+      message: 'joined the room'
+    };
+    // let feed = myMessageController.feed;
     // feed[Date.now()] = newMsg;
-    socket.emit('updatedMessages', feed)
+    // socket.emit('updatedMessages', feed)
+    myMessageController.addToFeed(newMsg, 'message');
+    io.emit('updatedMessages', myMessageController.feed);
     // io.emit('updatedMessages', feed)
   })
 
@@ -99,20 +96,22 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
     countOfConnections--;
     io.emit('connectedUsers', countOfConnections);
-    // if (socket.handshake.auth.username) {
-    //   let newMsg = {
-    //     user_id: Number(socket.handshake.auth.user_id),
-    //     username: socket.handshake.auth.username,
-    //     trip_id: 1,
-    //     message: 'has left the room'
-    //   }
-      let feed = myMessageController.feed;
-      // feed[Date.now()] = newMsg;
-      // io.emit('updatedMessages', feed);
-      socket.disconnect();
+    let newMsg = {
+      user_id: Number(socket.handshake.auth.user_id),
+      username: socket.handshake.auth.username,
+      trip_id: 1,
+      type: 'info',
+      message: 'has left the room'
+    }
+    // let feed = myMessageController.feed;
+    // feed[Date.now()] = newMsg;
+    socket.disconnect();
+    myMessageController.addToFeed(newMsg, 'message');
+    io.emit('updatedMessages', myMessageController.feed);
     // }
   });
 
+  //TODO: break out these AXIOS requests into controllers for each item -- return a promise so that we can emit our changes to the db back to the client from this file.
   socket.on('message', (text) => {
     let newMsg = {
       user_id: Number(socket.handshake.auth.user_id),
@@ -134,13 +133,13 @@ io.on('connection', (socket) => {
       })
   })
 
-  socket.on('comment', (message, comment) => {
-    console.log('Message', message.message_id ,'received a comment: "', comment, '"');
+  socket.on('comment', (comment) => {
+    console.log('Message', comment.message_id, 'received a comment: "', comment.comment, '"');
     let newComment = {
       trip_id: 1,
-      message_id: message.message_id,
+      message_id: comment.message_id,
       user_id: Number(socket.handshake.auth.user_id),
-      comment: comment
+      comment: comment.comment
     }
     axios.post('https://morning-bayou-59969.herokuapp.com/comments', newComment)
       .then((result) => {
@@ -152,9 +151,51 @@ io.on('connection', (socket) => {
       .catch((err) => {
         console.log('error in post to DB', err)
       })
-
   })
+
+  socket.on('addHotel', (hotel) => {
+    axios({
+      method: 'post',
+      url: 'http://morning-bayou-59969.herokuapp.com/hotels',
+      data: hotel,
+      header: { 'Access-Control-Allow-Origin': '*' }
+    })
+      .then((response) => {
+        console.log('hotel from the client sent by the socket and saved in the database', response.data.rows[0])
+        let newHotel = response.data.rows[0];
+        newHotel.type = 'hotel';
+        newHotel.timestamp = newHotel.time_created;
+        newHotel.username = socket.handshake.auth.username;
+        myMessageController.addToFeed(newHotel, 'hotel')
+        io.emit('updatedHotels', response.data.rows[0])
+        io.emit('updatedMessages', myMessageController.feed)
+      })
+      .catch(console.log)
+  })
+
+  socket.on('addFlight', (flight) => {
+    axios({
+      method: 'post',
+      url: 'http://morning-bayou-59969.herokuapp.com/flights',
+      data: flight,
+      header: { 'Access-Control-Allow-Origin': '*' }
+    })
+      .then((response) => {
+        console.log('flight from the client sent by the socket and saved in the database', response.data)
+        let newFlight = response.data;
+        newFlight.type = 'flight';
+        newFlight.timestamp = newFlight.meta.time_created;
+        newFlight.username = socket.handshake.auth.username;
+        myMessageController.addToFeed(newFlight, 'flight')
+        io.emit('updatedFlights', response.data)
+        io.emit('updatedMessages', myMessageController.feed)
+      })
+      .catch(console.log)
+  });
+
 });
+
+
 
 http.listen(4000, () => {
   console.log('listening at http://localhost:4000');

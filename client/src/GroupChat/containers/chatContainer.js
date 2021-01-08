@@ -11,7 +11,8 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     thread: state.chat.messageInThread,
-    chatFeed: state.chat.chatFeed
+    chatFeed: state.chat.chatFeed,
+    connectedUserCount: state.chat.connectedUserCount
   }
 }
 

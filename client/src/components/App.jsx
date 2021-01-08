@@ -8,12 +8,10 @@ import { AuthContext } from './providers/AuthenticationProvider.jsx'
 import PrivateRoute from './wrappers/PrivateRoute.jsx';
 import Login from '../AuthFlow/Login.jsx';
 import SignUp from '../AuthFlow/Signup.jsx';
-import FriendTrips from './FriendTrips.jsx';
+import FriendTrips from '../FriendTrips/FriendTrips.jsx';
 
 const Application = styled.div`
   position: absolute;
-  // height: 100%;
-  // width: 100%;
   top: 0;
   left: 0;
   bottom: 0;

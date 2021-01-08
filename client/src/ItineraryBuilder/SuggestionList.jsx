@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Droppable } from 'react-beautiful-dnd';
 import ItineraryFlightSuggestion from './ItineraryFlightSuggestion.jsx';
 import ItineraryHotelSuggestion from './ItineraryHotelSuggestion.jsx';
-import { ApplicationContext } from '../components/providers/ApplicationProvider.jsx'
 
 const Container = styled.div`
   display: flex;
@@ -12,9 +11,7 @@ const Container = styled.div`
   position: relative;
   width: 34%;
 `;
-
 const Header = styled.header`
-
   min-height: 10%;
   border-bottom: 1px solid black;
   display: flex;
@@ -35,12 +32,11 @@ const Select = styled.select`
   margin:0;
   padding: 0;
   width: 100%;
-`
-
+`;
 const FlightContainer = styled.div`
-border-top-right-radius: 15px;
-border-top-left-radius: 15px;
-margin-top: 3%;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+  margin-top: 3%;
   display: flex;
   flex-direction: column;
   border-left: 1px solid black;
@@ -53,7 +49,6 @@ margin-top: 3%;
   margin-right: 2%;
   padding: 2%;
 `;
-
 const HotelContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -71,7 +66,6 @@ const HotelContainer = styled.div`
   border-bottom-right-radius: 15px;
   border-bottom-left-radius: 15px;
 `;
-
 const List = styled.ul`
   margin: 0;
   list-style: none;
@@ -80,8 +74,7 @@ const List = styled.ul`
   overflow-y: scroll;
 `;
 
-const SuggestionList = ({ flights, hotels, getSavedItinerary }) => {
-  const appContext = useContext(ApplicationContext);
+const SuggestionList = ({ flights, hotels, getSavedItinerary, selectedTrip }) => {
   const [selectedItin, setSelectedItin] = useState("Jorge's Itinerary");
   return (
     <Container>
@@ -89,11 +82,10 @@ const SuggestionList = ({ flights, hotels, getSavedItinerary }) => {
         <H3>Group Suggestions</H3>
       </Header>
       <Subheader>
-          <Select onChange={(e) => { console.log('clik'); getSavedItinerary(e) }} value={appContext.selectedTrip.trip_id}>
+          <Select onChange={(e) => { getSavedItinerary(e) }} value={selectedTrip.trip_id}>
             <option value={1}> All Itineraries </option>
             <option value={2}> Harrison's Itinerary </option>
           </Select>
-
       </Subheader>
       <FlightContainer>
         <h3>Flights</h3>

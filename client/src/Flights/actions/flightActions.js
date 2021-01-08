@@ -15,6 +15,10 @@ const setSavedFlights = (savedFlights) => ({
   type: 'SET_SAVED_FLIGHTS',
   savedResults: savedFlights
 })
+const addSavedFlight = (flight) => ({
+  type: 'ADD_SAVED_FLIGHT',
+  flight: flight
+})
 
 //Thunks that do async stuff THEN update state (by calling above funcs)
 const searchForFlights = (flightQuery) => {
@@ -57,7 +61,7 @@ const saveSearchResult = (flight) => {
       header: { 'Access-Control-Allow-Origin': '*' }
     })
       .then((data) => {
-        dispatch(getSavedFlights())
+        dispatch(addSavedFlights())
       })
       .catch(console.log)
   }
@@ -80,4 +84,4 @@ const voteOnSuggestion = (vote) => {
 
 
 
-export { setLoading, searchForFlights, setSearchResults, setSavedFlights, saveSearchResult, getSavedFlights, voteOnSuggestion };
+export { setLoading, searchForFlights, setSearchResults, setSavedFlights, addSavedFlight, saveSearchResult, getSavedFlights, voteOnSuggestion };

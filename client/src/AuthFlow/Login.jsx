@@ -117,7 +117,6 @@ const Login = () => {
             </Field>
             <Button type="submit">Sign In</Button>
             <P>Don't have an account? <Link to='/signup'>Sign Up</Link> </P>
-
           </Form>
         </Content> :
         <Redirect to="/home" />}
