@@ -4,7 +4,7 @@ import Map from '../ReactMapGl.jsx';
 
 const mapStateToProps = (state) => {
   return {
-    hotels: state.hotels.savedResults
+    selectedTrip: state.app.selectedTrip
   }
 }
 
