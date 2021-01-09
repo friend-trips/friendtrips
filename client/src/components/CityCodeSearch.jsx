@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { DomesticDestinations, IntlDestinations } from '../lib/CityCodes.js'
 
+import amadeus from '../lib/amadeus.js'
+
 const Container = styled.div`
   position: relative;
   width: 100%;
@@ -10,7 +12,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-right: 4px;
-`
+`;
 const Form = styled.form`
   margin: 0;
   padding: 0;
@@ -28,7 +30,6 @@ const Input = styled.input`
   margin: 0;
   padding-left: 5px;
 `;
-// const SearchResults = styled.div``;
 const CityCodes = styled.ul`
   position: relative;
   top: 0;
@@ -57,54 +58,40 @@ const Info = styled.p`
   margin: 0;
 `;
 
-const CityCodeSearch = ({ setDestination }) => {
+//TODO: add switch (or pass a prop) to allow user to pick between domestic and international city search
+const CityCodeSearch = ({ setDestination, placeholderText }) => {
   const [query, setQuery] = useState('');
-  const [destinationType, setDestinationType] = useState('domestic');
   const [searchResults, setSearchResults] = useState([]);
   const [index, setIndex] = useState(null);
   const [cityCode, setCityCode] = useState('');
   const [inputFocused, setInputFocused] = useState(false);
 
   useEffect(() => {
-    let cityCodeList;
-    if (destinationType === 'domestic') {
-      cityCodeList = DomesticDestinations;
-    } else if (destinationType === 'international') {
-      cityCodeList = IntlDestinations;
-    }
-    setIndex(null);
-    let newSearchResults = cityCodeList
-      .sort((a, b) => {
-        return scoreCandidate(query, a) - scoreCandidate(query, b);
+    amadeus.referenceData.locations.get({
+      keyword : query,
+      subType : 'CITY'
+    })
+      .then((res) => {
+        let cities = res.data.map((row) => {
+          return {
+            name: row.name,
+            cityCode: row.iataCode
+          }
+        })
+        setSearchResults(cities);
       })
-      .slice(0, 9);
-    setSearchResults(newSearchResults);
-  }, [query])
-
-  const scoreCandidate = (word, target) => {
-    //hamDist + indexOf(word) returns an integer which we can use in our sorting func -- the smaller the score, the better the match
-    if (target.indexOf(word) === -1) {
-      return Infinity;
-    }
-    let ham = 0;
-    for (let i = 0; i <= word.length - 1; i++) {
-      if (word[i] !== target[i]) {
-        ham++;
-      }
-    }
-    return ham + target.indexOf(word);
-  }
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [query]);
 
   const makeSelection = (city) => {
     console.log('makeSelection', city)
-    let codeStart = city.indexOf('(');
-    let codeEnd = city.indexOf(')')
-    let cityCode = city.slice(codeStart + 1, codeEnd);
-    setCityCode(cityCode);
-    setQuery(city);
+    setCityCode(city.cityCode);
+    setQuery(city.name);
     setInputFocused(false);
     // send city code back up to parent if that's how we are still doing it
-    setDestination(cityCode);
+    setDestination(city.cityCode);
   }
 
   const handleKeyPress = (event) => {
@@ -113,7 +100,6 @@ const CityCodeSearch = ({ setDestination }) => {
     }
     //check for reserved keys
     if (event.key === 'ArrowDown') {
-      console.log('down')
       if (index === null) {
         setIndex(0);
         return;
@@ -121,7 +107,6 @@ const CityCodeSearch = ({ setDestination }) => {
         setIndex(index + 1)
       }
     } else if (event.key === 'ArrowUp') {
-      console.log('up')
       if (index === null) {
         setIndex(0);
         return;
@@ -129,7 +114,6 @@ const CityCodeSearch = ({ setDestination }) => {
         setIndex(index - 1)
       }
     } else if (event.key === 'Enter') {
-      console.log('enter', event.key);
       event.preventDefault();
       if (!index) {
         setIndex(0);
@@ -137,10 +121,8 @@ const CityCodeSearch = ({ setDestination }) => {
       makeSelection(searchResults[index]);
       setIndex(null);
     } else if (event.key === 'Backspace') {
-      console.log('backspace', event.key);
       setQuery(query.slice(0, query.length - 1));
     }
-    //return;
   }
 
   return (
@@ -152,9 +134,9 @@ const CityCodeSearch = ({ setDestination }) => {
           type="text"
           value={query}
           onChange={(e) => {setQuery(e.target.value)}}
+          placeholder={placeholderText || "Destination"}
         />
       </Form>
-      {/* <SearchResults> */}
       <CityCodes >
         {inputFocused ?
           (query.length > 0) ?
@@ -164,14 +146,13 @@ const CityCodeSearch = ({ setDestination }) => {
                 <City
                   onClick={() => { makeSelection(city) }} style={selectionStyle}
                 >
-                  {city}
+                  {city.name}
                 </City>)
             }) :
             <Info>Start Typing To Search For Cities</Info>
           :
           null}
       </CityCodes>
-      {/* </SearchResults> */}
     </Container>
   );
 };
