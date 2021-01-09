@@ -43,10 +43,10 @@ const Mapbox = () => {
     //adds location search control
     map.addControl(
       new MapboxGeocoder({
-      accessToken: mapboxgl.accessToken,
-      mapboxgl: mapboxgl
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl
       })
-      );
+    );
     map.on('load', () => {
 
       axios.get('http://localhost:4001/pois')
@@ -62,7 +62,7 @@ const Mapbox = () => {
               <p>${poi.name}</p>
               <p>${poi.category}</p>
             </div>`
-            ;
+              ;
             let newMarker = new mapboxgl.Marker()
               .setLngLat([poi.longitude, poi.latitude])
               .setPopup(new mapboxgl.Popup().setHTML(htmlString))

@@ -6,6 +6,7 @@ import MarkerPopup from './MarkerPopup.jsx';
 import axios from 'axios';
 
 import amadeus from '../lib/amadeus.js'
+import cookieParser from 'cookie-parser';
 
 const Map = ({ selectedTrip }) => {
   const [viewport, setViewport] = useState({
@@ -58,6 +59,23 @@ const Map = ({ selectedTrip }) => {
       onDblClick={(pointerEvent) => {
         console.log(pointerEvent);
         getData(pointerEvent.lngLat[1], pointerEvent.lngLat[0])
+      }}
+      onLoad={(map) => {
+        //add geoCoder (location search) control
+        //TODO: figure out how to remove old markers when this thing pans the camera to a different spot on the map
+        map.target.addControl(
+          new MapboxGeocoder({
+            accessToken: accessToken,
+            mapboxgl: map.target
+          })
+        );
+        //add navigation controll
+        // map.target.addControl(
+        //   new MapboxDirections({
+        //     accessToken: accessToken
+        //   }),
+        //   'top-left'
+        // );
       }}
     >
       {markers.map((marker, i) => {
