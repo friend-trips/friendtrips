@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { DomesticDestinations, IntlDestinations } from '../lib/CityCodes.js'
 
 import amadeus from '../lib/amadeus.js'
 
