@@ -31,11 +31,21 @@ const Mapbox = () => {
       center: [lng, lat],
       zoom: zoom
     });
+
+    //adds navigation control
+    // map.addControl(
+    //   new MapboxDirections({
+    //   accessToken: mapboxgl.accessToken
+    //   }),
+    //   'top-left'
+    //   );
+
+    //adds location search control
     map.addControl(
-      new MapboxDirections({
-      accessToken: mapboxgl.accessToken
-      }),
-      'top-left'
+      new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl
+      })
       );
     map.on('load', () => {
 
