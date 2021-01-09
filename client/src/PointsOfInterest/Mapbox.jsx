@@ -31,7 +31,12 @@ const Mapbox = () => {
       center: [lng, lat],
       zoom: zoom
     });
-
+    map.addControl(
+      new MapboxDirections({
+      accessToken: mapboxgl.accessToken
+      }),
+      'top-left'
+      );
     map.on('load', () => {
 
       axios.get('http://localhost:4001/pois')
