@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import mapboxgl, { Marker } from 'mapbox-gl';
 import styled from 'styled-components';
 import { accessToken } from '../../../configs/mapbox.config.js';
+import MarkerPopup from './MarkerPopup.jsx'
+
+import amadeus from '../lib/amadeus.js'
 
 const Map = styled.div`
   position: absolute;
@@ -28,20 +31,44 @@ const Mapbox = () => {
       zoom: zoom
     });
 
-    map.on('click', (pointerEvent) => {
-      console.log(pointerEvent)
-      setMarkers([...markers,  pointerEvent.lngLat ]);
+    map.on('dblclick', (pointer) => {
+      console.log(pointer)
+      setMarkers([...markers, pointer.lngLat]);
       let newMarker = new mapboxgl.Marker()
-          .setLngLat([pointerEvent.lngLat.lng, pointerEvent.lngLat.lat])
-          .addTo(map);
+        .setLngLat([pointer.lngLat.lng, pointer.lngLat.lat])
+        .addTo(map);
+      // Specify that the panTo animation should last 5000 milliseconds.
+      map.panTo([pointer.lngLat.lng, pointer.lngLat.lat], { duration: 1000 });
+
+      getData(pointer.lngLat.lat, pointer.lngLat.lng)
+        .then(({ data }) => {
+          console.log('poi {data}: ', data)
+          data.forEach((poi) => {
+            let {name, category} = poi;
+            let htmlString = `
+              <div>
+                <p>${poi.name}</p>
+                <p>${poi.category}</p>
+              </div>`
+            ;
+            let newMarker = new mapboxgl.Marker()
+              .setLngLat([poi.geoCode.longitude, poi.geoCode.latitude])
+              .setPopup(new mapboxgl.Popup().setHTML(htmlString))
+              .addTo(map);
+          })
+        })
+        .catch((err) => {
+          console.log('poi search err', err)
+        })
     })
   }, [])
 
-  useEffect(() => {
-    let newMarker = new mapboxgl.Marker()
-          .setLngLat([30.5, 50.5])
-          // .addTo(map)
-  }, [markers])
+  const getData = (lat, long) => {
+    return amadeus.referenceData.locations.pointsOfInterest.get({
+      latitude: lat,
+      longitude: long
+    })
+  }
 
   return (
     <div>
