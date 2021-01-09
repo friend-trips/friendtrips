@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { DomesticDestinations, IntlDestinations } from '../lib/CityCodes.js'
+
+import amadeus from '../lib/amadeus.js'
 
 const Container = styled.div`
   position: relative;
@@ -59,52 +60,37 @@ const Info = styled.p`
 //TODO: add switch (or pass a prop) to allow user to pick between domestic and international city search
 const CityCodeSearch = ({ setDestination, placeholderText }) => {
   const [query, setQuery] = useState('');
-  const [destinationType, setDestinationType] = useState('domestic');
   const [searchResults, setSearchResults] = useState([]);
   const [index, setIndex] = useState(null);
   const [cityCode, setCityCode] = useState('');
   const [inputFocused, setInputFocused] = useState(false);
 
   useEffect(() => {
-    let cityCodeList;
-    if (destinationType === 'domestic') {
-      cityCodeList = DomesticDestinations;
-    } else if (destinationType === 'international') {
-      cityCodeList = IntlDestinations;
-    }
-    setIndex(null);
-    let newSearchResults = cityCodeList
-      .sort((a, b) => {
-        return scoreCandidate(query, a) - scoreCandidate(query, b);
+    amadeus.referenceData.locations.get({
+      keyword : query,
+      subType : 'CITY'
+    })
+      .then((res) => {
+        let cities = res.data.map((row) => {
+          return {
+            name: row.name,
+            cityCode: row.iataCode
+          }
+        })
+        setSearchResults(cities);
       })
-      .slice(0, 9);
-    setSearchResults(newSearchResults);
-  }, [query])
-
-  const scoreCandidate = (word, target) => {
-    //hamDist + indexOf(word) returns an integer which we can use in our sorting func -- the smaller the score, the better the match
-    if (target.indexOf(word) === -1) {
-      return Infinity;
-    }
-    let ham = 0;
-    for (let i = 0; i <= word.length - 1; i++) {
-      if (word[i] !== target[i]) {
-        ham++;
-      }
-    }
-    return ham + target.indexOf(word);
-  }
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [query]);
 
   const makeSelection = (city) => {
     console.log('makeSelection', city)
-    let codeStart = city.indexOf('(');
-    let codeEnd = city.indexOf(')')
-    let cityCode = city.slice(codeStart + 1, codeEnd);
-    setCityCode(cityCode);
-    setQuery(city);
+    setCityCode(city.cityCode);
+    setQuery(city.name);
     setInputFocused(false);
     // send city code back up to parent if that's how we are still doing it
-    setDestination(cityCode);
+    setDestination(city.cityCode);
   }
 
   const handleKeyPress = (event) => {
@@ -159,7 +145,7 @@ const CityCodeSearch = ({ setDestination, placeholderText }) => {
                 <City
                   onClick={() => { makeSelection(city) }} style={selectionStyle}
                 >
-                  {city}
+                  {city.name}
                 </City>)
             }) :
             <Info>Start Typing To Search For Cities</Info>
