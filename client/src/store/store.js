@@ -5,12 +5,14 @@ import friendTripsReducer from '../FriendTrips/reducers/FriendTripsReducer.js'
 import hotelReducer from '../Hotels/reducers/hotelReducer.js'
 import flightReducer from '../Flights/reducers/flightReducer.js';
 import chatReducer from '../GroupChat/reducers/chatReducer.js'
+import poiReducer from '../PointsOfInterest/reducers/poiReducer.js'
 
 
 const rootReducer = combineReducers({
   app: friendTripsReducer,
   flights: flightReducer,
   hotels: hotelReducer,
+  pois: poiReducer,
   chat: chatReducer,
 });
 
@@ -27,6 +29,11 @@ const preloadedState = {
     savedResults: []
   },
   hotels: {
+    isLoading: false,
+    searchResults: [],
+    savedResults: []
+  },
+  pois: {
     isLoading: false,
     searchResults: [],
     savedResults: []
