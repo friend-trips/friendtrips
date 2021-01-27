@@ -32,7 +32,10 @@ const POIToolTip = ({poi, saveSearchResult}) => {
     <div>
       <p>{poi.name}</p>
       <p>{poi.category}</p>
-      <button onClick={() => { savePOI() }}> Save </button>
+      {!poi.isSaved ?
+      <button onClick={() => { savePOI() }}> Save </button>:
+      null
+      }
     </div>
   );
 };
