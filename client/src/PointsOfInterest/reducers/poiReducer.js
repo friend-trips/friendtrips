@@ -17,7 +17,7 @@ var poiReducer = (state = initialState, action) => {
       return Object.assign({}, state, { savedResults: action.savedResults });
       case 'ADD_SAVED_POI':
       console.log('ADD SAVED POI', state)
-      return Object.assign({}, state, { savedResults: [...state.savedResults, action.hotel] });
+      return Object.assign({}, state, { savedResults: [...state.savedResults, action.poi] });
     default:
       return state;
   }

@@ -2,6 +2,7 @@ import {useEffect} from 'react'
 import {useDispatch} from 'react-redux'
 import {setChatFeed, setConnectedUserCount} from '../../GroupChat/actions/chatActions.js'
 import {addSavedHotel} from '../../Hotels/actions/hotelActions.js'
+import {addSavedPOI} from '../../PointsOfInterest/actions/poiActions.js'
 import {addSavedFlight} from '../../Flights/actions/flightActions.js'
 import groupMessages from '../../lib/chatFeedParser.js'
 import socket from '../../lib/chatSocket.js'
@@ -30,6 +31,10 @@ const useSocket = (user_id, username) => {
     socket.on('updatedHotels', (hotel) => {
       console.log('new hotel received from server', hotel);
       dispatch(addSavedHotel(hotel));
+    })
+    socket.on('updatedPOIs', (poi) => {
+      console.log('new poi received from server', poi);
+      dispatch(addSavedPOI(poi));
     })
     //clean up socket connection when the component unmounts
     return () => {

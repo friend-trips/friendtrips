@@ -193,6 +193,26 @@ io.on('connection', (socket) => {
       .catch(console.log)
   });
 
+  socket.on('addPOI', (poi) => {
+    axios({
+      method: 'post',
+      url: 'http://morning-bayou-59969.herokuapp.com/pois',
+      data: poi,
+      header: { 'Access-Control-Allow-Origin': '*' }
+    })
+      .then((response) => {
+        console.log('poi from the client sent by the socket and saved in the database', response.data)
+        let newPOI = response.data;
+        // newPOI.type = 'poi';
+        // newPOI.timestamp = newPOI.meta.time_created;
+        // newPOI.username = socket.handshake.auth.username;
+        // myMessageController.addToFeed(newPOI, 'poi')
+        io.emit('updatedPOIs', response.data)
+        // io.emit('updatedMessages', myMessageController.feed)
+      })
+      .catch(console.log)
+  });
+
 });
 
 

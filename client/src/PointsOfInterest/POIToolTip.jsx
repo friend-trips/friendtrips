@@ -1,14 +1,12 @@
-import React, { useContext } from 'react';
-import {AuthContext} from '../components/providers/AuthenticationProvider.jsx'
-import axios from 'axios'
+import React from 'react';
 
-const POIToolTip = ({poi, saveSearchResult}) => {
-  const authContext = useContext(AuthContext);
+const POIToolTip = ({poi, saveSearchResult, user_id, emitChange}) => {
+
   const savePOI = () => {
     //TODO: figure out why authContext returns undefined here
     let newPOI = {
       trip_id: 1,
-      user_id: 7,
+      user_id: user_id,
       poi_id: poi.id,
       name: poi.name,
       category: poi.category,
@@ -17,7 +15,8 @@ const POIToolTip = ({poi, saveSearchResult}) => {
       longitude: poi.geoCode.longitude,
       created: new Date()
     }
-    saveSearchResult(newPOI);
+    // saveSearchResult(newPOI);
+    emitChange('addPOI', newPOI);
   }
   return (
     <div>

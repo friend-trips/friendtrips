@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import mapboxgl, { Marker } from 'mapbox-gl';
 import styled from 'styled-components';
@@ -6,6 +6,8 @@ import { accessToken } from '../../../configs/mapbox.config.js';
 import HotelTooltip from './HotelTooltip.jsx'
 import MapControlMenu from './MapControlMenu.jsx'
 import POIToolTip from './POIToolTip.jsx'
+import {AuthContext} from '../components/providers/AuthenticationProvider.jsx'
+import {ApplicationContext} from '../components/providers/ApplicationProvider.jsx'
 
 const Map = styled.div`
   position: absolute;
@@ -33,16 +35,27 @@ const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, save
   const [mapControl, setMapControl] = useState(null);
   const [currentControl, setCurrentControl] = useState('none')
 
+  const authContext = useContext(AuthContext);
+  const appContext = useContext(ApplicationContext);
+
   const createPOI = (map, poi) => {
     if (poi.geoCode) {
       poi.longitude = poi.geoCode.longitude;
       poi.latitude = poi.geoCode.latitude;
     }
     let imgToShow = poi.category === 'RESTAURANT' ? 'foodMarker' : poi.category === 'SIGHTS' ? '001-event' : poi.category === 'SHOPPING' ? 'shopping (1)' : 'drinksMarker'
+
     let tooltipDiv = document.createElement('div');
-    ReactDOM.render(<POIToolTip poi={poi} saveSearchResult={saveSearchResult}/>, tooltipDiv)
+    ReactDOM.render(
+      <POIToolTip
+        poi={poi}
+        saveSearchResult={saveSearchResult}
+        user_id={authContext.user}
+        emitChange={appContext.emitChange}
+      />, tooltipDiv)
     let newTooltip = new mapboxgl.Popup({ offset: 15 })
     newTooltip.setDOMContent(tooltipDiv)
+
     let marker = document.createElement('div');
     ReactDOM.render(<img src={`./assets/images/${imgToShow}.png`} />, marker)
     let newMarker = new mapboxgl.Marker({ color: 'green', element: marker })
