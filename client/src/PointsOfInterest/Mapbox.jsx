@@ -6,8 +6,8 @@ import { accessToken } from '../../../configs/mapbox.config.js';
 import HotelTooltip from './HotelTooltip.jsx'
 import MapControlMenu from './MapControlMenu.jsx'
 import POIToolTip from './POIToolTip.jsx'
-import {AuthContext} from '../components/providers/AuthenticationProvider.jsx'
-import {ApplicationContext} from '../components/providers/ApplicationProvider.jsx'
+import { AuthContext } from '../components/providers/AuthenticationProvider.jsx'
+import { ApplicationContext } from '../components/providers/ApplicationProvider.jsx'
 
 const Map = styled.div`
   position: absolute;
@@ -75,7 +75,7 @@ const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, save
 
     const searchNearHotel = (long, lat) => {
       map.panTo([long, lat], { duration: 1000 });
-      searchForPOIs({latitude: lat, longitude: long})
+      searchForPOIs({ latitude: lat, longitude: long })
     }
 
     map.on('load', () => {
@@ -96,6 +96,7 @@ const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, save
           .setPopup(newTooltip)
           .addTo(map);
       })
+      map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
       getSavedPOIs((err, data) => {
         if (!err) {
@@ -115,7 +116,7 @@ const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, save
       console.log(pointer)
       // Specify that the panTo animation should last 5000 milliseconds.
       map.panTo([pointer.lngLat.lng, pointer.lngLat.lat], { duration: 1000 });
-      searchForPOIs({latitude: pointer.lngLat.lat, longitude: pointer.lngLat.lng})
+      searchForPOIs({ latitude: pointer.lngLat.lat, longitude: pointer.lngLat.lng })
     })
 
     setMapInstance(map);
@@ -139,7 +140,7 @@ const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, save
       const currentMapControl = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         mapboxgl: mapboxgl,
-        marker: {element: marker}
+        marker: { element: marker }
       })
       setMapControl(currentMapControl);
       mapInstance.addControl(currentMapControl)
@@ -157,7 +158,7 @@ const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, save
 
   return (
     <div>
-      <MapControlMenu currentControl={currentControl} setCurrentControl={setCurrentControl}/>
+      <MapControlMenu currentControl={currentControl} setCurrentControl={setCurrentControl} />
       <Map ref={el => mapContainer = el} />
     </div>
   )
