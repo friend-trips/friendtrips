@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Map from '../Mapbox.jsx';
-import {getSavedPOIs, searchForPOIs} from '../actions/poiActions.js'
+import {getSavedPOIs, searchForPOIs, saveSearchResult} from '../actions/poiActions.js'
 
 const mapStateToProps = (state) => {
   return {
@@ -13,8 +13,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getSavedPOIs: () => {dispatch(getSavedPOIs())},
-    searchForPOIs: (query) => {dispatch(searchForPOIs(query))}
+    getSavedPOIs: (cb) => {dispatch(getSavedPOIs(cb))},
+    searchForPOIs: (query) => {dispatch(searchForPOIs(query))},
+    saveSearchResult: (poi) =>{dispatch(saveSearchResult(poi))}
   }
 }
 

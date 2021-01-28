@@ -10,7 +10,6 @@ import Chat from '../GroupChat/containers/chatContainer.js';
 import Hotels from '../Hotels/containers/HotelsContainer.js';
 import ItineraryBuilder from '../ItineraryBuilder/containers/ItineraryBuilderContainer.js';
 import Mapbox from '../PointsOfInterest/containers/MapboxContainer.js'
-import ReactMap from '../PointsOfInterest/containers/ReactMapContainer.js'
 //TODO: import containerized version of components -- after they have been connected() to the redux store
 import NavBar from '../components/containers/NavBarContainer.js';
 
@@ -55,9 +54,6 @@ const FriendTrips = () => {
               </Route>
               <Route exactly path="/mapbox">
                 <Mapbox />
-              </Route>
-              <Route exactly path="/react-map">
-                <ReactMap />
               </Route>
               <Route>
                 <Chat />

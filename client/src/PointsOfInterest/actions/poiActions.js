@@ -42,12 +42,17 @@ const getSavedPOIs = (cb) => {
     axios.get(`https://morning-bayou-59969.herokuapp.com/pois/`)
       .then((result) => {
         console.log(result);
-        dispatch(setSavedPOIs(Object.values(result.data)));
+        dispatch(setSavedPOIs(result.data));
         if (cb) {
-          cb(Object.values(result.data));
+          cb(null, result.data);
         }
       })
-      .catch(console.log)
+      .catch((err) => {
+        console.log(err);
+        if (cb) {
+          cb(err, null);
+        }
+      })
   }
 }
 const saveSearchResult = (poi) => {
@@ -60,8 +65,7 @@ const saveSearchResult = (poi) => {
       header: { 'Access-Control-Allow-Origin': '*' }
     })
       .then((response) => {
-        console.log('poi save search result', response.data.rows[0])
-        dispatch(addSavedPOI(response.data.rows[0]))
+        dispatch(addSavedPOI(response.data))
       })
       .catch(console.log)
   }

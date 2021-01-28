@@ -3,12 +3,9 @@ import ReactDOM from 'react-dom';
 import mapboxgl, { Marker } from 'mapbox-gl';
 import styled from 'styled-components';
 import { accessToken } from '../../../configs/mapbox.config.js';
-import MarkerPopup from './MarkerPopup.jsx'
-import axios from 'axios';
 import HotelTooltip from './HotelTooltip.jsx'
-// import POIToolTip from './containers/POITooltipContainer.js'
+import MapControlMenu from './MapControlMenu.jsx'
 import POIToolTip from './POIToolTip.jsx'
-import amadeus from '../lib/amadeus.js'
 
 const Map = styled.div`
   position: absolute;
@@ -27,26 +24,27 @@ const Pin = styled.div`
 let mapContainer = React.createRef(null)
 mapboxgl.accessToken = accessToken;
 
-const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs }) => {
+
+const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, saveSearchResult }) => {
   const [lng, setLng] = useState(-74.017204);
   const [lat, setLat] = useState(40.705658);
   const [zoom, setZoom] = useState(12);
+  const [mapInstance, setMapInstance] = useState(null);
+  const [mapControl, setMapControl] = useState(null);
+  const [currentControl, setCurrentControl] = useState('none')
 
   const createPOI = (map, poi) => {
     if (poi.geoCode) {
       poi.longitude = poi.geoCode.longitude;
       poi.latitude = poi.geoCode.latitude;
     }
-    let imgToShow = poi.category === 'RESTAURANT' ? 'foodMarker' : poi.category === 'SIGHTS' ? '001-event' : poi.category === 'SHOPPING' ? 'shoppingMarker' : 'drinksMarker'
+    let imgToShow = poi.category === 'RESTAURANT' ? 'foodMarker' : poi.category === 'SIGHTS' ? '001-event' : poi.category === 'SHOPPING' ? 'shopping (1)' : 'drinksMarker'
     let tooltipDiv = document.createElement('div');
-    ReactDOM.render(
-      <POIToolTip poi={poi} />, tooltipDiv)
+    ReactDOM.render(<POIToolTip poi={poi} saveSearchResult={saveSearchResult}/>, tooltipDiv)
     let newTooltip = new mapboxgl.Popup({ offset: 15 })
-    newTooltip
-      .setDOMContent(tooltipDiv)
+    newTooltip.setDOMContent(tooltipDiv)
     let marker = document.createElement('div');
-    ReactDOM.render(
-      <img src={`./assets/images/${imgToShow}.png`} />, marker)
+    ReactDOM.render(<img src={`./assets/images/${imgToShow}.png`} />, marker)
     let newMarker = new mapboxgl.Marker({ color: 'green', element: marker })
       .setLngLat([poi.longitude, poi.latitude])
       .setPopup(newTooltip)
@@ -62,44 +60,19 @@ const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs }) =>
       zoom: zoom
     });
 
-    //adds navigation control
-    // map.addControl(
-    //   new MapboxDirections({
-    //   accessToken: mapboxgl.accessToken
-    //   }),
-    //   'top-left'
-    //   );
-
-    //adds location search control
-    // map.addControl(
-    //   new MapboxGeocoder({
-    //     accessToken: mapboxgl.accessToken,
-    //     mapboxgl: mapboxgl
-    //   })
-    // );
     const searchNearHotel = (long, lat) => {
       map.panTo([long, lat], { duration: 1000 });
-      getData(lat, long)
-        .then(({ data }) => {
-          console.log('poi {data}: ', data)
-          data.forEach((poi) => {
-            createPOI(map, poi);
-          })
-        })
-        .catch((err) => {
-          console.log('poi search err', err)
-        })
+      searchForPOIs({latitude: lat, longitude: long})
     }
+
     map.on('load', () => {
       hotels.forEach((hotel) => {
-
         let tooltipDiv = document.createElement('div');
         ReactDOM.render(
           <HotelTooltip hotel={hotel} searchNearHotel={searchNearHotel} />, tooltipDiv)
         let newTooltip = new mapboxgl.Popup({ offset: 15 })
         newTooltip
           .setDOMContent(tooltipDiv)
-
         let hotelMarkerDiv = document.createElement('div');
         ReactDOM.render(
           <div><img
@@ -111,53 +84,67 @@ const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs }) =>
           .addTo(map);
       })
 
-
-      axios.get('https://morning-bayou-59969.herokuapp.com/pois')
-        .then((result) => {
-          console.log('get all pois', result)
-          let savedPois = result.data.map((poi) => {
+      getSavedPOIs((err, data) => {
+        if (!err) {
+          console.log('get all pois')
+          let savedPois = data.map((poi) => {
             poi.isSaved = true;
             return poi
           });
-          result.data.forEach((poi) => {
+          data.forEach((poi) => {
             createPOI(map, poi);
           })
-        })
-        .catch((err) => {
-          console.log('get all poi err', err);
-        })
-
+        }
+      })
     })
 
     map.on('dblclick', (pointer) => {
       console.log(pointer)
       // Specify that the panTo animation should last 5000 milliseconds.
       map.panTo([pointer.lngLat.lng, pointer.lngLat.lat], { duration: 1000 });
-
-      getData(pointer.lngLat.lat, pointer.lngLat.lng)
-        .then(({ data }) => {
-          console.log('poi {data}: ', data)
-          data.forEach((poi) => {
-            createPOI(map, poi)
-          })
-        })
-        .catch((err) => {
-          console.log('poi search err', err)
-        })
+      searchForPOIs({latitude: pointer.lngLat.lat, longitude: pointer.lngLat.lng})
     })
+
+    setMapInstance(map);
   }, []);
 
+  useEffect(() => {
+    if (mapInstance && mapControl) {
+      setMapControl(null);
+      mapInstance.removeControl(mapControl);
+    }
+    if (currentControl === 'navigator') {
+      const currentMapControl = new MapboxDirections({
+        accessToken: mapboxgl.accessToken
+      });
+      setMapControl(currentMapControl);
+      mapInstance.addControl(currentMapControl)
+    } else if (currentControl === 'geocoder') {
+      let marker = document.createElement('div');
+      ReactDOM.render(
+        <img src={`./assets/images/006-marker-1.png`} />, marker)
+      const currentMapControl = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl,
+        marker: {element: marker}
+      })
+      setMapControl(currentMapControl);
+      mapInstance.addControl(currentMapControl)
+    }
+  }, [currentControl])
 
-
-  const getData = (lat, long) => {
-    return amadeus.referenceData.locations.pointsOfInterest.get({
-      latitude: lat,
-      longitude: long
-    })
-  }
+  useEffect(() => {
+    console.log('add new search results', searchResults)
+    if (mapInstance) {
+      searchResults.forEach((poi) => {
+        createPOI(mapInstance, poi);
+      })
+    }
+  }, [searchResults])
 
   return (
     <div>
+      <MapControlMenu currentControl={currentControl} setCurrentControl={setCurrentControl}/>
       <Map ref={el => mapContainer = el} />
     </div>
   )

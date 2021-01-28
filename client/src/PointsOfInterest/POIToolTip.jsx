@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import {AuthContext} from '../components/providers/AuthenticationProvider.jsx'
 import axios from 'axios'
+
 const POIToolTip = ({poi, saveSearchResult}) => {
   const authContext = useContext(AuthContext);
   const savePOI = () => {
@@ -16,17 +17,7 @@ const POIToolTip = ({poi, saveSearchResult}) => {
       longitude: poi.geoCode.longitude,
       created: new Date()
     }
-    console.log(newPOI)
-    axios({
-      method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/pois',
-      data: newPOI,
-      header: { 'Access-Control-Allow-Origin': '*' }
-    })
-      .then((response) => {
-        console.log('post poi response, ', response);
-      })
-      .catch(console.log)
+    saveSearchResult(newPOI);
   }
   return (
     <div>
