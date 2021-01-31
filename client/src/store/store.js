@@ -6,6 +6,7 @@ import hotelReducer from '../Hotels/reducers/hotelReducer.js'
 import flightReducer from '../Flights/reducers/flightReducer.js';
 import chatReducer from '../GroupChat/reducers/chatReducer.js'
 import poiReducer from '../PointsOfInterest/reducers/poiReducer.js'
+import itineraryReducer from '../ItineraryBuilder/reducers/ItineraryReducer.js'
 
 
 const rootReducer = combineReducers({
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   hotels: hotelReducer,
   pois: poiReducer,
   chat: chatReducer,
+  itinerary: itineraryReducer
 });
 
 const preloadedState = {
@@ -42,6 +44,9 @@ const preloadedState = {
     connectedUserCount: 0,
     chatFeed: [],
     messageInThread: null
+  },
+  itinerary: {
+    savedEvents: []
   }
 }
 

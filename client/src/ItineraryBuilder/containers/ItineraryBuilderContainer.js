@@ -3,21 +3,20 @@ import ItineraryBuilder from '../Calendar.jsx';
 import {getSavedHotels} from '../../Hotels/actions/hotelActions.js'
 import {getSavedFlights} from '../../Flights/actions/flightActions.js'
 import {getSavedPOIs} from '../../PointsOfInterest/actions/poiActions.js'
+import {getSavedEvents, saveEvent, updateEvent, deleteEvent} from '../actions/ItineraryBuilderActions.js'
 
 const mapStateToProps = (state) => {
   return {
-    hotelSuggestions: state.hotels.savedResults,
-    flightSuggestions: state.flights.savedResults,
-    poiSuggestions: state.pois.savedResults,
-    selectedTrip: state.app.selectedTrip,
+    savedEvents: state.itinerary.savedEvents
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getSavedHotels: (cb) => dispatch(getSavedHotels(cb)),
-    getSavedFlights: (cb) => dispatch(getSavedFlights(cb)),
-    getSavedPOIs: (cb) => dispatch(getSavedPOIs(cb))
+    getSavedEvents: (itinerary_id, cb) => dispatch(getSavedEvents(itinerary_id, cb)),
+    saveEvent: (event, itinId) => dispatch(saveEvent(event, itinId)),
+    updateEvent: (event, itinId) => dispatch(updateEvent(event, itinId)),
+    deleteEvent: (eventId, itinId) => dispatch(deleteEvent(eventId, itinId)),
   };
 };
 

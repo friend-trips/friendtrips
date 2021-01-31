@@ -122,13 +122,15 @@ const HotelCardExpansion = ({selectedTrip,  bookingQuery, hotel, isExpanded, sav
 
   const save = function (offer, isSuggested) {
     const hotelData = {
-      trip_id: selectedTrip.trip_id,
+      trip_id: selectedTrip ? selectedTrip.trip_id : 1,
       user_id: authContext.user,
       check_in_date: bookingQuery.checkInDate,
       check_out_date: bookingQuery.checkOutDate,
       room_quantity: bookingQuery.roomQuantity,
       adults: bookingQuery.adults,
       hotel_name: hotel.name,
+      latitude: hotel.latitude,
+      longitude: hotel.longitude,
       hotel_address: hotel.address,
       city_code: hotel.cityCode,
       rating: hotel.rating ? hotel.rating : 5,

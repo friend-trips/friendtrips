@@ -16,6 +16,8 @@ const filterData = (arr) => {
       " " +
       result["hotel"]["address"]["countryCode"] +
       postalCode;
+    filteredResult.latitude = result.hotel.latitude;
+    filteredResult.longitude = result.hotel.longitude;
     filteredResult["address"] = address;
     filteredResult["rating"] = result["hotel"]["rating"];
     // store the hotel amenities

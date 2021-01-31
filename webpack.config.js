@@ -1,5 +1,6 @@
 const path = require('path');
-const webpack = require('webpack')
+const webpack = require('webpack');
+
 module.exports = {
   entry: `${__dirname}/client/src/Index.jsx`,
   module: {
@@ -8,6 +9,10 @@ module.exports = {
         test: /\.jsx$/,
         exclude: /node_modules/,
         loader: "babel-loader"
+      },
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
       }
     ]
   },

@@ -41,7 +41,6 @@ const getSavedPOIs = (cb) => {
   return (dispatch) => {
     axios.get(`https://morning-bayou-59969.herokuapp.com/pois/`)
       .then((result) => {
-        console.log(result);
         dispatch(setSavedPOIs(result.data));
         if (cb) {
           cb(null, result.data);

@@ -28,6 +28,7 @@ const searchForHotels = (hotelQuery) => {
     amadeus.shopping.hotelOffers
       .get(hotelQuery)
       .then((response) => {
+        console.log(response)
         dispatch(setSearchResults(parser(response.data)));
         dispatch(setLoading(false));
       })

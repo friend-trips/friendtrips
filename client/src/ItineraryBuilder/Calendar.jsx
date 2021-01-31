@@ -29,16 +29,29 @@ Date.prototype.addDays = function (days) {
 
 const calendarDate = new Date();
 
-const Calendar = ({ hotelSuggestions, flightSuggestions, poiSuggestions, selectedTrip, getSavedFlights, getSavedHotels, getSavedPOIs }) => {
-  const [events, setEvents] = useState([].concat(...hotelSuggestions, ...flightSuggestions, ...poiSuggestions));
-  const [hotels, setHotels] = useState([])
-  const [flights, setFlights] = useState([])
-  const [pois, setPOIs] = useState([])
+const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEvents }) => {
+  // const [events, setEvents] = useState([].concat(...hotelSuggestions, ...flightSuggestions, ...poiSuggestions));
+
   const [calendaredEvents, setCalendaredEvents] = useState([]);
   const [validStart, setValidStart] = useState(Date.now())
   const [validEnd, setValidEnd] = useState(Date.now() + 2629800000)
   const calendarComponentRef = useRef();
   const [undo, setUndo] = useState(null);
+
+  useEffect(() => {
+    console.log(savedEvents)
+
+    if (savedEvents) {
+      let newEvents = savedEvents.map((event) => ({
+        ...event, start: event.start_date, end: event.end_date
+      }));
+      setCalendaredEvents(newEvents);
+    }
+  }, [savedEvents])
+
+  useEffect(() => {
+    console.log('new events', calendaredEvents)
+  }, [calendaredEvents])
 
   useEffect(() => {
     let draggableEl = document.getElementById("external-events");
@@ -53,6 +66,7 @@ const Calendar = ({ hotelSuggestions, flightSuggestions, poiSuggestions, selecte
         let username = eventEl.getAttribute("username");
         let id = eventEl.getAttribute("suggestion_id");
         let duration = moment(moment(end).add(1, 'day').valueOf()).diff(moment(start));
+        console.log('id to keep', id)
         setValidStart(moment(start).format())
         setValidEnd(moment(end).add(1, 'day').valueOf())
         let newEvent = {
@@ -62,6 +76,7 @@ const Calendar = ({ hotelSuggestions, flightSuggestions, poiSuggestions, selecte
           end: moment(end).add(1, 'day').valueOf(),
           type: type,
           id: id,
+          event_id: id,
           suggestedBy: username,
           constraint: (start && end) ? {
             start: moment(start).format(),
@@ -72,43 +87,13 @@ const Calendar = ({ hotelSuggestions, flightSuggestions, poiSuggestions, selecte
       }
     });
 
-    const hotelEvents = hotelSuggestions.map((hotel) => ({
-      title: 'Stay at ' + hotel.hotel_name,
-      start: moment(hotel.check_in_date).format(),
-      end: moment(hotel.check_out_date).add(1, 'day').valueOf(),
-      username: hotel.username,
-      type: 'hotel',
-      id: hotel.hotel_id
-    }));
-    setHotels(hotelEvents);
-
-    const flightEvents = flightSuggestions.map((flight) => ({
-      title: 'Flight from ' + flight.outgoing.departure_airport + ' to ' + flight.outgoing.arrival_airport,
-      start: moment(flight.outgoing.departure_date).format(),
-      end: moment(flight.outgoing.departure_date).add(1, 'day').valueOf(),
-      username: flight.meta.username,
-      type: 'flight',
-      id: flight.meta.suggestion_id
-    }))
-    setFlights(flightEvents);
-
-    const poiEvents = poiSuggestions.map((poi) => ({
-      title: poi.name,
-      username: poi.user_id,
-      id: poi.poi_id,
-      // start: moment(new Date()).format('l'),
-      // end: moment(new Date()).format('l'),
-      type: 'poi'
-    }))
-    setPOIs(poiEvents);
-
-    setCalendaredEvents(hotelEvents.concat(...flightEvents));
+    if (savedEvents.length === 0) {
+      getSavedEvents(1);
+    }
   }, [])
 
   const handleeventRecieve = (info) => {
     const calendar = calendarComponentRef.current.getApi();
-
-    // console.log('eventReceive', info.event, info.event.start, info.event.end);
     let newEvent = { ...info.event };
     //this is dumb.. but if the start and end props are the same, then we should assume we are receiving a POI event -- we need to manually edit our dates.
     if (moment(info.event.start).diff(moment(info.event.end)) === 0) {
@@ -119,7 +104,20 @@ const Calendar = ({ hotelSuggestions, flightSuggestions, poiSuggestions, selecte
         end: info.event.end,
       }
     }
-    setCalendaredEvents(calendaredEvents.concat(newEvent))
+    console.log(newEvent)
+    setCalendaredEvents(calendaredEvents.concat(newEvent));
+    let eventRecord = {
+      itinerary_id: 1,
+      suggestion_id: info.event.id,
+      title: info.event.title,
+      type: newEvent._def.extendedProps.type,
+      description: info.event.description,
+      start_date: info.event.start,
+      end_date: info.event.end
+    };
+    console.log('record to save', eventRecord);
+    saveEvent(eventRecord, eventRecord.itinerary_id);
+    //event is calendared -- reset validDate boundaries
     setValidStart(Date.now())
     setValidEnd(Date.now() + 2629800000)
   };
@@ -151,7 +149,7 @@ const Calendar = ({ hotelSuggestions, flightSuggestions, poiSuggestions, selecte
   const handleEventChange = (eventChangeInfo) => {
     console.log('eventChange', eventChangeInfo);
     setCalendaredEvents(calendaredEvents.map(event => {
-      return event.id === eventChangeInfo.event.id
+      return event.event_id === eventChangeInfo.event._def.extendedProps.event_id
         ? Object.assign({}, event, {
           start: eventChangeInfo.event.start,
           end: eventChangeInfo.event.end
@@ -159,19 +157,38 @@ const Calendar = ({ hotelSuggestions, flightSuggestions, poiSuggestions, selecte
         : event
     }
     ))
+    let eventRecord = {
+      itinerary_id: 1,
+      event_id: eventChangeInfo.event._def.extendedProps.event_id,
+      suggestion_id: eventChangeInfo.event.id,
+      title: eventChangeInfo.event.title,
+      type: eventChangeInfo.event._def.extendedProps.type,
+      description: eventChangeInfo.event.description,
+      start_date: eventChangeInfo.event.start,
+      end_date: eventChangeInfo.event.end
+    };
+    updateEvent(eventRecord, 1)
   };
 
   const handleEventClick = (eventClickInfo) => {
     console.log('event clicked, deleting...', eventClickInfo)
+    console.log('event clicked, deleting...', eventClickInfo.event.id)
     const elToDelete = calendarComponentRef.current.getApi().getEventById(eventClickInfo.event.id);
     elToDelete.remove();
+    setCalendaredEvents(events => events.filter(e => {
+      return e.event_id !== eventClickInfo.event._def.extendedProps.event_id
+    }));
+    deleteEvent(eventClickInfo.event._def.extendedProps.event_id, 1)
   }
 
   const handleEventRemoved = (eventRemovedInfo) => {
     console.log('eventRemoved', eventRemovedInfo);
-    setCalendaredEvents(calendaredEvents.filter(e => e.id !== eventRemovedInfo.event.id));
-    //would be nice if we could get this 'undo' function saved somewhere so we could call it again later... for now let's just call it again
-    // setTimeout(eventRemovedInfo.revert, 1000);
+    console.log('eventID', eventRemovedInfo.event._def.extendedProps.event_id);
+    // setCalendaredEvents(calendaredEvents.filter(e => {
+    //   console.log('event remove check', e)
+    //   return e.event_id !== eventRemovedInfo.event._def.extendedProps.event_id
+    // }));
+    deleteEvent(eventRemovedInfo.event._def.extendedProps.event_id, 1)
   }
 
   const showCalendared = () => {
@@ -211,9 +228,9 @@ const Calendar = ({ hotelSuggestions, flightSuggestions, poiSuggestions, selecte
     <Container>
       <EventList showCalendared={showCalendared} />
       {typeof undo === 'function' ?
-      <button onClick={undo}>Undo</button>
+        <button onClick={undo}>Undo</button>
         : null
-    }
+      }
       <CalendarContainer className="demo-app-calendar">
         <FullCalendar
           // eventDidMount={(mountArg) => { console.log('eventmounted, ', mountArg) }}
@@ -225,8 +242,8 @@ const Calendar = ({ hotelSuggestions, flightSuggestions, poiSuggestions, selecte
           minTime={"07:00:00"}
           maxTime={"19:00:00"}
           defaultView="dayGridMonth"
-          //eventRender={(info)=>console.log("hi")}
-          validRange={ () => ({
+          // eventRender={(info)=>console.log('eventRender', info)}
+          validRange={() => ({
             start: validStart,
             end: validEnd
           })}
@@ -256,7 +273,7 @@ const Calendar = ({ hotelSuggestions, flightSuggestions, poiSuggestions, selecte
           eventOverlap={true}
           eventChange={handleEventChange}
           eventClick={handleEventClick}
-          eventRemove={handleEventRemoved}
+          // eventRemove={handleEventRemoved}
           draggable={true}
         />
       </CalendarContainer>
