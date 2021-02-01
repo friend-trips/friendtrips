@@ -4,13 +4,15 @@ import styled from 'styled-components';
 import moment from 'moment'
 
 const Container = styled.div`
+  position: relative;
   width: 15%;
-  max-height: 400px;
+  max-height: 90vh;
   margin-left: 1rem;
   overflow-y: scroll;
 `;
 
 const UL = styled.ul`
+  display: ${props => props.show ? 'block' : 'none'};
   list-style: none;
   padding: 0;
   margin: 0;
@@ -32,7 +34,6 @@ const Event = styled.div`
 const Expansion = styled.section`
   transition: height .5s ease-out;
   display: ${props => props.expanded ? 'flex' : 'none'};
-  // height: ${props => props.expanded ? '200px' : 'auto'};
   border-top: ${props => props.expanded ? '1px solid black' : 'none'};
   margin-top: 1rem;
   border-radius: 10px;
@@ -83,6 +84,7 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
   const [flights, setFlights] = useState([])
   const [pois, setPOIs] = useState([])
   const [expansionID, setExpansionID] = useState(null)
+  const [expandedList, setExpandedList] = useState('all')
 
   useEffect(() => {
     if (hotelSuggestions.length === 0) {
@@ -160,8 +162,8 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
     <Container id="external-events" className='demo-app-sidebar'>
       <div className='demo-app-sidebar-section'>
         <button onClick={showCalendared}>Show Calendared</button>
-        <h4>Hotels ({hotels.length})</h4>
-        <UL>
+        <h4 onClick={() => {setExpandedList('hotels')}}>{(expandedList === 'all' || expandedList === 'hotels') ? ' + ' : ' - '}Hotels ({hotels.length})</h4>
+        <UL show={(expandedList === 'all' || expandedList === 'hotels')}>
           {hotels.map((event, i) => {
             return (
               <LI key={'event-' + i} onClick={() => { handleClick(event.suggestion_id) }} >
@@ -198,8 +200,8 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
             )
           })}
         </UL>
-        <h4>Flights ({flights.length})</h4>
-        <UL>
+        <h4 onClick={() => {setExpandedList('flights')}}>{(expandedList === 'all' || expandedList === 'flights') ? ' + ' : ' - '}Flights ({flights.length})</h4>
+        <UL show={(expandedList === 'all' || expandedList === 'flights')}>
           {flights.map((event, i) => {
             return (
               <LI key={'event-' + i} onClick={() => { handleClick(event.suggestion_id) }} >
@@ -223,8 +225,8 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
             )
           })}
         </UL>
-        <h4>POIs ({pois.length})</h4>
-        <UL>
+        <h4 onClick={() => {setExpandedList('pois')}}>{(expandedList === 'all' || expandedList === 'pois') ? ' + ' : ' - '}POIs ({pois.length})</h4>
+        <UL show={(expandedList === 'all' || expandedList === 'pois')}>
           {pois.map((event, i) => {
             return (
               <LI key={'event-' + i} onClick={() => { handleClick(event.suggestion_id) }} >

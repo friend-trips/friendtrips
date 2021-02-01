@@ -85,30 +85,28 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
     new Draggable(draggableEl, {
       itemSelector: ".fc-event",
       eventData: (eventEl) => {
+        //pass only 'safe' data through element attributes
         const title = eventEl.getAttribute("title");
-        // let start = eventEl.getAttribute("startdate");
-        // let end = eventEl.getAttribute("enddate");
         const type = eventEl.getAttribute("type");
-        // let username = eventEl.getAttribute("username");
         const id = eventEl.getAttribute("suggestion_id");
         if (type === 'hotel') {
           let selectedHotel = hotelSuggestions.filter((hotel) => hotel.offer_id === id)[0];
-          const start = selectedHotel.check_in_date;
-          const end = selectedHotel.check_out_date;
-          const duration = moment(moment(end).add(1, 'day').valueOf()).diff(moment(start));
-          setValidStart(moment(start).format())
-          setValidEnd(moment(end).add(1, 'day').valueOf())
+          const start = moment(selectedHotel.check_in_date);
+          const end = moment(selectedHotel.check_out_date);
+          const duration = moment(end.add(1, 'day').valueOf()).diff(start);
+          setValidStart(start.format())
+          setValidEnd(end.format())
           let newEvent = {
             title: title,
-            start: moment(start).format(),
+            start: start.format(),
             duration: duration,
-            end: moment(end).add(1, 'day').valueOf(),
+            end: end.add(1, 'day').valueOf(),
             type: type,
             id: id,
             event_id: id,
             constraint: (start && end) ? {
-              start: moment(start).format(),
-              end: moment(end).add(1, 'day').valueOf()
+              start: start.format(),
+              end: end.format()
             } : null
           };
           return newEvent;
@@ -171,7 +169,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
       }
     }
     if (newEvent._def.extendedProps.type === 'flight') {
-      console.log('FLIGHT RECEIVED IN CALENDAR', newEvent._def.extendedProps);
+      //if a flight event was dropped, create the return flight event from passed info
       const {returning} = newEvent._def.extendedProps;
       const formattedOutgoingDepartureTime = moment(returning.departure_time, 'HH:mm a');
       const formattedOutgoingDuration = moment(returning.duration, 'HH:mm');
@@ -187,7 +185,9 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
       }
       calendar.addEvent(returningFlight);
     }
+    //add new event to list of events on the calendar
     setCalendaredEvents(calendaredEvents.concat(newEvent));
+    //save addition to the database
     let eventRecord = {
       itinerary_id: 1,
       suggestion_id: info.event.id,
@@ -197,7 +197,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
       start_date: info.event.start,
       end_date: info.event.end
     };
-    console.log('record to save', eventRecord);
+    // console.log('record to save', eventRecord);
     saveEvent(eventRecord, eventRecord.itinerary_id);
     //event is calendared -- reset validDate boundaries
     setValidStart(Date.now())
