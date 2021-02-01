@@ -8,8 +8,7 @@ const mapStateToProps = (state) => {
   return {
     hotelSuggestions: state.hotels.savedResults,
     flightSuggestions: state.flights.savedResults,
-    poiSuggestions: state.pois.savedResults,
-    selectedTrip: state.app.selectedTrip,
+    poiSuggestions: state.pois.savedResults
   };
 };
 

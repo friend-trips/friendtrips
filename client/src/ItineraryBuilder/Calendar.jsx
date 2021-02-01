@@ -32,19 +32,18 @@ const calendarDate = new Date();
 const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEvents }) => {
   // const [events, setEvents] = useState([].concat(...hotelSuggestions, ...flightSuggestions, ...poiSuggestions));
 
-  const [calendaredEvents, setCalendaredEvents] = useState([]);
+  const [calendaredEvents, setCalendaredEvents] = useState(savedEvents);
   const [validStart, setValidStart] = useState(Date.now())
-  const [validEnd, setValidEnd] = useState(Date.now() + 2629800000)
+  const [validEnd, setValidEnd] = useState(Date.now() + 31557600000)
   const calendarComponentRef = useRef();
   const [undo, setUndo] = useState(null);
 
   useEffect(() => {
-    console.log(savedEvents)
-
     if (savedEvents) {
-      let newEvents = savedEvents.map((event) => ({
-        ...event, start: event.start_date, end: event.end_date
-      }));
+      let newEvents = savedEvents
+        .map((event) => ({
+          ...event, start: event.start_date, end: event.end_date
+        }));
       setCalendaredEvents(newEvents);
     }
   }, [savedEvents])
@@ -87,8 +86,10 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
       }
     });
 
-    if (savedEvents.length === 0) {
-      getSavedEvents(1);
+    if (savedEvents) {
+      if (savedEvents.length === 0) {
+        getSavedEvents(1);
+      }
     }
   }, [])
 
@@ -103,6 +104,15 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
         start: info.event.start,
         end: info.event.end,
       }
+    }
+    if (newEvent._def.extendedProps.type === 'flight') {
+      console.log('FLIGHT RECEIVED IN CALENDAR');
+      let fake = {
+        title: 'fake event',
+        start: moment(info.event.start).add(1, 'day').valueOf(),
+        end: moment(info.event.end).add(1, 'day').valueOf()
+      }
+      calendar.addEvent(fake);
     }
     console.log(newEvent)
     setCalendaredEvents(calendaredEvents.concat(newEvent));
@@ -119,7 +129,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
     saveEvent(eventRecord, eventRecord.itinerary_id);
     //event is calendared -- reset validDate boundaries
     setValidStart(Date.now())
-    setValidEnd(Date.now() + 2629800000)
+    setValidEnd(Date.now() + 31557600000)
   };
 
   const handleeventResize = (eventResizeInfo) => {
@@ -134,17 +144,17 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
     ))
   };
 
-  const handleeventDrop = (eventDropInfo) => {
-    console.log('drop event', eventDropInfo.event);
-    setCalendaredEvents(calendaredEvents.map(event =>
-      event.id === eventDropInfo.event.id
-        ? Object.assign({}, event, {
-          start: eventDropInfo.event.start,
-          end: eventDropInfo.event.end
-        })
-        : event
-    ))
-  };
+  // const handleeventDrop = (eventDropInfo) => {
+  //   console.log('drop event', eventDropInfo.event);
+  //   setCalendaredEvents(calendaredEvents.map(event =>
+  //     event.id === eventDropInfo.event.id
+  //       ? Object.assign({}, event, {
+  //         start: eventDropInfo.event.start,
+  //         end: eventDropInfo.event.end
+  //       })
+  //       : event
+  //   ))
+  // };
 
   const handleEventChange = (eventChangeInfo) => {
     console.log('eventChange', eventChangeInfo);
@@ -188,7 +198,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
     //   console.log('event remove check', e)
     //   return e.event_id !== eventRemovedInfo.event._def.extendedProps.event_id
     // }));
-    deleteEvent(eventRemovedInfo.event._def.extendedProps.event_id, 1)
+    // deleteEvent(eventRemovedInfo.event._def.extendedProps.event_id, 1)
   }
 
   const showCalendared = () => {
@@ -236,13 +246,8 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
           // eventDidMount={(mountArg) => { console.log('eventmounted, ', mountArg) }}
           events={calendaredEvents}
           eventResize={handleeventResize}
-          eventDrop={handleeventDrop}
+          // eventDrop={handleeventDrop}
           eventReceive={handleeventRecieve}
-          timeFormat={"H(:mm)"}
-          minTime={"07:00:00"}
-          maxTime={"19:00:00"}
-          defaultView="dayGridMonth"
-          // eventRender={(info)=>console.log('eventRender', info)}
           validRange={() => ({
             start: validStart,
             end: validEnd
@@ -253,28 +258,31 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
             end: "dayGridMonth,timeGridWeek,timeGridDay list"
           }}
           rerenderDelay={10}
-          eventDurationEditable={false}
+          eventDurationEditable={true}
           plugins={[
+            interactionPlugin,
             dayGridPlugin,
             timeGridPlugin,
-            list,
-            interactionPlugin
+            list
           ]}
           select={(e) => { console.log('select', e) }}
           ref={calendarComponentRef}
-          // weekends={this.state.calendarWeekends}
           events={calendaredEvents}
           dateClick={(obj) => console.log('dateClicked', obj.dateStr)}
-          currentDate={calendarDate}
-          // defaultDate={new Date()}
           editable={true}
           selectable={true}
           eventDragStart={(e) => { console.log('e drag start', e) }}
           eventOverlap={true}
           eventChange={handleEventChange}
           eventClick={handleEventClick}
-          // eventRemove={handleEventRemoved}
-          draggable={true}
+          eventRemove={handleEventRemoved}
+          initialView="dayGridMonth"
+        // defaultDate={new Date()}
+        // currentDate={calendarDate}
+        // draggable={true}
+        // timeFormat={"H(:mm)"}
+        // minTime={"07:00:00"}
+        // maxTime={"19:00:00"}
         />
       </CalendarContainer>
     </Container>
