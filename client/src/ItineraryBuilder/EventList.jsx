@@ -118,12 +118,27 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
       end: flight.outgoing.departure_date,
       username: flight.meta.username,
       type: 'flight',
-      suggestion_id: flight.meta.suggestion_id
+      suggestion_id: flight.meta.suggestion_id,
+      groupId: flight.meta.suggestion_id
     })))
   }, [flightSuggestions])
 
+  //OLD FLIGHTSUGGESTIONS HOOK
+  // useEffect(() => {
+  //   console.log('FLIGHT SUGGESTIONS', flightSuggestions)
+  //   setFlights(flightSuggestions.map((flight) => ({
+  //     title: 'Flight from ' + flight.outgoing.departure_airport + ' to ' + flight.outgoing.arrival_airport,
+  //     start: flight.outgoing.departure_date,
+  //     end: flight.outgoing.departure_date,
+  //     username: flight.meta.username,
+  //     type: 'flight',
+  //     suggestion_id: flight.meta.suggestion_id,
+  //     groupId: flight.meta.suggestion_id
+  //   })))
+  // }, [flightSuggestions])
+
   useEffect(() => {
-    // console.log('POI SUGGESTIONS', poiSuggestions)
+    // console.log('POI SUGGESTIONS', p oiSuggestions)
     setPOIs(poiSuggestions.map((poi) => ({
       title: poi.name,
       username: poi.user_id,

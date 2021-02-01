@@ -29,8 +29,9 @@ Date.prototype.addDays = function (days) {
 
 const calendarDate = new Date();
 
-const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEvents }) => {
-  // const [events, setEvents] = useState([].concat(...hotelSuggestions, ...flightSuggestions, ...poiSuggestions));
+const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEvents, hotelSuggestions, flightSuggestions, poiSuggestions }) => {
+
+  const [eventsByID, setEventsByID] = useState({});
 
   const [calendaredEvents, setCalendaredEvents] = useState(savedEvents);
   const [validStart, setValidStart] = useState(Date.now())
@@ -38,6 +39,32 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
   const calendarComponentRef = useRef();
   const [undo, setUndo] = useState(null);
 
+  useEffect(() => {
+    let myEvents = { ...eventsByID };
+    console.log('before add', myEvents)
+    hotelSuggestions.forEach((hotel) => {
+      // if (!myEvents['hotel-' + hotel.offer_id]) {
+      myEvents['hotel-' + hotel.offer_id] = hotel;
+      // }
+    })
+    flightSuggestions.forEach((flight) => {
+      // if (!myEvents['flight-' + flight.meta.suggestion_id]) {
+      myEvents['flight-' + flight.meta.suggestion_id] = flight;
+      // }
+    })
+    poiSuggestions.forEach((poi) => {
+      // if (!myEvents['poi-' + poi.poi_id]) {
+      myEvents['poi-' + poi.poi_id] = poi;
+      // }
+    })
+    console.log('myevents', myEvents)
+    setEventsByID(myEvents);
+  }, [hotelSuggestions, flightSuggestions, poiSuggestions])
+
+  const getRecordFromEventList = (id) => {
+    console.log('EVENTS LIST', eventsByID)
+    return eventsByID[id];
+  }
   useEffect(() => {
     if (savedEvents) {
       let newEvents = savedEvents
@@ -58,31 +85,69 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
     new Draggable(draggableEl, {
       itemSelector: ".fc-event",
       eventData: (eventEl) => {
-        let title = eventEl.getAttribute("title");
-        let start = eventEl.getAttribute("startdate");
-        let end = eventEl.getAttribute("enddate");
-        let type = eventEl.getAttribute("type");
-        let username = eventEl.getAttribute("username");
-        let id = eventEl.getAttribute("suggestion_id");
-        let duration = moment(moment(end).add(1, 'day').valueOf()).diff(moment(start));
-        console.log('id to keep', id)
-        setValidStart(moment(start).format())
-        setValidEnd(moment(end).add(1, 'day').valueOf())
-        let newEvent = {
-          title: title,
-          start: moment(start).format(),
-          duration: duration,
-          end: moment(end).add(1, 'day').valueOf(),
-          type: type,
-          id: id,
-          event_id: id,
-          suggestedBy: username,
-          constraint: (start && end) ? {
+        const title = eventEl.getAttribute("title");
+        // let start = eventEl.getAttribute("startdate");
+        // let end = eventEl.getAttribute("enddate");
+        const type = eventEl.getAttribute("type");
+        // let username = eventEl.getAttribute("username");
+        const id = eventEl.getAttribute("suggestion_id");
+        if (type === 'hotel') {
+          let selectedHotel = hotelSuggestions.filter((hotel) => hotel.offer_id === id)[0];
+          const start = selectedHotel.check_in_date;
+          const end = selectedHotel.check_out_date;
+          const duration = moment(moment(end).add(1, 'day').valueOf()).diff(moment(start));
+          setValidStart(moment(start).format())
+          setValidEnd(moment(end).add(1, 'day').valueOf())
+          let newEvent = {
+            title: title,
             start: moment(start).format(),
-            end: moment(end).add(1, 'day').valueOf()
-          } : null
-        };
-        return newEvent;
+            duration: duration,
+            end: moment(end).add(1, 'day').valueOf(),
+            type: type,
+            id: id,
+            event_id: id,
+            constraint: (start && end) ? {
+              start: moment(start).format(),
+              end: moment(end).add(1, 'day').valueOf()
+            } : null
+          };
+          return newEvent;
+        } else if (type === 'poi') {
+          setValidStart(moment(Date.now()).format())
+          setValidEnd(moment(Date.now()).add(1, 'year').valueOf())
+          let newEvent = {
+            title: title,
+            type: type,
+            id: id,
+            event_id: id
+          }
+          return newEvent;
+        } else if (type === 'flight') {
+          let selectedFlight = flightSuggestions.filter((flight) => flight.meta.suggestion_id === id)[0];
+          let {outgoing, returning} = selectedFlight;
+          const formattedOutgoingDepartureTime = moment(outgoing.departure_time, 'HH:mm a');
+          const formattedOutgoingDuration = moment(outgoing.duration, 'HH:mm');
+          const start = moment(outgoing.departure_date).add(formattedOutgoingDepartureTime.hours(), 'hours').add(formattedOutgoingDepartureTime.minutes(), 'minutes');
+          const end = start.add(formattedOutgoingDuration.hours(), 'hours').add(formattedOutgoingDepartureTime.minutes(), 'minutes');
+          setValidStart(moment(outgoing.departure_date).format())
+          setValidEnd(moment(returning.departure_date).add(1, 'day').valueOf())
+          let newEvent = {
+            title: title,
+            start: start.format(),
+            duration: outgoing.duration,
+            end: end.format(),
+            type: type,
+            id: id,
+            event_id: id,
+            groupId: id,
+            returning: returning,
+            constraint: (start && end) ? {
+              start: start.subtract(1, 'day').format(),
+              end: end.format()
+            } : null
+          };
+          return newEvent;
+        }
       }
     });
 
@@ -106,15 +171,22 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
       }
     }
     if (newEvent._def.extendedProps.type === 'flight') {
-      console.log('FLIGHT RECEIVED IN CALENDAR');
-      let fake = {
-        title: 'fake event',
-        start: moment(info.event.start).add(1, 'day').valueOf(),
-        end: moment(info.event.end).add(1, 'day').valueOf()
+      console.log('FLIGHT RECEIVED IN CALENDAR', newEvent._def.extendedProps);
+      const {returning} = newEvent._def.extendedProps;
+      const formattedOutgoingDepartureTime = moment(returning.departure_time, 'HH:mm a');
+      const formattedOutgoingDuration = moment(returning.duration, 'HH:mm');
+      const start = moment(returning.departure_date).add(formattedOutgoingDepartureTime.hours(), 'hours').add(formattedOutgoingDepartureTime.minutes(), 'minutes');
+      const end = start.add(formattedOutgoingDuration.hours(), 'hours').add(formattedOutgoingDepartureTime.minutes(), 'minutes');
+      let returningFlight = {
+        title: 'Flight from ' + returning.departure_airport + ' to ' + returning.arrival_airport,
+        start: start.format(),
+        end: end.format(),
+        id: newEvent._def.extendedProps.event_id,
+        event_id: newEvent._def.extendedProps.event_id,
+        groupId: newEvent._def.extendedProps.event_id,
       }
-      calendar.addEvent(fake);
+      calendar.addEvent(returningFlight);
     }
-    console.log(newEvent)
     setCalendaredEvents(calendaredEvents.concat(newEvent));
     let eventRecord = {
       itinerary_id: 1,
@@ -277,6 +349,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
           eventClick={handleEventClick}
           eventRemove={handleEventRemoved}
           initialView="dayGridMonth"
+          droppable={true}
         // defaultDate={new Date()}
         // currentDate={calendarDate}
         // draggable={true}

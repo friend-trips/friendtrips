@@ -7,7 +7,10 @@ import {getSavedEvents, saveEvent, updateEvent, deleteEvent} from '../actions/It
 
 const mapStateToProps = (state) => {
   return {
-    savedEvents: state.itinerary.savedEvents
+    savedEvents: state.itinerary.savedEvents,
+    hotelSuggestions: state.hotels.savedResults,
+    flightSuggestions: state.flights.savedResults,
+    poiSuggestions: state.pois.savedResults
   };
 };
 
