@@ -36,7 +36,7 @@ const Expansion = styled.section`
   display: ${props => props.expanded ? 'flex' : 'none'};
   border-top: ${props => props.expanded ? '1px solid black' : 'none'};
   margin-top: 1rem;
-  border-radius: 10px;
+  // border-radius: 10px;
   flex-direction: column;
   width: 100%;
 `;
@@ -58,6 +58,7 @@ const Price = styled.div`
 
 const StartEnd = styled.div`
   display: flex;
+  font-size: .8em;
   flex-direction: column;
 `;
 
@@ -99,26 +100,31 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
   }, [])
 
   useEffect(() => {
-    setHotels(hotelSuggestions.map((hotel) => ({
-      title: 'Stay at ' + hotel.hotel_name,
-      start: hotel.check_in_date,
-      end: hotel.check_out_date,
-      username: hotel.username,
-      num_of_nights: hotel.num_of_nights,
-      price: hotel.price,
-      room_type: hotel.room_type,
-      type: 'hotel',
-      suggestion_id: hotel.offer_id
-    })));
+    setHotels(hotelSuggestions
+      // .filter((hotel) => new Date(hotel.check_in_date) >= new Date())
+      .map((hotel) => ({
+        title: 'Stay at ' + hotel.hotel_name,
+        start: hotel.check_in_date,
+        end: hotel.check_out_date,
+        username: hotel.username,
+        num_of_nights: hotel.num_of_nights,
+        price: hotel.price,
+        room_type: hotel.room_type,
+        type: 'hotel',
+        suggestion_id: hotel.offer_id
+      }))
+      .sort((a,b) => new Date(a.start) - new Date(b.start))
+    );
   }, [hotelSuggestions])
 
   useEffect(() => {
     console.log('FLIGHT SUGGESTIONS', flightSuggestions)
-    setFlights(flightSuggestions.map((flight) => ({
+    setFlights(flightSuggestions.filter((flight) => new Date(flight.outgoing.departure_date) > new Date()).map((flight) => ({
       title: 'Flight from ' + flight.outgoing.departure_airport + ' to ' + flight.outgoing.arrival_airport,
       start: flight.outgoing.departure_date,
-      end: flight.outgoing.departure_date,
+      end: flight.returning.departure_date,
       username: flight.meta.username,
+      price: flight.meta.total_price,
       type: 'flight',
       suggestion_id: flight.meta.suggestion_id,
       groupId: flight.meta.suggestion_id
@@ -162,7 +168,7 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
     <Container id="external-events" className='demo-app-sidebar'>
       <div className='demo-app-sidebar-section'>
         <button onClick={showCalendared}>Show Calendared</button>
-        <h4 onClick={() => {setExpandedList('hotels')}}>{(expandedList === 'all' || expandedList === 'hotels') ? ' + ' : ' - '}Hotels ({hotels.length})</h4>
+        <h4 onClick={() => { setExpandedList('hotels') }}>{(expandedList === 'all' || expandedList === 'hotels') ? ' - ' : ' + '}Hotels ({hotels.length})</h4>
         <UL show={(expandedList === 'all' || expandedList === 'hotels')}>
           {hotels.map((event, i) => {
             return (
@@ -200,7 +206,7 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
             )
           })}
         </UL>
-        <h4 onClick={() => {setExpandedList('flights')}}>{(expandedList === 'all' || expandedList === 'flights') ? ' + ' : ' - '}Flights ({flights.length})</h4>
+        <h4 onClick={() => { setExpandedList('flights') }}>{(expandedList === 'all' || expandedList === 'flights') ? ' - ' : ' + '}Flights ({flights.length})</h4>
         <UL show={(expandedList === 'all' || expandedList === 'flights')}>
           {flights.map((event, i) => {
             return (
@@ -218,14 +224,27 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
                   {event.title}
                 </div>
                 <Expansion expanded={event.suggestion_id === expansionID}>
-
+                  <Price>Price: {event.price}</Price>
+                  <ExpansionHeader>
+                    <StartEnd>
+                      <small>{'Departing: '}</small>{event.start}
+                    </StartEnd>
+                    <StartEnd>
+                      <small>{'Returning: '}</small>{event.end}
+                    </StartEnd>
+                  </ExpansionHeader>
+                  <ExpansionBody>
+                    {/* <ExpansionRow><small>RoomType: </small>{event.room_type}</ExpansionRow> */}
+                    {/* <ExpansionRow><small>Nights: </small>{event.num_of_nights}</ExpansionRow> */}
+                    <ExpansionRow><small>Suggested By: </small>{event.username}</ExpansionRow>
+                  </ExpansionBody>
                 </Expansion>
 
               </LI>
             )
           })}
         </UL>
-        <h4 onClick={() => {setExpandedList('pois')}}>{(expandedList === 'all' || expandedList === 'pois') ? ' + ' : ' - '}POIs ({pois.length})</h4>
+        <h4 onClick={() => { setExpandedList('pois') }}>{(expandedList === 'all' || expandedList === 'pois') ? ' - ' : ' + '}POIs ({pois.length})</h4>
         <UL show={(expandedList === 'all' || expandedList === 'pois')}>
           {pois.map((event, i) => {
             return (

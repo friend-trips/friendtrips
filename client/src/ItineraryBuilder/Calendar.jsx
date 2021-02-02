@@ -41,7 +41,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
 
   useEffect(() => {
     let myEvents = { ...eventsByID };
-    console.log('before add', myEvents)
+    // console.log('before add', myEvents)
     hotelSuggestions.forEach((hotel) => {
       // if (!myEvents['hotel-' + hotel.offer_id]) {
       myEvents['hotel-' + hotel.offer_id] = hotel;
@@ -57,12 +57,12 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
       myEvents['poi-' + poi.poi_id] = poi;
       // }
     })
-    console.log('myevents', myEvents)
+    // console.log('myevents', myEvents)
     setEventsByID(myEvents);
   }, [hotelSuggestions, flightSuggestions, poiSuggestions])
 
   const getRecordFromEventList = (id) => {
-    console.log('EVENTS LIST', eventsByID)
+    // console.log('EVENTS LIST', eventsByID)
     return eventsByID[id];
   }
   useEffect(() => {
@@ -76,7 +76,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
   }, [savedEvents])
 
   useEffect(() => {
-    console.log('new events', calendaredEvents)
+    // console.log('new events', calendaredEvents)
   }, [calendaredEvents])
 
   useEffect(() => {
@@ -100,12 +100,13 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
             title: title,
             start: start.format(),
             duration: duration,
-            end: end.add(1, 'day').valueOf(),
+            // end: end.add(1, 'day').valueOf(),
             type: type,
             id: id,
             event_id: id,
+            allDay: true,
             constraint: (start && end) ? {
-              start: start.format(),
+              start: start.subtract(1, 'day').format(),
               end: end.format()
             } : null
           };
@@ -117,23 +118,35 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
             title: title,
             type: type,
             id: id,
-            event_id: id
+            event_id: id,
+            allDay: true,
+            startTime: { hours: 12 }
           }
           return newEvent;
         } else if (type === 'flight') {
-          let selectedFlight = flightSuggestions.filter((flight) => flight.meta.suggestion_id === id)[0];
-          let {outgoing, returning} = selectedFlight;
+          const selectedFlight = flightSuggestions.filter((flight) => flight.meta.suggestion_id === id)[0];
+          const { outgoing, returning } = selectedFlight;
           const formattedOutgoingDepartureTime = moment(outgoing.departure_time, 'HH:mm a');
           const formattedOutgoingDuration = moment(outgoing.duration, 'HH:mm');
-          const start = moment(outgoing.departure_date).add(formattedOutgoingDepartureTime.hours(), 'hours').add(formattedOutgoingDepartureTime.minutes(), 'minutes');
-          const end = start.add(formattedOutgoingDuration.hours(), 'hours').add(formattedOutgoingDepartureTime.minutes(), 'minutes');
+          const start = moment(outgoing.departure_date)
+            .add(formattedOutgoingDepartureTime.hours(), 'hours')
+            .add(formattedOutgoingDepartureTime.minutes(), 'minutes');
+          const end = start
+            .add(formattedOutgoingDuration.hours(), 'hours')
+            .add(formattedOutgoingDuration.minutes(), 'minutes');
           setValidStart(moment(outgoing.departure_date).format())
           setValidEnd(moment(returning.departure_date).add(1, 'day').valueOf())
-          let newEvent = {
+          const newEvent = {
             title: title,
-            start: start.format(),
-            duration: outgoing.duration,
-            end: end.format(),
+            start: start.valueOf(),
+            startTime: {
+              hours: formattedOutgoingDepartureTime.hours(),
+              minutes: formattedOutgoingDepartureTime.minutes()
+            },
+            duration: {
+              hours: formattedOutgoingDuration.hours(),
+              minutes: formattedOutgoingDuration.minutes()
+            },
             type: type,
             id: id,
             event_id: id,
@@ -141,9 +154,10 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
             returning: returning,
             constraint: (start && end) ? {
               start: start.subtract(1, 'day').format(),
-              end: end.format()
+              end: start.add(1, 'day').valueOf()
             } : null
           };
+          // calendar.addEvent(newEvent);
           return newEvent;
         }
       }
@@ -157,33 +171,62 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
   }, [])
 
   const handleeventRecieve = (info) => {
+    //undo automated event add from Calendar -- we will handle the add ourselves
+    info.revert();
     const calendar = calendarComponentRef.current.getApi();
     let newEvent = { ...info.event };
+    console.log('newEvent,', newEvent)
     //this is dumb.. but if the start and end props are the same, then we should assume we are receiving a POI event -- we need to manually edit our dates.
     if (moment(info.event.start).diff(moment(info.event.end)) === 0) {
       newEvent = {
         ...newEvent,
         title: info.event.title,
         start: info.event.start,
-        end: info.event.end,
+        end: info.event.end
       }
     }
     if (newEvent._def.extendedProps.type === 'flight') {
       //if a flight event was dropped, create the return flight event from passed info
-      const {returning} = newEvent._def.extendedProps;
-      const formattedOutgoingDepartureTime = moment(returning.departure_time, 'HH:mm a');
-      const formattedOutgoingDuration = moment(returning.duration, 'HH:mm');
-      const start = moment(returning.departure_date).add(formattedOutgoingDepartureTime.hours(), 'hours').add(formattedOutgoingDepartureTime.minutes(), 'minutes');
-      const end = start.add(formattedOutgoingDuration.hours(), 'hours').add(formattedOutgoingDepartureTime.minutes(), 'minutes');
-      let returningFlight = {
+      const { returning } = newEvent._def.extendedProps;
+      const formattedReturningDepartureTime = moment(returning.departure_time, 'HH:mm a');
+      const formattedReturningDuration = moment(returning.duration, 'HH:mm');
+      const start = moment(returning.departure_date)
+        .add(formattedReturningDepartureTime.hours(), 'hours')
+        .add(formattedReturningDepartureTime.minutes(), 'minutes');
+      const end = start
+        .add(formattedReturningDuration.hours(), 'hours')
+        .add(formattedReturningDepartureTime.minutes(), 'minutes');
+      console.log(returning.duration, 'return duration', formattedReturningDuration.hours(), formattedReturningDuration.minutes())
+      const returningFlight = {
         title: 'Flight from ' + returning.departure_airport + ' to ' + returning.arrival_airport,
-        start: start.format(),
-        end: end.format(),
+        start: start.valueOf(),
+        backgroundColor: 'red',
+        startTime: {
+          hours: formattedReturningDepartureTime.hours(),
+          minutes: formattedReturningDepartureTime.minutes()
+        },
+        duration: {
+          hours: formattedReturningDuration.hours(),
+          minutes: formattedReturningDuration.minutes()
+        },
+        type: newEvent._def.extendedProps.type,
         id: newEvent._def.extendedProps.event_id,
         event_id: newEvent._def.extendedProps.event_id,
         groupId: newEvent._def.extendedProps.event_id,
       }
-      calendar.addEvent(returningFlight);
+      // calendar.addEvent(returningFlight);
+      setCalendaredEvents(calendaredEvents.concat(returningFlight))
+
+      let returningFlightRecord = {
+        itinerary_id: 1,
+        suggestion_id: info.event.id,
+        title: returningFlight.title,
+        type: returningFlight.type,
+        description: info.event.description,
+        start_date: start.format(),
+        end_date: end.format()
+      }
+      saveEvent(returningFlightRecord, returningFlightRecord.itinerary_id)
     }
     //add new event to list of events on the calendar
     setCalendaredEvents(calendaredEvents.concat(newEvent));
@@ -254,11 +297,15 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
 
   const handleEventClick = (eventClickInfo) => {
     console.log('event clicked, deleting...', eventClickInfo)
-    console.log('event clicked, deleting...', eventClickInfo.event.id)
-    const elToDelete = calendarComponentRef.current.getApi().getEventById(eventClickInfo.event.id);
-    elToDelete.remove();
+    console.log('event clicked, deleting...', eventClickInfo.event.extendedProps)
+    // const elToDelete = calendarComponentRef.current.getApi().getEventById(eventClickInfo.event.id);
+    // elToDelete.remove();
     setCalendaredEvents(events => events.filter(e => {
-      return e.event_id !== eventClickInfo.event._def.extendedProps.event_id
+      console.log(e.suggestion_id, eventClickInfo.event._def.extendedProps.suggestion_id)
+      if (e.suggestion_id === eventClickInfo.event._def.extendedProps.suggestion_id) {
+        deleteEvent(e.event_id, 1);
+      }
+      return e.suggestion_id !== eventClickInfo.event._def.extendedProps.suggestion_id
     }));
     deleteEvent(eventClickInfo.event._def.extendedProps.event_id, 1)
   }
@@ -315,8 +362,10 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
       }
       <CalendarContainer className="demo-app-calendar">
         <FullCalendar
-          // eventDidMount={(mountArg) => { console.log('eventmounted, ', mountArg) }}
-          events={calendaredEvents}
+          // eventDidMount={(mountArg) => {
+          //   console.log('eventmounted, ', mountArg)
+          // }}
+          // events={calendaredEvents}
           eventResize={handleeventResize}
           // eventDrop={handleeventDrop}
           eventReceive={handleeventRecieve}
@@ -350,6 +399,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
           eventRemove={handleEventRemoved}
           initialView="dayGridMonth"
           droppable={true}
+          timeZone={'local'}
         // defaultDate={new Date()}
         // currentDate={calendarDate}
         // draggable={true}
