@@ -89,8 +89,10 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
         const title = eventEl.getAttribute("title");
         const type = eventEl.getAttribute("type");
         const id = eventEl.getAttribute("suggestion_id");
+        console.log(id)
         if (type === 'hotel') {
           let selectedHotel = hotelSuggestions.filter((hotel) => hotel.offer_id === id)[0];
+          console.log(selectedHotel)
           const start = moment(selectedHotel.check_in_date);
           const end = moment(selectedHotel.check_out_date);
           const duration = moment(end.add(1, 'day').valueOf()).diff(start);
