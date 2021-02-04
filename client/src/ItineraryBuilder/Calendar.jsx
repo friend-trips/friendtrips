@@ -15,8 +15,14 @@ const Container = styled.div`
   flex-direction: row;
   position: relative;
 `;
+const Sidebar = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 15%;
+`;
 const CalendarContainer = styled.div`
   flex: 1;
+  width: 85%;
   padding: 1rem;
 `;
 
@@ -28,52 +34,83 @@ Date.prototype.addDays = function (days) {
 }
 
 const calendarDate = new Date();
+const itineraries = [
+  {
+    name: 'cool itinerary',
+    itinerary_id: 1,
+    user_id: 1,
+    trip_id: 1
+  },
+  {
+    name: 'awesome itinerary',
+    itinerary_id: 2,
+    user_id: 1,
+    trip_id: 1
+  }
+];
 
 const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEvents, hotelSuggestions, flightSuggestions, poiSuggestions }) => {
 
-  const [eventsByID, setEventsByID] = useState({});
+  // const [eventsByID, setEventsByID] = useState({});
 
   const [calendaredEvents, setCalendaredEvents] = useState(savedEvents);
   const [validStart, setValidStart] = useState(Date.now())
   const [validEnd, setValidEnd] = useState(Date.now() + 31557600000)
   const calendarComponentRef = useRef();
   const [undo, setUndo] = useState(null);
+  const [currentItinerary, setCurrentItinerary] = useState(itineraries[0])
 
-  useEffect(() => {
-    let myEvents = { ...eventsByID };
-    // console.log('before add', myEvents)
-    hotelSuggestions.forEach((hotel) => {
-      // if (!myEvents['hotel-' + hotel.offer_id]) {
-      myEvents['hotel-' + hotel.offer_id] = hotel;
-      // }
-    })
-    flightSuggestions.forEach((flight) => {
-      // if (!myEvents['flight-' + flight.meta.suggestion_id]) {
-      myEvents['flight-' + flight.meta.suggestion_id] = flight;
-      // }
-    })
-    poiSuggestions.forEach((poi) => {
-      // if (!myEvents['poi-' + poi.poi_id]) {
-      myEvents['poi-' + poi.poi_id] = poi;
-      // }
-    })
-    // console.log('myevents', myEvents)
-    setEventsByID(myEvents);
-  }, [hotelSuggestions, flightSuggestions, poiSuggestions])
+  // useEffect(() => {
+  //   let myEvents = { ...eventsByID };
+  //   // console.log('before add', myEvents)
+  //   hotelSuggestions.forEach((hotel) => {
+  //     myEvents['hotel-' + hotel.offer_id] = hotel;
+  //   })
+  //   flightSuggestions.forEach((flight) => {
+  //     myEvents['flight-' + flight.meta.suggestion_id] = flight;
+  //   })
+  //   poiSuggestions.forEach((poi) => {
+  //     myEvents['poi-' + poi.poi_id] = poi;
+  //   })
+  //   // console.log('myevents', myEvents)
+  //   setEventsByID(myEvents);
+  // }, [hotelSuggestions, flightSuggestions, poiSuggestions])
 
-  const getRecordFromEventList = (id) => {
-    // console.log('EVENTS LIST', eventsByID)
-    return eventsByID[id];
-  }
+  // const getRecordFromEventList = (id) => {
+  //   // console.log('EVENTS LIST', eventsByID)
+  //   return eventsByID[id];
+  // }
   useEffect(() => {
     if (savedEvents) {
       let newEvents = savedEvents
-        .map((event) => ({
-          ...event, start: event.start_date, end: event.end_date
-        }));
+        .map((event) => {
+          let calendarEvent = {
+            ...event,
+            start: event.start_date,
+            end: event.end_date
+          };
+          if (event.type === 'hotel') {
+            calendarEvent.color = '#56a54d',
+              calendarEvent.title = 'Stay at ' + event.title,
+              calendarEvent.allDay = true
+          }
+          if (event.type === 'flight') {
+            calendarEvent.color = '#bb9ffc'
+            console.log(event)
+          }
+          if (event.type === 'poi') {
+            // calendarEvent.color = '#d15151'
+          }
+          return (calendarEvent)
+        });
       setCalendaredEvents(newEvents);
     }
   }, [savedEvents])
+
+  useEffect(() => {
+    console.log('itin', currentItinerary)
+    getSavedEvents(currentItinerary.itinerary_id);
+  }, [currentItinerary])
 
   useEffect(() => {
     // console.log('new events', calendaredEvents)
@@ -89,10 +126,8 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
         const title = eventEl.getAttribute("title");
         const type = eventEl.getAttribute("type");
         const id = eventEl.getAttribute("suggestion_id");
-        console.log(id)
         if (type === 'hotel') {
           let selectedHotel = hotelSuggestions.filter((hotel) => hotel.offer_id === id)[0];
-          console.log(selectedHotel)
           const start = moment(selectedHotel.check_in_date);
           const end = moment(selectedHotel.check_out_date);
           const duration = moment(end.add(1, 'day').valueOf()).diff(start);
@@ -106,7 +141,6 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
             type: type,
             id: id,
             event_id: id,
-            allDay: true,
             constraint: (start && end) ? {
               start: start.subtract(1, 'day').format(),
               end: end.format()
@@ -178,15 +212,17 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
     const calendar = calendarComponentRef.current.getApi();
     let newEvent = { ...info.event };
     console.log('newEvent,', newEvent)
+    /*DELETE THIS AT EOD
     //this is dumb.. but if the start and end props are the same, then we should assume we are receiving a POI event -- we need to manually edit our dates.
-    if (moment(info.event.start).diff(moment(info.event.end)) === 0) {
-      newEvent = {
-        ...newEvent,
-        title: info.event.title,
-        start: info.event.start,
-        end: info.event.end
-      }
-    }
+    // if (moment(info.event.start).diff(moment(info.event.end)) === 0) {
+    //   newEvent = {
+    //     ...newEvent,
+    //     title: info.event.title,
+    //     start: info.event.start,
+    //     end: info.event.end
+    //   }
+    // }
+     */
     if (newEvent._def.extendedProps.type === 'flight') {
       //if a flight event was dropped, create the return flight event from passed info
       const { returning } = newEvent._def.extendedProps;
@@ -195,14 +231,15 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
       const start = moment(returning.departure_date)
         .add(formattedReturningDepartureTime.hours(), 'hours')
         .add(formattedReturningDepartureTime.minutes(), 'minutes');
-      const end = start
+      const end = moment(start)
         .add(formattedReturningDuration.hours(), 'hours')
         .add(formattedReturningDepartureTime.minutes(), 'minutes');
+      console.log('start', start, 'end', end)
       console.log(returning.duration, 'return duration', formattedReturningDuration.hours(), formattedReturningDuration.minutes())
       const returningFlight = {
-        title: 'Flight from ' + returning.departure_airport + ' to ' + returning.arrival_airport,
+        title: returning.arrival_airport + ' ⇄ ' + returning.departure_airport,
         start: start.valueOf(),
-        backgroundColor: 'red',
+        end: end.valueOf(),
         startTime: {
           hours: formattedReturningDepartureTime.hours(),
           minutes: formattedReturningDepartureTime.minutes()
@@ -220,7 +257,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
       setCalendaredEvents(calendaredEvents.concat(returningFlight))
 
       let returningFlightRecord = {
-        itinerary_id: 1,
+        itinerary_id: currentItinerary.itinerary_id,
         suggestion_id: info.event.id,
         title: returningFlight.title,
         type: returningFlight.type,
@@ -234,7 +271,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
     setCalendaredEvents(calendaredEvents.concat(newEvent));
     //save addition to the database
     let eventRecord = {
-      itinerary_id: 1,
+      itinerary_id: currentItinerary.itinerary_id,
       suggestion_id: info.event.id,
       title: info.event.title,
       type: newEvent._def.extendedProps.type,
@@ -285,7 +322,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
     }
     ))
     let eventRecord = {
-      itinerary_id: 1,
+      itinerary_id: currentItinerary.itinerary_id,
       event_id: eventChangeInfo.event._def.extendedProps.event_id,
       suggestion_id: eventChangeInfo.event.id,
       title: eventChangeInfo.event.title,
@@ -336,7 +373,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
           type: event._def.extendedProps.type,
           user_id: 7 || event._def.extendedProps.suggestedBy,
           trip_id: 1,
-          itinerary_id: 1,
+          itinerary_id: currentItinerary.itinerary_id,
         }
         console.log(itinEvent);
       } else {
@@ -347,7 +384,7 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
           type: event._def.extendedProps.type,
           user_id: 7 || event._def.extendedProps.suggestedBy,
           trip_id: 1,
-          itinerary_id: 1,
+          itinerary_id: currentItinerary.itinerary_id,
         }
         console.log(itinEvent);
       }
@@ -357,11 +394,6 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
 
   return (
     <Container>
-      <EventList showCalendared={showCalendared} />
-      {typeof undo === 'function' ?
-        <button onClick={undo}>Undo</button>
-        : null
-      }
       <CalendarContainer className="demo-app-calendar">
         <FullCalendar
           // eventDidMount={(mountArg) => {
@@ -410,6 +442,9 @@ const Calendar = ({ getSavedEvents, saveEvent, updateEvent, deleteEvent, savedEv
         // maxTime={"19:00:00"}
         />
       </CalendarContainer>
+      <Sidebar>
+        <EventList showCalendared={showCalendared} setCurrentItinerary={setCurrentItinerary} currentItinerary={currentItinerary}/>
+      </Sidebar>
     </Container>
   );
 };

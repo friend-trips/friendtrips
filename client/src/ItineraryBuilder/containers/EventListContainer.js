@@ -3,6 +3,7 @@ import EventList from '../EventList.jsx';
 import {getSavedHotels} from '../../Hotels/actions/hotelActions.js'
 import {getSavedFlights} from '../../Flights/actions/flightActions.js'
 import {getSavedPOIs} from '../../PointsOfInterest/actions/poiActions.js'
+import {createItinerary} from '../actions/ItineraryBuilderActions.js'
 
 const mapStateToProps = (state) => {
   return {
@@ -16,7 +17,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getSavedHotels: (cb) => dispatch(getSavedHotels(cb)),
     getSavedFlights: (cb) => dispatch(getSavedFlights(cb)),
-    getSavedPOIs: (cb) => dispatch(getSavedPOIs(cb))
+    getSavedPOIs: (cb) => dispatch(getSavedPOIs(cb)),
+    createItinerary: (itin, cb) => dispatch(createItinerary(itin, cb))
   };
 };
 

@@ -43,7 +43,7 @@ const saveEvent = (event, itinId) => {
       header: { 'Access-Control-Allow-Origin': '*' }
     })
       .then((response) => {
-        console.log('event save search result', response.data)
+        // console.log('event save search result', response.data)
         dispatch(addSavedEvent(response.data))
       })
       .catch(console.log)
@@ -59,7 +59,7 @@ const updateEvent = (event, itinId) => {
       header: { 'Access-Control-Allow-Origin': '*' }
     })
       .then((response) => {
-        console.log('event update result', response.data)
+        // console.log('event update result', response.data)
         dispatch(updateSavedEvent(event))
       })
       .catch(console.log)
@@ -75,8 +75,27 @@ const deleteEvent = (event_id, itinId) => {
       header: { 'Access-Control-Allow-Origin': '*' }
     })
       .then((response) => {
-        console.log('event update result', response.data)
+        // console.log('delete event result', response.data)
         dispatch(deleteSavedEvent(event_id))
+      })
+      .catch(console.log)
+  }
+}
+
+const createItinerary = (itinerary, cb) => {
+  return (dispatch) => {
+    axios({
+      method: 'post',
+      url: `http://morning-bayou-59969.herokuapp.com/api/itinerary/`,
+      data: itinerary,
+      header: { 'Access-Control-Allow-Origin': '*' }
+    })
+      .then((response) => {
+        console.log(response.data[0])
+        if (cb) {
+          console.log('callback response')
+          cb(response.data[0])
+        }
       })
       .catch(console.log)
   }
@@ -85,4 +104,4 @@ const deleteEvent = (event_id, itinId) => {
 
 
 
-export { setSavedEvents, getSavedEvents, updateEvent, deleteEvent, saveEvent };
+export { setSavedEvents, getSavedEvents, updateEvent, deleteEvent, saveEvent, createItinerary };

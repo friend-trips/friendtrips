@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Draggable } from '@fullcalendar/interaction'
 import styled from 'styled-components';
-import moment from 'moment'
+import { AuthContext } from '../components/providers/AuthenticationProvider.jsx'
 
 const Container = styled.div`
   position: relative;
-  width: 15%;
-  max-height: 90vh;
-  margin-left: 1rem;
+  margin-right: 1rem;
   overflow-y: scroll;
 `;
 
@@ -31,8 +29,16 @@ const LI = styled.li`
   cursor: pointer;
 `;
 
+const Section = styled.section`
+  max-height: 80vh;
+  overflow-y: scroll;
+  margin-top: 1rem;
+  margin-bottom: .85em;
+`;
+
 const H4 = styled.h4`
   cursor: pointer;
+  margin-bottom: .85em;
 `;
 
 
@@ -87,15 +93,35 @@ const ExpansionRow = styled.div`
   justify-content: space-between;
 `;
 
+const Footer = styled.footer`
+  display: flex;
+  justify-content: space-around;
+`;
 
+let itineraries = [
+  {
+    name: 'cool itinerary',
+    itinerary_id: 1,
+    user_id: 1,
+    trip_id: 1
+  },
+  {
+    name: 'awesome itinerary',
+    itinerary_id: 2,
+    user_id: 1,
+    trip_id: 1
+  }
+];
 
-const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCalendared, getSavedFlights, getSavedHotels, getSavedPOIs }) => {
+const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCalendared, getSavedFlights, getSavedHotels, getSavedPOIs, setCurrentItinerary, currentItinerary, createItinerary }) => {
 
   const [hotels, setHotels] = useState([])
   const [flights, setFlights] = useState([])
   const [pois, setPOIs] = useState([])
   const [expansionID, setExpansionID] = useState(null)
   const [expandedList, setExpandedList] = useState('all')
+  const authContext = useContext(AuthContext);
+
 
   useEffect(() => {
     if (hotelSuggestions.length === 0) {
@@ -107,6 +133,7 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
     if (poiSuggestions.length === 0) {
       getSavedPOIs();
     }
+    //get itineraries for this user
   }, [])
 
   useEffect(() => {
@@ -141,19 +168,6 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
     })))
   }, [flightSuggestions])
 
-  //OLD FLIGHTSUGGESTIONS HOOK
-  // useEffect(() => {
-  //   console.log('FLIGHT SUGGESTIONS', flightSuggestions)
-  //   setFlights(flightSuggestions.map((flight) => ({
-  //     title: 'Flight from ' + flight.outgoing.departure_airport + ' to ' + flight.outgoing.arrival_airport,
-  //     start: flight.outgoing.departure_date,
-  //     end: flight.outgoing.departure_date,
-  //     username: flight.meta.username,
-  //     type: 'flight',
-  //     suggestion_id: flight.meta.suggestion_id,
-  //     groupId: flight.meta.suggestion_id
-  //   })))
-  // }, [flightSuggestions])
 
   useEffect(() => {
     // console.log('POI SUGGESTIONS', p oiSuggestions)
@@ -166,7 +180,7 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
     })));
   }, [poiSuggestions])
 
-  const handleClick = (suggestion_ID) => {
+  const handleEventItemClick = (suggestion_ID) => {
     if (suggestion_ID === expansionID) {
       setExpansionID(null);
     } else {
@@ -182,31 +196,56 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
     }
   }
 
+  const handleCreateItin = (itineraryName) => {
+    let itinerary = {
+      name: itineraryName,
+      user_id: authContext.user,
+      trip_id: 1
+    }
+    createItinerary(itinerary, (itin) => {
+      setCurrentItinerary(itin);
+      itineraries.push(itin)
+    })
+  }
+
   return (
     <Container id="external-events" className='demo-app-sidebar'>
       <header>
-        <h3 style={{marginBottom: 0, padding: 0}}>Saved Events</h3>
-        <small style={{cursor: 'pointer'}}><span onClick={() =>handleListToggle('all')}>[Expand]</span>  <span onClick={() => handleListToggle('none')}>[Collapse]</span></small>
+        <h3 style={{ marginBottom: 0, padding: 0 }}>Saved Events</h3>
+        <select id='itin-select' onChange={(e) => {
+          if (e.target.value !== 'new') {
+            setCurrentItinerary(e.target.value)
+          } else { handleCreateItin(prompt('Name your new Itinerary')) }
+        }} value={currentItinerary} style={{ border: '.5px solid grey' }}>
+          {itineraries.map(itin => (
+            <option value={itin}> {itin.name || 'Unnamed Itinerary (' + itinerary_id + ')'}</option>
+          ))}
+          <hr />
+          <option value="new">Create New Itinerary</option>
+        </select>
+
       </header>
-      <div className='demo-app-sidebar-section'>
-        <H4 onClick={() => { handleListToggle('hotels') }}>{(expandedList === 'all' || expandedList === 'hotels') ? ' - ' : ' + '}Hotels ({hotels.length})</H4>
+      <Section className='demo-app-sidebar-section'>
+        <H4 onClick={() => { handleListToggle('hotels') }} style={{ marginTop: 0 }}>{(expandedList === 'all' || expandedList === 'hotels') ? ' - ' : ' + '}Hotels ({hotels.length})</H4>
         <UL show={(expandedList === 'all' || expandedList === 'hotels')}>
           {hotels.map((event, i) => {
             return (
-              <LI key={'event-' + i} onClick={() => { handleClick(event.suggestion_id) }} style={{ border: '2px double #56a54d' }}>
+              <LI key={'event-' + i} onClick={() => { handleEventItemClick(event.suggestion_id) }} style={{ border: '2px double #56a54d' }}>
                 <div
                   className="fc-event"
                   title={event.title}
                   startDate={event.start}
                   endDate={event.end}
                   username={event.username}
-                  style={{ marginLeft: '3px', marginRight: '3px',   textAlign: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textTransform: 'capitalize',
-                  marginTop: '.25rem',
-                  marginBottom: '.25rem' }}
+                  style={{
+                    marginLeft: '3px', marginRight: '3px', textAlign: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textTransform: 'capitalize',
+                    marginTop: '.25rem',
+                    marginBottom: '.25rem'
+                  }}
                   type={'hotel'}
                   suggestion_id={event.suggestion_id}
                 >
@@ -237,7 +276,7 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
         <UL show={(expandedList === 'all' || expandedList === 'flights')}>
           {flights.map((event, i) => {
             return (
-              <LI key={'event-' + i} onClick={() => { handleClick(event.suggestion_id) }} style={{ border: '2px double #bb9ffc' }}>
+              <LI key={'event-' + i} onClick={() => { handleEventItemClick(event.suggestion_id) }} style={{ border: '2px double #bb9ffc' }}>
                 <div
                   className="fc-event"
                   title={event.title}
@@ -275,7 +314,7 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
         <UL show={(expandedList === 'all' || expandedList === 'pois')}>
           {pois.map((event, i) => {
             return (
-              <LI key={'event-' + i} onClick={() => { handleClick(event.suggestion_id) }} style={{ border: '2px solid #d15151' }}>
+              <LI key={'event-' + i} onClick={() => { handleEventItemClick(event.suggestion_id) }} style={{ border: '2px solid #d15151' }}>
                 <div
                   className="fc-event"
                   title={event.title}
@@ -299,7 +338,12 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
           })}
         </UL>
         {/* <button onClick={showCalendared}>Show Calendared</button> */}
-      </div>
+      </Section>
+      <Footer>
+        <small style={{ cursor: 'pointer' }}><span onClick={() => handleListToggle('all')}>[Expand]</span>
+        </small>
+        <small> <span onClick={() => handleListToggle('none')}>[Collapse]</span></small>
+      </Footer>
     </Container>
   );
 };
