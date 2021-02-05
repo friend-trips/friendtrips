@@ -5,7 +5,7 @@ const passport = require('passport');
 // const session = require('express-session');
 const bcrypt = require("bcrypt");
 const axios = require('axios');
-const ENV = require('../../configs/environment.config.js');
+// const ENV = require('../../configs/environment.config.js');
 // router.use(
 //   session({
 //     secret: ENV.SESS_SECRET,
@@ -13,7 +13,7 @@ const ENV = require('../../configs/environment.config.js');
 //     saveUninitialized: false,
 //   })
 // );
-router.use(cookieParser(ENV.SESS_SECRET));
+router.use(cookieParser(process.env.SESS_SECRET));
 router.use(passport.initialize());
 router.use(passport.session());
 require("../passportConfig")(passport);
