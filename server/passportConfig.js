@@ -10,7 +10,7 @@ module.exports = function (passport) {
       //grab matching user record from the database
       axios({
         method: 'get',
-        url: ENV.AUTH_ROUTE,
+        url: 'https://morning-bayou-59969.herokuapp.com/auth/check_user',
         data: {
           username: username
         }
@@ -49,7 +49,7 @@ module.exports = function (passport) {
   });
   passport.deserializeUser((id, cb) => {
     console.log('DESERIALIZE')
-    axios.get(`${ENV.USER_ROUTE + '/' + id}`)
+    axios.get(`${'https://morning-bayou-59969.herokuapp.com/users/' + id}`)
       .then((req) => {
         // console.log('DS', req.data)
         const userInformation = {
