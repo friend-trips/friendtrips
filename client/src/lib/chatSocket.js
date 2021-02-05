@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
-
-const socket = io('http://localhost:4000', {
+// const urlStr = 'http://localhost:4000'
+const socket = io(`https://friendtrips.herokuapp.com/${process.env.PORT || 4000}`, {
   path: '/socket.io',
   auth: {
     user_id: '',
