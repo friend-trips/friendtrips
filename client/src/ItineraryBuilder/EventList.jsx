@@ -30,7 +30,7 @@ const LI = styled.li`
 `;
 
 const Section = styled.section`
-  max-height: 80vh;
+  height: 80vh;
   overflow-y: scroll;
   margin-top: 1rem;
   margin-bottom: .85em;
@@ -113,13 +113,14 @@ let itineraries = [
   }
 ];
 
-const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCalendared, getSavedFlights, getSavedHotels, getSavedPOIs, setCurrentItinerary, currentItinerary, createItinerary }) => {
+const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCalendared, getSavedFlights, getSavedHotels, getSavedPOIs, createItinerary, updateSelectedItin, getItinsByTrip, selectedTrip, itineraryList, selectedItinerary }) => {
 
   const [hotels, setHotels] = useState([])
   const [flights, setFlights] = useState([])
   const [pois, setPOIs] = useState([])
   const [expansionID, setExpansionID] = useState(null)
   const [expandedList, setExpandedList] = useState('all')
+  const [tripItins, setTripItins] = useState(itineraryList)
   const authContext = useContext(AuthContext);
 
 
@@ -134,11 +135,28 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
       getSavedPOIs();
     }
     //get itineraries for this user
+    if (itineraryList.length === 0) {
+      console.log('selectedTrip', selectedTrip)
+      let trip = selectedTrip.trip_id || 1
+      getItinsByTrip(trip)
+    }
   }, [])
 
   useEffect(() => {
+    let markedItins = itineraryList.map((itin) => (itin.user_i === authContext.user) ? { ...itin, editable: true } : { ...itin, editable: false })
+    if (!selectedItinerary) {
+      updateSelectedItin(itineraryList.filter(i => i.user_id === authContext.user)[0]);
+    }
+    itineraryList && setTripItins(markedItins);
+  }, [itineraryList])
+
+  useEffect(() => {
+    console.log(tripItins, 'tripitin')
+  }, [tripItins])
+
+  useEffect(() => {
     setHotels(hotelSuggestions
-      // .filter((hotel) => new Date(hotel.check_in_date) >= new Date())
+      .filter((hotel) => new Date(hotel.check_in_date) >= new Date())
       .map((hotel) => ({
         title: hotel.hotel_name,
         start: hotel.check_in_date,
@@ -155,7 +173,6 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
   }, [hotelSuggestions])
 
   useEffect(() => {
-    console.log('FLIGHT SUGGESTIONS', flightSuggestions)
     setFlights(flightSuggestions.filter((flight) => new Date(flight.outgoing.departure_date) > new Date()).map((flight) => ({
       title: flight.outgoing.arrival_airport + ' ⇄ ' + flight.returning.arrival_airport,
       start: flight.outgoing.departure_date,
@@ -170,7 +187,6 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
 
 
   useEffect(() => {
-    // console.log('POI SUGGESTIONS', p oiSuggestions)
     setPOIs(poiSuggestions.map((poi) => ({
       title: poi.name,
       username: poi.user_id,
@@ -203,7 +219,7 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
       trip_id: 1
     }
     createItinerary(itinerary, (itin) => {
-      setCurrentItinerary(itin);
+      updateSelectedItin(itin);
       itineraries.push(itin)
     })
   }
@@ -212,138 +228,148 @@ const EventList = ({ hotelSuggestions, flightSuggestions, poiSuggestions, showCa
     <Container id="external-events" className='demo-app-sidebar'>
       <header>
         <h3 style={{ marginBottom: 0, padding: 0 }}>Saved Events</h3>
-        <select id='itin-select' onChange={(e) => {
-          if (e.target.value !== 'new') {
-            setCurrentItinerary(e.target.value)
-          } else { handleCreateItin(prompt('Name your new Itinerary')) }
-        }} value={currentItinerary} style={{ border: '.5px solid grey' }}>
-          {itineraries.map(itin => (
-            <option value={itin}> {itin.name || 'Unnamed Itinerary (' + itinerary_id + ')'}</option>
-          ))}
-          <hr />
-          <option value="new">Create New Itinerary</option>
-        </select>
-
+        {tripItins ?
+          <select id='itin-select' onChange={(e) => {
+            if (e.target.value !== 'new') {
+              updateSelectedItin(Number(e.target.value))
+            } else { handleCreateItin(prompt('Name your new Itinerary')) }
+          }} value={selectedItinerary ? selectedItinerary.itinerary_id : null} style={{ width: '100%', border: '.5px solid grey' }}>
+            {tripItins.map(itin => (
+              <option value={itin.itinerary_id}> {itin.name || 'Unnamed Itinerary (' + itin.itinerary_id + ')'}</option>
+            ))}
+            <hr />
+            <option value="new">Create New Itinerary</option>
+          </select>
+          : null}
       </header>
       <Section className='demo-app-sidebar-section'>
-        <H4 onClick={() => { handleListToggle('hotels') }} style={{ marginTop: 0 }}>{(expandedList === 'all' || expandedList === 'hotels') ? ' - ' : ' + '}Hotels ({hotels.length})</H4>
-        <UL show={(expandedList === 'all' || expandedList === 'hotels')}>
-          {hotels.map((event, i) => {
-            return (
-              <LI key={'event-' + i} onClick={() => { handleEventItemClick(event.suggestion_id) }} style={{ border: '2px double #56a54d' }}>
-                <div
-                  className="fc-event"
-                  title={event.title}
-                  startDate={event.start}
-                  endDate={event.end}
-                  username={event.username}
-                  style={{
-                    marginLeft: '3px', marginRight: '3px', textAlign: 'center',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    textTransform: 'capitalize',
-                    marginTop: '.25rem',
-                    marginBottom: '.25rem'
-                  }}
-                  type={'hotel'}
-                  suggestion_id={event.suggestion_id}
-                >
-                  {event.title}
-                </div>
-                <Expansion expanded={event.suggestion_id === expansionID}>
-                  <Price style={{ borderBottom: '2px solid #56a54d', borderTop: '2px solid #56a54d' }}>Price: {event.price}</Price>
-                  <ExpansionHeader>
-                    <StartEnd>
-                      <small>{'Check in: '}</small>{event.start}
-                    </StartEnd>
-                    <StartEnd>
-                      <small>{'Check out: '}</small>{event.end}
-                    </StartEnd>
-                  </ExpansionHeader>
-                  <ExpansionBody>
-                    <ExpansionRow><small>RoomType: </small>{event.room_type}</ExpansionRow>
-                    <ExpansionRow><small>Nights: </small>{event.num_of_nights}</ExpansionRow>
-                    <ExpansionRow><small>Suggested By: </small>{event.username}</ExpansionRow>
-                  </ExpansionBody>
-                </Expansion>
+        {!selectedItinerary ?
+          <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><small><i>Select an Itinerary above</i></small></div>
+        : selectedItinerary.user_id === authContext.user ?
+        <>
+          <H4 onClick={() => { handleListToggle('hotels') }} style={{ marginTop: 0 }}>{(expandedList === 'all' || expandedList === 'hotels') ? ' - ' : ' + '}Hotels ({hotels.length})</H4>
+          <UL show={(expandedList === 'all' || expandedList === 'hotels')}>
+            {hotels.map((event, i) => {
+              return (
+                <LI key={'event-' + i} onClick={() => { handleEventItemClick(event.suggestion_id) }} style={{ border: '2px double #56a54d' }}>
+                  <div
+                    className="fc-event"
+                    title={event.title}
+                    startDate={event.start}
+                    endDate={event.end}
+                    username={event.username}
+                    style={{
+                      marginLeft: '3px', marginRight: '3px', textAlign: 'center',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textTransform: 'capitalize',
+                      marginTop: '.25rem',
+                      marginBottom: '.25rem'
+                    }}
+                    type={'hotel'}
+                    suggestion_id={event.suggestion_id}
+                  >
+                    {event.title}
+                  </div>
+                  <Expansion expanded={event.suggestion_id === expansionID}>
+                    <Price style={{ borderBottom: '2px solid #56a54d', borderTop: '2px solid #56a54d' }}>Price: {event.price}</Price>
+                    <ExpansionHeader>
+                      <StartEnd>
+                        <small>{'Check in: '}</small>{event.start}
+                      </StartEnd>
+                      <StartEnd>
+                        <small>{'Check out: '}</small>{event.end}
+                      </StartEnd>
+                    </ExpansionHeader>
+                    <ExpansionBody>
+                      <ExpansionRow><small>RoomType: </small>{event.room_type}</ExpansionRow>
+                      <ExpansionRow><small>Nights: </small>{event.num_of_nights}</ExpansionRow>
+                      <ExpansionRow><small>Suggested By: </small>{event.username}</ExpansionRow>
+                    </ExpansionBody>
+                  </Expansion>
 
-              </LI>
-            )
-          })}
-        </UL>
-        <H4 onClick={() => { handleListToggle('flights') }}>{(expandedList === 'all' || expandedList === 'flights') ? ' - ' : ' + '}Flights ({flights.length})</H4>
-        <UL show={(expandedList === 'all' || expandedList === 'flights')}>
-          {flights.map((event, i) => {
-            return (
-              <LI key={'event-' + i} onClick={() => { handleEventItemClick(event.suggestion_id) }} style={{ border: '2px double #bb9ffc' }}>
-                <div
-                  className="fc-event"
-                  title={event.title}
-                  startDate={event.start}
-                  endDate={event.end}
-                  username={event.username}
-                  style={{ marginLeft: '3px', marginRight: '3px' }}
-                  type={'flight'}
-                  suggestion_id={event.suggestion_id}
-                >
-                  {event.title}
-                </div>
-                <Expansion expanded={event.suggestion_id === expansionID}>
-                  <Price style={{ borderBottom: '2px solid #bb9ffc', borderTop: '2px solid #bb9ffc' }}>Price: {event.price}</Price>
-                  <ExpansionHeader>
-                    <StartEnd>
-                      <small>{'Departing: '}</small>{event.start}
-                    </StartEnd>
-                    <StartEnd>
-                      <small>{'Returning: '}</small>{event.end}
-                    </StartEnd>
-                  </ExpansionHeader>
-                  <ExpansionBody >
-                    {/* <ExpansionRow><small>RoomType: </small>{event.room_type}</ExpansionRow> */}
-                    {/* <ExpansionRow><small>Nights: </small>{event.num_of_nights}</ExpansionRow> */}
-                    <ExpansionRow><small>Suggested By: </small>{event.username}</ExpansionRow>
-                  </ExpansionBody>
-                </Expansion>
+                </LI>
+              )
+            })}
+          </UL>
+          <H4 onClick={() => { handleListToggle('flights') }}>{(expandedList === 'all' || expandedList === 'flights') ? ' - ' : ' + '}Flights ({flights.length})</H4>
+          <UL show={(expandedList === 'all' || expandedList === 'flights')}>
+            {flights.map((event, i) => {
+              return (
+                <LI key={'event-' + i} onClick={() => { handleEventItemClick(event.suggestion_id) }} style={{ border: '2px double #bb9ffc' }}>
+                  <div
+                    className="fc-event"
+                    title={event.title}
+                    startDate={event.start}
+                    endDate={event.end}
+                    username={event.username}
+                    style={{ marginLeft: '3px', marginRight: '3px' }}
+                    type={'flight'}
+                    suggestion_id={event.suggestion_id}
+                  >
+                    {event.title}
+                  </div>
+                  <Expansion expanded={event.suggestion_id === expansionID}>
+                    <Price style={{ borderBottom: '2px solid #bb9ffc', borderTop: '2px solid #bb9ffc' }}>Price: {event.price}</Price>
+                    <ExpansionHeader>
+                      <StartEnd>
+                        <small>{'Departing: '}</small>{event.start}
+                      </StartEnd>
+                      <StartEnd>
+                        <small>{'Returning: '}</small>{event.end}
+                      </StartEnd>
+                    </ExpansionHeader>
+                    <ExpansionBody >
+                      {/* <ExpansionRow><small>RoomType: </small>{event.room_type}</ExpansionRow> */}
+                      {/* <ExpansionRow><small>Nights: </small>{event.num_of_nights}</ExpansionRow> */}
+                      <ExpansionRow><small>Suggested By: </small>{event.username}</ExpansionRow>
+                    </ExpansionBody>
+                  </Expansion>
 
-              </LI>
-            )
-          })}
-        </UL>
-        <H4 onClick={() => { handleListToggle('pois') }}>{(expandedList === 'all' || expandedList === 'pois') ? ' - ' : ' + '}POIs ({pois.length})</H4>
-        <UL show={(expandedList === 'all' || expandedList === 'pois')}>
-          {pois.map((event, i) => {
-            return (
-              <LI key={'event-' + i} onClick={() => { handleEventItemClick(event.suggestion_id) }} style={{ border: '2px solid #d15151' }}>
-                <div
-                  className="fc-event"
-                  title={event.title}
-                  startDate={event.start}
-                  endDate={event.end}
-                  username={event.username}
-                  style={{ marginLeft: '3px', marginRight: '3px' }}
-                  suggestion_id={event.suggestion_id}
-                  type={'poi'}
-                >
-                  {event.title}
-                </div>
-                <Expansion expanded={event.suggestion_id === expansionID}>
-                  <ExpansionBody style={{ borderTop: '2px solid #d15151' }}>
-                    <ExpansionRow><small>Category: </small>{event.category}</ExpansionRow>
-                  </ExpansionBody>
-                </Expansion>
+                </LI>
+              )
+            })}
+          </UL>
+          <H4 onClick={() => { handleListToggle('pois') }}>{(expandedList === 'all' || expandedList === 'pois') ? ' - ' : ' + '}POIs ({pois.length})</H4>
+          <UL show={(expandedList === 'all' || expandedList === 'pois')}>
+            {pois.map((event, i) => {
+              return (
+                <LI key={'event-' + i} onClick={() => { handleEventItemClick(event.suggestion_id) }} style={{ border: '2px solid #3788d8' }}>
+                  <div
+                    className="fc-event"
+                    title={event.title}
+                    startDate={event.start}
+                    endDate={event.end}
+                    username={event.username}
+                    style={{ marginLeft: '3px', marginRight: '3px' }}
+                    suggestion_id={event.suggestion_id}
+                    type={'poi'}
+                  >
+                    {event.title}
+                  </div>
+                  <Expansion expanded={event.suggestion_id === expansionID}>
+                    <ExpansionBody style={{ borderTop: '2px solid #3788d8' }}>
+                      <ExpansionRow><small>Category: </small>{event.category}</ExpansionRow>
+                    </ExpansionBody>
+                  </Expansion>
 
-              </LI>
-            )
-          })}
-        </UL>
-        {/* <button onClick={showCalendared}>Show Calendared</button> */}
+                </LI>
+              )
+            })}
+          </UL>
+        </>
+        :
+        <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><small><i>This isn't your Itinerary</i></small></div>
+        }
       </Section>
+        {selectedItinerary && selectedItinerary.user_id === authContext.user ?
       <Footer>
         <small style={{ cursor: 'pointer' }}><span onClick={() => handleListToggle('all')}>[Expand]</span>
         </small>
         <small> <span onClick={() => handleListToggle('none')}>[Collapse]</span></small>
       </Footer>
+        : null}
     </Container>
   );
 };

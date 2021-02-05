@@ -10,7 +10,8 @@ const mapStateToProps = (state) => {
     savedEvents: state.itinerary.savedEvents,
     hotelSuggestions: state.hotels.savedResults,
     flightSuggestions: state.flights.savedResults,
-    poiSuggestions: state.pois.savedResults
+    poiSuggestions: state.pois.savedResults,
+    selectedItinerary: state.itinerary.selectedItinerary
   };
 };
 

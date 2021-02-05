@@ -1,5 +1,6 @@
 const initialState = {
   savedEvents: [],
+  itineraryList: [],
   selectedItinerary: null
 }
 
@@ -17,9 +18,12 @@ var itineraryReducer = (state = initialState, action) => {
     case 'DELETE_SAVED_EVENT':
       console.log('DELETE SAVED EVENTS', state)
       return {...state, savedEvents: state.savedEvents.filter((event) => event.event_id !== action.event_id)}
-    case 'SET_SELECTED_ITIN':
-      console.log('SET SELECTED ITIN', state)
-      return {...state, selectedItinerary: action.selectedItinerary}
+    case 'UPDATE_SELECTED_ITIN':
+      console.log('UPDATE_SELECTED_ITIN', state)
+      return {...state, selectedItinerary: state.itineraryList.filter((itin) => itin.itinerary_id === action.itineraryId)[0]}
+    case 'SET_ITIN_LIST':
+      console.log('SET_ITIN_LIST', state);
+      return {...state, itineraryList: action.itineraryList}
     default:
       return state;
   }

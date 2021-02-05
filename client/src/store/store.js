@@ -46,7 +46,9 @@ const preloadedState = {
     messageInThread: null
   },
   itinerary: {
-    savedEvents: []
+    savedEvents: [],
+    itineraryList: [],
+    selectedItinerary: null
   }
 }
 

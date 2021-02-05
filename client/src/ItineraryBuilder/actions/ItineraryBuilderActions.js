@@ -17,6 +17,14 @@ const deleteSavedEvent = (event_id) => ({
   type: 'DELETE_SAVED_EVENT',
   event_id: event_id
 })
+const updateSelectedItin = (itin_id) => ({
+  type: 'UPDATE_SELECTED_ITIN',
+  itineraryId: itin_id
+})
+const setItinList = (itineraryList) => ({
+  type: 'SET_ITIN_LIST',
+  itineraryList: itineraryList
+})
 
 //Thunks that do async stuff THEN update state (by calling above funcs)
 
@@ -67,7 +75,6 @@ const updateEvent = (event, itinId) => {
 }
 
 const deleteEvent = (event_id, itinId) => {
-  console.log('delete eventt', event_id, itinId)
   return (dispatch) => {
     axios({
       method: 'delete',
@@ -91,11 +98,28 @@ const createItinerary = (itinerary, cb) => {
       header: { 'Access-Control-Allow-Origin': '*' }
     })
       .then((response) => {
-        console.log(response.data[0])
+        // console.log(response.data[0])
+        updateSelectedItin(response.data[0].itinerary_id);
+        getItinsByTrip(response.data[0].trip_id);
         if (cb) {
-          console.log('callback response')
+          // console.log('callback response')
           cb(response.data[0])
         }
+      })
+      .catch(console.log)
+  }
+}
+
+const getItinsByTrip = (trip_id, cb) => {
+  return (dispatch) => {
+    axios({
+      method: 'get',
+      url: `http://morning-bayou-59969.herokuapp.com/api/itinerary/getAll/${trip_id}`,
+      header: { 'Access-Control-Allow-Origin': '*' }
+    })
+      .then((response) => {
+        console.log('getItinsByTrip', response.data.rows)
+        dispatch(setItinList(response.data.rows))
       })
       .catch(console.log)
   }
@@ -104,4 +128,4 @@ const createItinerary = (itinerary, cb) => {
 
 
 
-export { setSavedEvents, getSavedEvents, updateEvent, deleteEvent, saveEvent, createItinerary };
+export { setSavedEvents, getSavedEvents, updateEvent, deleteEvent, saveEvent, createItinerary, getItinsByTrip, updateSelectedItin };
