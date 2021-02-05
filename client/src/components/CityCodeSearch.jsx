@@ -66,22 +66,24 @@ const CityCodeSearch = ({ setDestination, placeholderText }) => {
   const [inputFocused, setInputFocused] = useState(false);
 
   useEffect(() => {
-    amadeus.referenceData.locations.get({
-      keyword : query,
-      subType : 'CITY'
-    })
-      .then((res) => {
-        let cities = res.data.map((row) => {
-          return {
-            name: row.name,
-            cityCode: row.iataCode
-          }
+    if (query) {
+      amadeus.referenceData.locations.get({
+        keyword: query,
+        subType: 'CITY'
+      })
+        .then((res) => {
+          let cities = res.data.map((row) => {
+            return {
+              name: row.name,
+              cityCode: row.iataCode
+            }
+          })
+          setSearchResults(cities);
         })
-        setSearchResults(cities);
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
   }, [query]);
 
   const makeSelection = (city) => {
@@ -132,7 +134,7 @@ const CityCodeSearch = ({ setDestination, placeholderText }) => {
         <Input
           type="text"
           value={query}
-          onChange={(e) => {setQuery(e.target.value)}}
+          onChange={(e) => { setQuery(e.target.value) }}
           placeholder={placeholderText || "Destination"}
         />
       </Form>
