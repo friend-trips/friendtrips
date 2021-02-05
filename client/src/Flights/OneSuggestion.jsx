@@ -232,7 +232,7 @@ const OneSuggestion = ({ data, voteOnSuggestion }) => {
       }
       // axios({
       //   method: 'post',
-      //   url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+      //   url: 'https://morning-bayou-59969.herokuapp.com/api/votes',
       //   header: {'Access-Control-Allow-Origin': '*'},
       //   data: {
       //     "type": "+",
@@ -253,7 +253,7 @@ const OneSuggestion = ({ data, voteOnSuggestion }) => {
   //     setUpvoteNames(upvoteNames => [...upvoteNames, meta.username]);
   //     axios({
   //       method: 'post',
-  //       url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+  //       url: 'https://morning-bayou-59969.herokuapp.com/api/votes',
   //       header: {'Access-Control-Allow-Origin': '*'},
   //       data: {
   //         "type": "+",
@@ -274,7 +274,7 @@ const OneSuggestion = ({ data, voteOnSuggestion }) => {
   //     setDownvoteNames(downvoteNames => [...downvoteNames, meta.username]);
   //     axios({
   //       method: 'post',
-  //       url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+  //       url: 'https://morning-bayou-59969.herokuapp.com/api/votes',
   //       header: {'Access-Control-Allow-Origin': '*'},
   //       data: {
   //         "type": "-",

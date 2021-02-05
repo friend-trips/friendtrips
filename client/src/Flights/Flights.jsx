@@ -82,7 +82,7 @@ const App = ({getSavedFlights}) => {
 //   }
 
 //   getSavedResults() {
-//     axios.get(`http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1`)
+//     axios.get(`https://morning-bayou-59969.herokuapp.com/flights/?trip_id=1`)
 
 //       .then((data) => {
 //         let savedArray = [];

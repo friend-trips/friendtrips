@@ -160,7 +160,7 @@ const OneSuggestion = (props) => {
       setUpvoteNames(upvoteNames => [...upvoteNames, data.username]);
       axios({
         method: 'post',
-        url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+        url: 'https://morning-bayou-59969.herokuapp.com/api/votes',
         header: {'Access-Control-Allow-Origin': '*'},
         data: {
           "type": "+",
@@ -183,7 +183,7 @@ const OneSuggestion = (props) => {
       setDownvoteNames(downvoteNames => [...downvoteNames, data.username]);
       axios({
         method: 'post',
-        url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+        url: 'https://morning-bayou-59969.herokuapp.com/api/votes',
         header: {'Access-Control-Allow-Origin': '*'},
         data: {
           "type": "-",

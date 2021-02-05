@@ -30,7 +30,7 @@ const setItinList = (itineraryList) => ({
 
 const getSavedEvents = (itinId, cb) => {
   return (dispatch) => {
-    axios.get(`http://morning-bayou-59969.herokuapp.com/api/itinerary/${itinId}/events/`)
+    axios.get(`https://morning-bayou-59969.herokuapp.com/api/itinerary/${itinId}/events/`)
       .then((result) => {
         console.log('get savedEvents results', result);
         dispatch(setSavedEvents(result.data));
@@ -46,7 +46,7 @@ const saveEvent = (event, itinId) => {
   return (dispatch) => {
     axios({
       method: 'post',
-      url: `http://morning-bayou-59969.herokuapp.com/api/itinerary/${itinId}/events`,
+      url: `https://morning-bayou-59969.herokuapp.com/api/itinerary/${itinId}/events`,
       data: event,
       header: { 'Access-Control-Allow-Origin': '*' }
     })
@@ -62,7 +62,7 @@ const updateEvent = (event, itinId) => {
   return (dispatch) => {
     axios({
       method: 'patch',
-      url: `http://morning-bayou-59969.herokuapp.com/api/itinerary/${itinId}/events/${event.event_id}`,
+      url: `https://morning-bayou-59969.herokuapp.com/api/itinerary/${itinId}/events/${event.event_id}`,
       data: event,
       header: { 'Access-Control-Allow-Origin': '*' }
     })
@@ -78,7 +78,7 @@ const deleteEvent = (event_id, itinId) => {
   return (dispatch) => {
     axios({
       method: 'delete',
-      url: `http://morning-bayou-59969.herokuapp.com/api/itinerary/${itinId}/events/${event_id}`,
+      url: `https://morning-bayou-59969.herokuapp.com/api/itinerary/${itinId}/events/${event_id}`,
       header: { 'Access-Control-Allow-Origin': '*' }
     })
       .then((response) => {
@@ -93,7 +93,7 @@ const createItinerary = (itinerary, cb) => {
   return (dispatch) => {
     axios({
       method: 'post',
-      url: `http://morning-bayou-59969.herokuapp.com/api/itinerary/`,
+      url: `https://morning-bayou-59969.herokuapp.com/api/itinerary/`,
       data: itinerary,
       header: { 'Access-Control-Allow-Origin': '*' }
     })
@@ -114,7 +114,7 @@ const getItinsByTrip = (trip_id, cb) => {
   return (dispatch) => {
     axios({
       method: 'get',
-      url: `http://morning-bayou-59969.herokuapp.com/api/itinerary/getAll/${trip_id}`,
+      url: `https://morning-bayou-59969.herokuapp.com/api/itinerary/getAll/${trip_id}`,
       header: { 'Access-Control-Allow-Origin': '*' }
     })
       .then((response) => {

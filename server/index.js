@@ -157,7 +157,7 @@ io.on('connection', (socket) => {
   socket.on('addHotel', (hotel) => {
     axios({
       method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/hotels',
+      url: 'https://morning-bayou-59969.herokuapp.com/hotels',
       data: hotel,
       header: { 'Access-Control-Allow-Origin': '*' }
     })
@@ -177,7 +177,7 @@ io.on('connection', (socket) => {
   socket.on('addFlight', (flight) => {
     axios({
       method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/flights',
+      url: 'https://morning-bayou-59969.herokuapp.com/flights',
       data: flight,
       header: { 'Access-Control-Allow-Origin': '*' }
     })
@@ -197,7 +197,7 @@ io.on('connection', (socket) => {
   socket.on('addPOI', (poi) => {
     axios({
       method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/pois',
+      url: 'https://morning-bayou-59969.herokuapp.com/pois',
       data: poi,
       header: { 'Access-Control-Allow-Origin': '*' }
     })

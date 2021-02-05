@@ -39,7 +39,7 @@ const searchForHotels = (hotelQuery) => {
 }
 const getSavedHotels = (cb) => {
   return (dispatch) => {
-    axios.get(`http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1`)
+    axios.get(`https://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1`)
       .then((result) => {
         dispatch(setSavedHotels(Object.values(result.data)));
         if (cb) {
@@ -54,7 +54,7 @@ const saveSearchResult = (hotel) => {
   return (dispatch) => {
     axios({
       method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/hotels',
+      url: 'https://morning-bayou-59969.herokuapp.com/hotels',
       data: hotel,
       header: { 'Access-Control-Allow-Origin': '*' }
     })
@@ -70,7 +70,7 @@ const voteOnSuggestion = (vote) => {
   return (dispatch) => {
     axios({
       method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+      url: 'https://morning-bayou-59969.herokuapp.com/api/votes',
       header: { 'Access-Control-Allow-Origin': '*' },
       data: vote
     })

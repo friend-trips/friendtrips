@@ -41,7 +41,7 @@ const getTripList = () => {
 const getTripData = (trip) => {
   //TODO: should re-fetch all data for a specific trip THEN populate/update store
   return (dispatch) => {
-    //axios.get(`http://morning-bayou-59969.herokuapp.com/flights/?trip_id=1`)
+    //axios.get(`https://morning-bayou-59969.herokuapp.com/flights/?trip_id=1`)
       //.then((result) => {
         dispatch(setSelectedTrip(trip));
       //})

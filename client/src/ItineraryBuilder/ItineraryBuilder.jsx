@@ -36,7 +36,7 @@ const ItineraryBuilder = ({ flightSuggestions, hotelSuggestions, getSavedFlights
   const getSavedItinerary = (e) => {
     console.log('searchedFor', e.target.value)
     e.preventDefault();
-    axios.get(`http://morning-bayou-59969.herokuapp.com/api/itinerary/?itinerary_id=${e.target.value}&trip_id=${selectedTrip.trip_id}`)
+    axios.get(`https://morning-bayou-59969.herokuapp.com/api/itinerary/?itinerary_id=${e.target.value}&trip_id=${selectedTrip.trip_id}`)
       .then(({ data }) => {
         console.log('got saved itin', data)
         let { flights, hotels } = data;

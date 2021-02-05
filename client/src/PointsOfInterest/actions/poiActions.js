@@ -59,7 +59,7 @@ const saveSearchResult = (poi) => {
   return (dispatch) => {
     axios({
       method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/pois',
+      url: 'https://morning-bayou-59969.herokuapp.com/pois',
       data: poi,
       header: { 'Access-Control-Allow-Origin': '*' }
     })
@@ -74,7 +74,7 @@ const voteOnSuggestion = (vote) => {
   return (dispatch) => {
     axios({
       method: 'post',
-      url: 'http://morning-bayou-59969.herokuapp.com/api/votes',
+      url: 'https://morning-bayou-59969.herokuapp.com/api/votes',
       header: { 'Access-Control-Allow-Origin': '*' },
       data: vote
     })

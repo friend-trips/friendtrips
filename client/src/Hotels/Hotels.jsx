@@ -169,7 +169,7 @@ export default Hotels;
 
 //   getSavedResults() {
 //     axios
-//       .get("http://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1")
+//       .get("https://morning-bayou-59969.herokuapp.com/hotels/?trip_id=1")
 //       .then(({ data }) => {
 //         let savedArray = [];
 //         console.log("data ", data);
