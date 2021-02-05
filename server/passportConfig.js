@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const localStrategy = require("passport-local").Strategy;
 const axios = require('axios');
-const ENV = require('../configs/environment.config.js')
+// const ENV = require('../configs/environment.config.js')
 
 module.exports = function (passport) {
   passport.use(
