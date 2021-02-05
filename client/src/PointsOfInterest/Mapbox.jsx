@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import mapboxgl, { Marker } from 'mapbox-gl';
 import styled from 'styled-components';
-import { accessToken } from '../../../configs/mapbox.config.js';
+// let accessToken;
+// if (!process.env.MAPBOX_TOKEN) {
+// import {accessToken} from '../../../configs/mapbox.config';
 import HotelTooltip from './HotelTooltip.jsx'
 import MapControlMenu from './MapControlMenu.jsx'
 import POIToolTip from './POIToolTip.jsx'
@@ -22,9 +24,17 @@ const Pin = styled.div`
   width: 20px;
   background-color: 'orange';
 `;
-
-let mapContainer = React.createRef(null)
-mapboxgl.accessToken = accessToken;
+let mapContainer = React.createRef(null);
+if (!process.env.MAPBOX_TOKEN) {
+  import('../../../configs/mapbox.config')
+    .then((r) => {
+      mapboxgl.accessToken = r.default.accessToken
+    })
+    .catch((err) => { console.log('import err', err)})
+} else {
+  mapboxgl.accessToken = process.env.MAPBOX_TOKEN
+}
+// mapboxgl.accessToken = accessToken;
 
 
 const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, saveSearchResult }) => {

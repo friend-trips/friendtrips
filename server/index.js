@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const morgan = require('morgan');
 const cors = require("cors");
@@ -7,7 +8,7 @@ const app = express();
 
 const chatController = require('./controllers/chatController.js');
 
-const ENV = require('../configs/environment.config.js');
+// const process.env = require('../configs/environment.config.js');
 const session = require('express-session');
 
 const authRoute = require('./routes/auth.js');
@@ -17,9 +18,9 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-
+console.log('SESSION ENV', process.env, process.env.SESS_SECRET)
 app.use(session({
-  secret: ENV.SESS_SECRET,
+  secret: process.env.SESS_SECRET,
   resave: false,
   saveUninitialized: false,
 }))
