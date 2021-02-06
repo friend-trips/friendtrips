@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import {ApplicationContext} from '../components/providers/ApplicationProvider.jsx';
 import {AuthContext} from '../components/providers/AuthenticationProvider.jsx';
 import styled from 'styled-components';
-import amadeus from '../lib/amadeus.js'
 import axios from 'axios';
 import App from './Hotels.jsx';
 import Heart from '../components/Heart.jsx'
@@ -104,12 +103,14 @@ const HotelCardExpansion = ({selectedTrip,  bookingQuery, hotel, isExpanded, sav
     bookingQuery.currency = 'USD';
     setLoading(true);
     if (isExpanded) {
-      amadeus.shopping.hotelOffersByHotel
-      .get(bookingQuery)
+      axios({
+        method: 'post',
+        url: 'https://morning-bayou-59969.herokuapp.com/api/amadeus/hotel_offers',
+        data: bookingQuery
+      })
       .then((result) => {
         if (result.data) {
-          console.log('found', result.data.offers.length, 'results')
-          setRoomOffers(result.data.offers);
+          setRoomOffers(result.data);
           setLoading(false);
         }
       })

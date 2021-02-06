@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
-import amadeus from '../lib/amadeus.js'
+import axios from 'axios'
 
 const Container = styled.div`
   position: relative;
@@ -64,23 +64,16 @@ const CityCodeSearch = ({ setDestination, placeholderText }) => {
   const [index, setIndex] = useState(null);
   const [cityCode, setCityCode] = useState('');
   const [inputFocused, setInputFocused] = useState(false);
+  // https://morning-bayou-59969.herokuapp.com/api/amadeus/city_code/?keyword=San Francisco&subType=CITY
 
   useEffect(() => {
-    amadeus.referenceData.locations.get({
-      keyword : query,
-      subType : 'CITY'
-    })
-      .then((res) => {
-        let cities = res.data.map((row) => {
-          return {
-            name: row.name,
-            cityCode: row.iataCode
-          }
-        })
-        setSearchResults(cities);
+    axios.get(`https://morning-bayou-59969.herokuapp.com/api/amadeus/city_code/?keyword=${query}&subType=CITY`)
+      .then(({data}) => {
+        setSearchResults(data);
       })
       .catch((err) => {
         console.log(err)
+        setSearchResults([]);
       })
   }, [query]);
 

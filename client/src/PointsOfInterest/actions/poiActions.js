@@ -1,5 +1,4 @@
 import axios from 'axios';
-import amadeus from '../../lib/amadeus.js';
 
 //Normal actions that update state
 const setLoading = (loadingState) => ({
@@ -21,13 +20,11 @@ const addSavedPOI = (poi) => ({
 
 //Thunks that do async stuff THEN update state (by calling above funcs)
 const searchForPOIs = (poiQuery) => {
+  let {longitude, latitude} = poiQuery
   return (dispatch) => {
-    console.log('SEARCH FOR POIS', poiQuery);
     dispatch(setLoading(true));
-    amadeus.referenceData.locations.pointsOfInterest
-      .get(poiQuery)
+    axios.get(`https://morning-bayou-59969.herokuapp.com/api/amadeus/POI/?latitude=${latitude}&longitude=${longitude}`)
       .then((response) => {
-        console.log(response)
         dispatch(setSearchResults(response.data));
         dispatch(setLoading(false));
       })
