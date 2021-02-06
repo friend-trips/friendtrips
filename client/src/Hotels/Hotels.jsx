@@ -14,10 +14,6 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> staging
 const Hotels = ({getSavedHotels, searchForHotels}) => {
   const [searchQuery, setSearchQuery] = useState({});
 
@@ -40,8 +36,4 @@ const Hotels = ({getSavedHotels, searchForHotels}) => {
   );
 }
 
-<<<<<<< HEAD
 export default Hotels;
-=======
-export default Hotels;
->>>>>>> staging
