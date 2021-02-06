@@ -23,13 +23,15 @@ const addSavedHotel = (hotel) => ({
 //Thunks that do async stuff THEN update state (by calling above funcs)
 const searchForHotels = (hotelQuery) => {
   return (dispatch) => {
-    console.log('SEARCH FOR HOTELS ');
     dispatch(setLoading(true));
-    amadeus.shopping.hotelOffers
-      .get(hotelQuery)
-      .then((response) => {
-        console.log(response)
-        dispatch(setSearchResults(parser(response.data)));
+    axios({
+      method: 'post',
+      url: 'http://morning-bayou-59969.herokuapp.com/api/amadeus/hotels',
+      header: { 'Access-Control-Allow-Origin': '*' },
+      data: hotelQuery
+    })
+      .then(({data}) => {
+        dispatch(setSearchResults(data));
         dispatch(setLoading(false));
       })
       .catch((response) => {

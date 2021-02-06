@@ -140,7 +140,6 @@ const initialState = {
 function reducer(state, action) {
   switch (action.type) {
     case "focusChange":
-      console.log("got here!!!!");
       return { ...state, focusedInput: action.payload };
     case "dateChange":
       return action.payload;
@@ -150,7 +149,7 @@ function reducer(state, action) {
 }
 
 export default function SearchBar(props) {
-  const [cityCode, setCityCode] = useState("");
+  const [cityCode, setCityCode] = useState("LON");
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
   const [focusedCalendar, setFocusedCalendar] = useState(null);
@@ -159,7 +158,6 @@ export default function SearchBar(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const setDates = (data) => {
-    console.log(data);
     setCheckInDate(data.startDate);
     setCheckOutDate(data.endDate);
   };

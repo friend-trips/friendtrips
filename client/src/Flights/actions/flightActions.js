@@ -23,15 +23,15 @@ const addSavedFlight = (flight) => ({
 //Thunks that do async stuff THEN update state (by calling above funcs)
 const searchForFlights = (flightQuery) => {
   return (dispatch) => {
-    console.log('SEARCH FOR FLIGHTS ');
     dispatch(setLoading(true));
-    amadeus.shopping.flightOffersSearch
-      .get(flightQuery)
+    axios({
+      method: 'post',
+      url: 'http://morning-bayou-59969.herokuapp.com/api/amadeus/flights',
+      header: { 'Access-Control-Allow-Origin': '*' },
+      data: flightQuery
+    })
       .then(function (response) {
-        console.log(
-          'RESPONSE FROM SERVER', response.data
-        )
-        dispatch(setSearchResults(parser(response.data)));
+        dispatch(setSearchResults(response.data));
         dispatch(setLoading(false));
       })
       .catch(function (response) {

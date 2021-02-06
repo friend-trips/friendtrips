@@ -104,12 +104,14 @@ const HotelCardExpansion = ({selectedTrip,  bookingQuery, hotel, isExpanded, sav
     bookingQuery.currency = 'USD';
     setLoading(true);
     if (isExpanded) {
-      amadeus.shopping.hotelOffersByHotel
-      .get(bookingQuery)
+      axios({
+        method: 'post',
+        url: 'https://morning-bayou-59969.herokuapp.com/api/amadeus/hotel_offers',
+        data: bookingQuery
+      })
       .then((result) => {
         if (result.data) {
-          console.log('found', result.data.offers.length, 'results')
-          setRoomOffers(result.data.offers);
+          setRoomOffers(result.data);
           setLoading(false);
         }
       })
