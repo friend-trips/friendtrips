@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import {ApplicationContext} from '../components/providers/ApplicationProvider.jsx';
 import {AuthContext} from '../components/providers/AuthenticationProvider.jsx';
 import styled from 'styled-components';
-import amadeus from '../lib/amadeus.js'
 import axios from 'axios';
 import App from './Hotels.jsx';
 import Heart from '../components/Heart.jsx'

@@ -1,6 +1,4 @@
 import axios from 'axios';
-import amadeus from '../../lib/amadeus.js';
-import parser from '../../lib/flightResultParser.js'
 
 //Normal actions that update state
 const setLoading = (loadingState) => ({

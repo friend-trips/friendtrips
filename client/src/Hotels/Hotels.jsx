@@ -3,7 +3,6 @@ import SearchBar from "./SearchBar.jsx";
 import HotelPageContent from "./HotelPageContent.jsx";
 import styled from "styled-components";
 import axios from "axios";
-import filterData from '../lib/hotelResultParser.js'
 
 //entire screen
 const Wrapper = styled.div`

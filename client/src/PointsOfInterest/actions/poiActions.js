@@ -1,5 +1,4 @@
 import axios from 'axios';
-import amadeus from '../../lib/amadeus.js';
 
 //Normal actions that update state
 const setLoading = (loadingState) => ({
