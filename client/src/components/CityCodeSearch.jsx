@@ -67,12 +67,6 @@ const CityCodeSearch = ({ setDestination, placeholderText }) => {
   // https://morning-bayou-59969.herokuapp.com/api/amadeus/city_code/?keyword=San Francisco&subType=CITY
 
   useEffect(() => {
-<<<<<<< HEAD
-    if (query) {
-      amadeus.referenceData.locations.get({
-        keyword: query,
-        subType: 'CITY'
-=======
     axios.get(`https://morning-bayou-59969.herokuapp.com/api/amadeus/city_code/?keyword=${query}&subType=CITY`)
       .then(({data}) => {
         setSearchResults(data);
@@ -80,7 +74,6 @@ const CityCodeSearch = ({ setDestination, placeholderText }) => {
       .catch((err) => {
         console.log(err)
         setSearchResults([]);
->>>>>>> staging
       })
         .then((res) => {
           let cities = res.data.map((row) => {
