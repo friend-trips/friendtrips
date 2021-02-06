@@ -4,13 +4,6 @@ import styled, { ThemeProvider } from "styled-components";
 import moment from "moment";
 import keys from "../../../config.js";
 
-// import styles from './App.css';
-
-var Amadeus = require("amadeus");
-var amadeus = new Amadeus({
-  clientId: keys.clientId,
-  clientSecret: keys.clientSecret,
-});
 
 const Container = styled.div`
   display: flex;
@@ -206,16 +199,6 @@ function FlightForm({ searchForFlights }) {
       max: 25,
     }
     searchForFlights(flightQuery);
-    // amadeus.shopping.flightOffersSearch
-    //   .get()
-    //   .then(function (response) {
-    //     console.log("response", response.data);
-    //     flightDictionary = response.result.dictionaries.carriers;
-    //     displaySearchFeed(filterData(response.data));
-    //   })
-    //   .catch(function (response) {
-    //     console.error(response);
-    //   });
   };
 
   return (

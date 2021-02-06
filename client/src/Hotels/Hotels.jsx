@@ -3,7 +3,6 @@ import SearchBar from "./SearchBar.jsx";
 import HotelPageContent from "./HotelPageContent.jsx";
 import styled from "styled-components";
 import axios from "axios";
-import filterData from '../lib/hotelResultParser.js'
 
 //entire screen
 const Wrapper = styled.div`
@@ -15,7 +14,10 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> staging
 const Hotels = ({getSavedHotels, searchForHotels}) => {
   const [searchQuery, setSearchQuery] = useState({});
 
@@ -38,4 +40,8 @@ const Hotels = ({getSavedHotels, searchForHotels}) => {
   );
 }
 
+<<<<<<< HEAD
 export default Hotels;
+=======
+export default Hotels;
+>>>>>>> staging
