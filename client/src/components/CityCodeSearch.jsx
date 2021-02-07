@@ -68,26 +68,13 @@ const CityCodeSearch = ({ setDestination, placeholderText }) => {
 
   useEffect(() => {
     axios.get(`https://morning-bayou-59969.herokuapp.com/api/amadeus/city_code/?keyword=${query}&subType=CITY`)
-      .then(({data}) => {
+      .then(({ data }) => {
         setSearchResults(data);
       })
       .catch((err) => {
         console.log(err)
         setSearchResults([]);
       })
-        .then((res) => {
-          let cities = res.data.map((row) => {
-            return {
-              name: row.name,
-              cityCode: row.iataCode
-            }
-          })
-          setSearchResults(cities);
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    }
   }, [query]);
 
   const makeSelection = (city) => {

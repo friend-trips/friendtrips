@@ -23,6 +23,4 @@ var poiReducer = (state = initialState, action) => {
   }
 };
 
-export default poiReducer;console.log("got he!!!!");
-      re
-    console.log(data);
+export default poiReducer;

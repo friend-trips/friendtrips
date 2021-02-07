@@ -25,6 +25,7 @@ const Pin = styled.div`
   background-color: 'orange';
 `;
 let mapContainer = React.createRef(null);
+console.log(process.env, process.REACT_APP_)
 if (!process.env.MAPBOX_TOKEN) {
   import('../../../configs/mapbox.config')
     .then((r) => {
