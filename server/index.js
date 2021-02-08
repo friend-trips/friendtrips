@@ -18,7 +18,6 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-console.log('SESSION ENV', process.env, process.env.SESS_SECRET)
 app.use(session({
   secret: process.env.SESS_SECRET,
   resave: false,

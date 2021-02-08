@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import mapboxgl, { Marker } from 'mapbox-gl';
 import styled from 'styled-components';
-// let accessToken;
-// if (!process.env.MAPBOX_TOKEN) {
-// import {accessToken} from '../../../configs/mapbox.config';
+import axios from 'axios';
 import HotelTooltip from './HotelTooltip.jsx'
 import MapControlMenu from './MapControlMenu.jsx'
 import POIToolTip from './POIToolTip.jsx'
@@ -25,26 +23,26 @@ const Pin = styled.div`
   background-color: 'orange';
 `;
 let mapContainer = React.createRef(null);
-console.log(process.env, process.REACT_APP_)
-if (!process.env.MAPBOX_TOKEN) {
-  import('../../../configs/mapbox.config')
-    .then((r) => {
-      mapboxgl.accessToken = r.default.accessToken
-    })
-    .catch((err) => { console.log('import err', err)})
-} else {
-  mapboxgl.accessToken = process.env.MAPBOX_TOKEN
-}
+// if (!process.env.MAPBOX_TOKEN) {
+//   import('../../../configs/mapbox.config')
+//     .then((r) => {
+//       mapboxgl.accessToken = r.default.accessToken
+//     })
+//     .catch((err) => { console.log('import err', err)})
+// } else {
+//   mapboxgl.accessToken = process.env.MAPBOX_TOKEN
+// }
 // mapboxgl.accessToken = accessToken;
 
 
 const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, saveSearchResult }) => {
+  const [mapLoading, setMapLoading] = useState(true);
   const [lng, setLng] = useState(-74.017204);
   const [lat, setLat] = useState(40.705658);
   const [zoom, setZoom] = useState(12);
   const [mapInstance, setMapInstance] = useState(null);
   const [mapControl, setMapControl] = useState(null);
-  const [currentControl, setCurrentControl] = useState('none')
+  const [currentControl, setCurrentControl] = useState('none');
 
   const authContext = useContext(AuthContext);
   const appContext = useContext(ApplicationContext);
@@ -76,62 +74,72 @@ const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, save
   }
 
   useEffect(() => {
+    axios.get('https://morning-bayou-59969.herokuapp.com/api/mapbox')
+      .then(({ data }) => {
+        mapboxgl.accessToken = data;
+        setMapLoading(false);
+      })
+      .catch(console.error)
+  }, [])
 
-    const map = new mapboxgl.Map({
-      container: mapContainer,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [lng, lat],
-      zoom: zoom
-    });
+  useEffect(() => {
+    if (!mapLoading) {
+      const map = new mapboxgl.Map({
+        container: mapContainer,
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [lng, lat],
+        zoom: zoom
+      });
 
-    const searchNearHotel = (long, lat) => {
-      map.panTo([long, lat], { duration: 1000 });
-      searchForPOIs({ latitude: lat, longitude: long })
+      const searchNearHotel = (long, lat) => {
+        map.panTo([long, lat], { duration: 1000 });
+        searchForPOIs({ latitude: lat, longitude: long })
+      }
+
+      map.on('load', () => {
+        hotels.forEach((hotel) => {
+          let tooltipDiv = document.createElement('div');
+          ReactDOM.render(
+            <HotelTooltip hotel={hotel} searchNearHotel={searchNearHotel} />, tooltipDiv)
+          let newTooltip = new mapboxgl.Popup({ offset: 15 })
+          newTooltip
+            .setDOMContent(tooltipDiv)
+          let hotelMarkerDiv = document.createElement('div');
+          ReactDOM.render(
+            <div><img
+              style={{ height: '3rem' }}
+              src="./assets/images/hotelMarker.png"></img></div>, hotelMarkerDiv)
+          let newMarker = new mapboxgl.Marker({ color: 'red', element: hotelMarkerDiv })
+            .setLngLat([hotel.longitude, hotel.latitude])
+            .setPopup(newTooltip)
+            .addTo(map);
+        })
+        map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+
+        getSavedPOIs((err, data) => {
+          if (!err) {
+            console.log('get all pois')
+            let savedPois = data.map((poi) => {
+              poi.isSaved = true;
+              return poi
+            });
+            data.forEach((poi) => {
+              createPOI(map, poi);
+            })
+          }
+        })
+      })
+
+      map.on('dblclick', (pointer) => {
+        console.log(pointer)
+        // Specify that the panTo animation should last 5000 milliseconds.
+        map.panTo([pointer.lngLat.lng, pointer.lngLat.lat], { duration: 1000 });
+        searchForPOIs({ latitude: pointer.lngLat.lat, longitude: pointer.lngLat.lng })
+      })
+
+      setMapInstance(map);
     }
-
-    map.on('load', () => {
-      hotels.forEach((hotel) => {
-        let tooltipDiv = document.createElement('div');
-        ReactDOM.render(
-          <HotelTooltip hotel={hotel} searchNearHotel={searchNearHotel} />, tooltipDiv)
-        let newTooltip = new mapboxgl.Popup({ offset: 15 })
-        newTooltip
-          .setDOMContent(tooltipDiv)
-        let hotelMarkerDiv = document.createElement('div');
-        ReactDOM.render(
-          <div><img
-            style={{ height: '3rem' }}
-            src="./assets/images/hotelMarker.png"></img></div>, hotelMarkerDiv)
-        let newMarker = new mapboxgl.Marker({ color: 'red', element: hotelMarkerDiv })
-          .setLngLat([hotel.longitude, hotel.latitude])
-          .setPopup(newTooltip)
-          .addTo(map);
-      })
-      map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
-
-      getSavedPOIs((err, data) => {
-        if (!err) {
-          console.log('get all pois')
-          let savedPois = data.map((poi) => {
-            poi.isSaved = true;
-            return poi
-          });
-          data.forEach((poi) => {
-            createPOI(map, poi);
-          })
-        }
-      })
-    })
-
-    map.on('dblclick', (pointer) => {
-      console.log(pointer)
-      // Specify that the panTo animation should last 5000 milliseconds.
-      map.panTo([pointer.lngLat.lng, pointer.lngLat.lat], { duration: 1000 });
-      searchForPOIs({ latitude: pointer.lngLat.lat, longitude: pointer.lngLat.lng })
-    })
-
-    setMapInstance(map);
-  }, []);
+  }, [mapLoading]);
 
   useEffect(() => {
     if (mapInstance && mapControl) {
@@ -170,7 +178,10 @@ const Mapbox = ({ hotels, pois, searchResults, getSavedPOIs, searchForPOIs, save
   return (
     <div>
       <MapControlMenu currentControl={currentControl} setCurrentControl={setCurrentControl} />
-      <Map ref={el => mapContainer = el} />
+      {mapLoading ?
+        <div> Loading POIs... </div> :
+        <Map ref={el => mapContainer = el} />
+      }
     </div>
   )
 }
