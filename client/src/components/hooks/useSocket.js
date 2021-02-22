@@ -9,6 +9,7 @@ import socket from '../../lib/chatSocket.js'
 
 const useSocket = (user_id, username) => {
   const dispatch = useDispatch();
+  console.log('USE SOCKET', socket)
   useEffect(() => {
     socket.auth.user_id = user_id;
     socket.auth.username = username;
