@@ -48,9 +48,10 @@ app.get("/user", (req, res) => {
 
 
 const http = require('http').createServer(app);
-const io = require('socket.io')(http, {
-  path: '/socket.io'
-});
+// const io = require('socket.io')(http, {
+//   path: '/socket.io'
+// });
+const io = require('socket.io')(http);
 
 //TODO: move this messageController stuff elsewhere and create a POST route (or socket event or something) to re-initialize the chatController with a new trip_id
 let countOfConnections = 0;
@@ -218,5 +219,5 @@ io.on('connection', (socket) => {
 
 
 http.listen(process.env.PORT || 4000, () => {
-  console.log('listening at http://localhost:4000');
+  process.env.PORT ? console.log(`listening at http://localhost:${process.env.PORT}` : `listening at 4000`);
 });
