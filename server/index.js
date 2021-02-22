@@ -219,5 +219,5 @@ io.on('connection', (socket) => {
 
 
 http.listen(process.env.PORT || 4000, () => {
-  process.env.PORT ? console.log(`listening at http://localhost:${process.env.PORT}` : `listening at 4000`);
+  process.env.PORT ? console.log(`listening at http://localhost:${process.env.PORT}`) : console.log(`listening at 4000`);
 });
